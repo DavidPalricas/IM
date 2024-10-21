@@ -3,7 +3,7 @@ import keyboard as key
 def main():
 
     assistant = assi.Assistant()
-    assistant.open("https://www.google.com")
+    assistant.open("https://www.youtube.com/")
     
     running = True
     while running:
@@ -11,7 +11,7 @@ def main():
             assistant.close()
             running = False
         elif key.is_pressed("s"):
-            assistant.search("Vintage Cars")
+            assistant.search("Tiagosvki Improviso")
     
     
 
