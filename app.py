@@ -1,5 +1,7 @@
 import assistant as assi
 import tts 
+import json
+import xml.etree.ElementTree as ET
 
 from conextion_config import *
 import conextion_config as config
@@ -20,6 +22,23 @@ running = True
 
 
 
+def nlu_extrator(message):
+   
+   # Remove the <comand> tag
+   comand_tag = ET.fromstring(message).findall(".//command")
+
+   message = json.loads(comand_tag.pop(0).text)
+   
+   text = message["text"]
+
+   intent = message["intent"]["name"]
+
+   entities = message["entities"]
+   
+   return {"text":text,"intent":intent,"entities":entities}
+
+
+
 async def main():
 
 
@@ -37,16 +56,23 @@ async def main():
 
     async with websockets.connect( mmi_cli_out_Add,ssl = ssl_context) as websocket:
        print("connected Websocket")
+       #tts.TTS(FusionAdd=f"https://{OUTPUT}/IM/USER1/SPEECH").sendToVoice("boas")
+
        while running:
             try:
                 print("waiting message")
                 message = await websocket.recv()
-                print(f"Received message: {message}")
-
                 
+                if message not in ["OK","RENEW"]:
+                      
+                      nlu = nlu_extrator(message)
+
+                      print(nlu)
+
+                      
             except Exception as e:
-                print(e)
-          
+                            print(e)
+                    
 
 
 if __name__ == "__main__":
