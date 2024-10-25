@@ -39,10 +39,9 @@ async def main():
        print("connected Websocket")
        while running:
             try:
+                print("waiting message")
                 message = await websocket.recv()
-                
-                if message not in ["OK", "RENEW"]:
-                    print(message)
+                print(f"Received message: {message}")
 
                 
             except Exception as e:

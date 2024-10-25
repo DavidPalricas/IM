@@ -410,25 +410,14 @@ InitializeKWS();
     console.log(data);
 
  
-    if(data.intent.name=='change_color'){
-      var shape='' ;
-      var color='' ;
-
-      for (let i = 0; i < data.entities.length; i++)
-      {
-        if(data.entities[i].entity=='shape')
-    	    shape=data.entities[i].value;
-        if(data.entities[i].entity=='color')
-    	    color=data.entities[i].value;
-      }
   
-      var message = {'intent':'change_color','shape':shape,'color':color}
+      var message = JSON.stringify(data);
       var messaget = btoa(unescape(encodeURIComponent(final_transcript)));
       var result = { "recognized" : ["SPEECH", "SPEECHIN", "APP"], "text": messaget, "nlu": message };
       mmiCli_1.sendToIM(new LifeCycleEvent("SPEECHIN", "IM", "text-1", "ctx-1").
             doExtensionNotification(new EMMA("text-", "text", "command", 1, 0).
             setValue(JSON.stringify(result))));
-    }
+    
   });
 
   /*
@@ -460,11 +449,10 @@ InitializeKWS();
     console.log("--------------im1MessageHandler---------------");
 
     if(data != null && data!="RENEW" && data!="OK") {
-
       console.log(data);
 
       var content = $(data).find("emma\\:interpretation").first().text().trim();
-
+      
       if (typeof content == 'string') {
         try {
           // Try to parse XML
