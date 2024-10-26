@@ -1,10 +1,10 @@
-import assistant as assi
-import tts 
+import assistant.assistant as assi
+import assistant.web_app_conextions_files.tts as tts 
 import json
 import xml.etree.ElementTree as ET
 
-from conextion_config import *
-import conextion_config as config
+from web_app_conextions_files.conextion_config import *
+
 
 import asyncio
 
@@ -23,19 +23,17 @@ running = True
 
 
 def nlu_extrator(message):
-   
+  """
+  Extracts the nlu from the websocket's message
+  Parameters: message (str): The message received from the websocket
+  """ 
    # Remove the <comand> tag
-   comand_tag = ET.fromstring(message).findall(".//command")
-
-   message = json.loads(comand_tag.pop(0).text)
+  comand_tag = ET.fromstring(message).findall(".//command")
    
-   text = message["text"]
-
-   intent = message["intent"]["name"]
-
-   entities = message["entities"]
-   
-   return {"text":text,"intent":intent,"entities":entities}
+   # Removes the text from the comand tag and converts it to a json
+  message = json.loads(comand_tag.pop(0).text)
+ 
+  return {"text": message["text"],"intent":message["intent"]["name"],"entities":message["entities"]}
 
 
 
@@ -43,7 +41,6 @@ async def main():
 
 
     mmi_cli_out_Add = f"wss://{HOST}/IM/USER1/APP"
-
 
     ssl_context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_CLIENT)
     ssl_context.check_hostname = False
@@ -73,7 +70,5 @@ async def main():
             except Exception as e:
                             print(e)
                     
-
-
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
