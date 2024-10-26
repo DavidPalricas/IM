@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from web_app_conextions_files.tts import TTS
 from consts import OUTPUT
+from video import Video
 import time
 
 class Assistant:
@@ -12,7 +13,8 @@ class Assistant:
         self.driver = webdriver.Chrome()
         self.open("https://www.youtube.com")
         self.send_to_voice("Olá, como posso ajudar?")
-        self.video = None
+        self.video = False
+        self.running = True
            
     def send_to_voice(self, message):
         self.tts.sendToVoice(message) 
@@ -36,6 +38,7 @@ class Assistant:
 
 
     def search(self, query) :        
+        self.send_to_voice(f"Pesquisando pelo video {query}")
         wait = WebDriverWait(self.driver, 3)
         visible = EC.visibility_of_element_located
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
@@ -48,26 +51,38 @@ class Assistant:
            # Verificar se o vídeo não é um anúncio
            if "promoted" not in video.get_attribute("class"):  # Assumindo que anúncios contêm 'ad' na classe
                video.click()  # Clicar no primeiro vídeo que não é um anúncio
+               self.video = Video(False)
                break  # Sai
 
 
-    def close(self) :
-        self.driver.quit()
+    def shutdown(self) :
+        self.send_to_voice("Adeus, espero ter o ajudado")
+        self.running = False  # Set the control flag to stop the loop
+        print("Shutting down assistant...")
+        if self.driver:
+            self.driver.quit()  # Clean up the Selenium WebDriver instance
+
 
     def load_page(self):
          # To wait for the page to load
         time.sleep(5)
 
-
     def execute_action(self, nlu):
-      match nlu["intent"]:
-          case "search_video":
-              self.send_to_voice(f"Pesquisando pelo video {nlu['entities']}")
-              self.search(nlu["entities"])
+        match nlu["intent"]:
+            case "search_video":
+                self.search(nlu["entities"])
 
-          case "shutdown_assistant":
-              self.send_to_voice("Adeus, espero ter o ajudado")
-              self.close()
+            case "shutdown_assistant":
+                self.shutdown()
+
+            case "pause_video" | "play_video":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para pausar")
+                else:
+                   self.video.play_pause(self.driver,self.send_to_voice)
+
+                
+
 
             
 

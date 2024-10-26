@@ -7,8 +7,6 @@ import websockets
 from consts import HOST
 from web_app_conextions_files.tts import TTS
 
-# The running variable is used to control the application's execution
-running = True
 
 def nlu_extrator(message):
   """
@@ -23,8 +21,10 @@ def nlu_extrator(message):
   message = json.loads(comand_tag.pop(0).text)
 
   nlu = json.loads(message["nlu"])
-  
 
+  if nlu["entities"] == []:
+    return {"intent": nlu["intent"] ["name"]}
+  
   return {"intent": nlu["intent"] ["name"], "entities": nlu["entities"][0]["value"]}
 
 
@@ -44,6 +44,7 @@ async def main():
    It also is responsible for receiving messages and executing the aplication logic
   """
 
+
   assistant = Assistant()
 
   # Websocket url adress
@@ -54,7 +55,7 @@ async def main():
   async with websockets.connect( mmi_cli_out_Add,ssl = ssl_context) as websocket:
       print("Connected Websocket")
 
-      while running:
+      while assistant.running:
           try:
             print("Waiting for messages")
             message = await websocket.recv()
@@ -64,8 +65,8 @@ async def main():
               nlu = nlu_extrator(message)
               print("Message received")
 
-              assistant.execute_action(nlu)
-                    
+              await assistant.execute_action(nlu)
+                      
           except Exception as e:
                 print(e)
                       
