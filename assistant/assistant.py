@@ -20,8 +20,20 @@ class Assistant:
     def open(self, url) :
         self.driver.get(url)
         self.driver.maximize_window()
-
+        self.accept_cookies()
         self.load_page()
+
+    def accept_cookies(self):
+        try:
+            wait = WebDriverWait(self.driver, 5)
+            # Identify and click the button to accept cookies using text content or classes
+            accept_button = wait.until(EC.element_to_be_clickable(
+                (By.XPATH, "//button[.//span[contains(text(), 'Aceitar tudo')] or .//span[contains(text(), 'Accept all')]]")
+            ))
+            accept_button.click()
+        except Exception as e:
+            print(f"Cookie accept button not found or couldn't be clicked: {e}")
+
 
     def search(self, query) :        
         wait = WebDriverWait(self.driver, 3)
