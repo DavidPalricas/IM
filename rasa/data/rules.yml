@@ -16,3 +16,13 @@ rules:
   steps:
   - intent: search_video
   - action: utter_search_video
+
+- rule: pause_video
+  steps:
+  - intent: pause_video
+  - action: utter_pause_video
+
+- rule: play_video
+  steps:
+  - intent: play_video
+  - action: utter_play_video

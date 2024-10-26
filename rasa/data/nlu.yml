@@ -72,5 +72,35 @@ nlu:
     - Pesquise [vídeos de carros](video)
     - Pesquisa [vídeos de animais](video)
     - Encontre [vídeos de culinária](video)
-    - Econtra [vídeos de desporto](video)
+    - Encontra [vídeos de desporto](video)
 
+- intent: pause_video
+  examples: |
+    - Por favor pause o video
+    - Por favor pausa o video
+    - Pausa o video
+    - Pause o video
+    - Pausa
+    - Pause
+    - Para o video
+    - Pare o video
+    - Pare
+    - Para
+    - Parar o video
+    - Parar
+
+- intent: play_video
+  examples: |
+    - Por favor continua o video
+    - Por favor continue o video
+    - Continua o video
+    - Continue o video
+    - Continua
+    - Continue
+    - Continuar o video
+    - Continuar
+    - Dá play
+    - Play
+    - Tirar da pausa
+    - Tira da pausa
+    - Tira o video da pausa

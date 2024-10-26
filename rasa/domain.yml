@@ -5,6 +5,8 @@ intents:
 - affirm
 - deny
 - search_video
+- pause_video
+- play_video
 
 entities:
   - video
@@ -39,6 +41,11 @@ responses:
   utter_search_video:
   - text: Procurando o video {video}...
   - text: Pesquisando pelo video {video}...
+  utter_pause_video:
+  - text: Pausando o video
+  utter_play_video:
+  - text: Continuando o video
+  - text: A tirar da pausa
 actions:
 - action_greet_user
 - utter_goodbye
