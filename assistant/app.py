@@ -25,7 +25,7 @@ def nlu_extrator(message):
   nlu = json.loads(message["nlu"])
   
 
-  return {"intent": nlu["intent"] ["name"], "entities": nlu["entities"][1]["value"]}
+  return {"intent": nlu["intent"] ["name"], "entities": nlu["entities"][0]["value"]}
 
 
 def ignore_certificates():
@@ -59,15 +59,15 @@ async def main():
             print("Waiting for messages")
             message = await websocket.recv()
             
-            if message not in ["OK","RENEW"]:     
+            if message not in ["OK","RENEW"]:  
+              print(message)   
               nlu = nlu_extrator(message)
               print("Message received")
 
               assistant.execute_action(nlu)
                     
           except Exception as e:
-                #print(e)
-                pass
+                print(e)
                       
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
