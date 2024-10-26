@@ -10,7 +10,9 @@ nlu:
     - Olá assistente
     - olá
     - olá assistente
-    - olá assistnete
+    - viva
+    - via assistente
+
     
 - intent: goodbye
   examples: |
@@ -39,35 +41,27 @@ nlu:
     - Não gosto assim
     - Nem por isso
 
-- intent: light_switch
+- intent: search_video
   examples: |
-    - [Liga](switch) a luz da [sala](place), por favor
-    - Podes [ligar](switch) a luz da [cozinha](place)?
-    - Podes [desligar](switch) a luz do [quarto](place)?
-    - [Acende-me](switch) a luz da [entrada](place)
-    - [Apaga](switch) a luz do espelho(place)
-    - Podes [acender](switch) a luz da [casa de banho](place)?
-    - Podes [apagar](switch) a luz da [dispensa](place)?
-    - Podes [desligar](switch) a luz do [quarto e da casa de banho](place)?
-    - [Liga](switch) a luz da [sala](place)
-    - [Liga](switch) a luz do [quarto](place)
-    - [Desliga](switch) a luz do [quarto](place)
+    - Procura o video [Baby Shark Dance](video)
+    - Procura pelo video [How Animals Eat Their Food](video)
+    - Procure pelo video [Keyboard Cat](video)
+    - Procure o video [Qualquer um faz](video)
+    - Procure pelo video [Despacito](video)
+    - Pesquise o video [Como irritar um jogador de lol](video)
+    - Pesquise pelo video [O chão é lava](video)
+    - Pesquisa ai por [tutorial de python](video)
+    - Pesquise ai por [tutorial de java](video)
+    - Procura ai por [tutorial de c](video)
+    - Procure ai por [tutorial de c++](video)
+    - Procure por [tutorial de c#](video)
+    - Procura por [tutorial de javascript](video)
+    - Pesquise por [tutorial de html](video)
+    - Pesquisa por [tutorial de css](video)
+    - Procure [vídeos engraçados](video)
+    - Procura [videos de gatos](video)
+    - Pesquise [vídeos de carros](video)
+    - Pesquisa [vídeos de animais](video)
+    - Encontre [vídeos de culinária](video)
+    - Econtra [vídeos de desporto](video)
 
-- intent: change_color
-  examples: |
-    - Mudar a cor do [quadrado](shape) para  [verde](color)
-    - Mudar o [retangulo](shape) para  [vermelho](color)
-    - Alterar a cor do [circulo](shape) para  [amarelo](color)
-    - Mudar a cor do [quadrado](shape) para  [azul](color)
-    - Alterar o [circulo](shape) para  [verde](color)
-    - Mudar a cor do [triangulo](shape) para  [vermelho](color)
-    - Por o [circulo](shape) em  [amarelo](color)
-    - Mudar para [azul](color) o [triangulo](shape) 
-    - Alterar para [amarelo](color) o [quadrado](shape)
-    - Alterar o [circulo](shape) para  [castanho](color)
-    - Mudar o [quadrado](shape) para  [cinzento](color)
-    - Alterar o [triangulo](shape) para  [laranja](color)
-    - Por a cor do [circulo](shape) em  [rosa](color)
-    - Mudar a cor do [triangulo](shape) para  [preto](color)
-    - Por o [circulo](shape) em  [branco](color)
-    - Mudar para [azul](color) o [circulo](shape) 
