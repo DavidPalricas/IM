@@ -1,7 +1,6 @@
-from conextion_config import *
+from web_app_conextions_files.conextion_config import  LifeCycleEvent, EMMA, MMIClient
 
 class TTS():
-
     def __init__(self, IMAdd=None, FusionAdd=None):
         self.mmiCli = MMIClient(IMAdd, FusionAdd)
 

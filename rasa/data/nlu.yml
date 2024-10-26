@@ -14,13 +14,22 @@ nlu:
     - via assistente
 
     
-- intent: goodbye
+- intent: shutdown_assistant
   examples: |
     - Xau, Assistente
+    - Xau
     - Adeus, Assistente
+    - Adeus
     - Até logo, Assistente
-    - Boa noite, Assistente
+    - Até logo
     - Até amanhã, Assistente
+    - Até amanhã
+    - Até uma próxima, Assistente
+    - Até uma próxima
+    - Até breve, Assistente
+    - Até breve
+    - Até um dia, Assistente
+    - Até um dia
 
 - intent: affirm
   examples: |
