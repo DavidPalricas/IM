@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>CASA VIVA + Assistant</title>
+    <title>Youtube + Assistant</title>
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,7 @@
         --indicator-color: black;
         background: #fff; /*radial-gradient(#fff 75%, var(--indicator-color));*/
         min-height: 100vh;
-        color: burlywood;
+        color: white;
         font-family: Poppins;
         margin: 0;
         padding: 0;
@@ -28,13 +28,13 @@
         justify-content: center;
         width: 100%;
         border-radius: 10px;
-        background-color: #f0f0f0;
+        background-color: red;
       }
 
       .responseText{
-        border: solid 2px #8ea7cf;
+        border: solid 2px red;
         margin: 2%;
-        color: #41683a;
+        color: white;
       }
 
       .bottomNav{
@@ -46,18 +46,29 @@
       .recognized{
         font-size:x-large;
       }
+
+      #startInteraction{
+        height:160px;
+        width:160px;
+        border-radius: 100px;
+        border: none;
+        background-color: red;
+        color: white;
+        font-style: italic;
+        font-size: 30px;
+        cursor: pointer;
+        position: absolute;
+        top: 30%;
+        left: 44%;
+      }
+
     </style>
   </head>
   <body>
-    <h1 style="background-color: #4F5D73; margin: 0;">CASA VIVA + Assistant</h1>
+    <h1 style="background-color: red; margin: 0;">Youtube + Assistant</h1>
    <!-- <p>Click the button below and start speaking.</p>
     <button id="start-btn">Start</button>
     -->
-
-
-
-
-    
 
     <div class="bottomNav">
       <div id="response" class=""  style="">d</div>
@@ -105,11 +116,7 @@
         </div>
     </div>
 
-    
-    <div>
-      <button id="start-btn">Start</button>
-
-    </div>
+    <button id="startInteraction">Iniciar Interação</button>
 
     <div id="energy"></div>
 
@@ -130,13 +137,20 @@
 <script type="module">
 
 
-let  bypassBtn = document.getElementById('start-btn');
+document.addEventListener('DOMContentLoaded', function() {
+  let interaction_button = document.getElementById('startInteraction');
+        interaction_button.addEventListener('click', function() {
+        // Inicia o reconhecimento de fala
+        recognition.start();
+        console.log("Voice Interaction Started by button.");
+          interaction_button.innerHTML= "Pode falar!";
+          interaction_button.style.scale = 0.8;
+          interaction_button.style.transition = "0.5s";
+          interaction_button.style.backgroundColor = "red";
+})});
+
 
 var button_pressed = false;
-
-bypassBtn.addEventListener('click', function() {
-  button_pressed = true;
-});
 
 
 var isOnKWS=false;
