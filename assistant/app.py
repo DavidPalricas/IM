@@ -22,8 +22,13 @@ def nlu_extrator(message):
 
   nlu = json.loads(message["nlu"])
 
+
+
+
   if nlu["entities"] == []:
     return {"intent": nlu["intent"] ["name"]}
+  
+  print(nlu["entities"])
   
   return {"intent": nlu["intent"] ["name"], "entities": nlu["entities"][0]["value"]}
 

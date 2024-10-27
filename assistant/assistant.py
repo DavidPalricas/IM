@@ -35,10 +35,22 @@ class Assistant:
             accept_button.click()
         except Exception as e:
             print(f"Cookie accept button not found or couldn't be clicked: {e}")
+    
 
+    def handling_search_message(self, query):
+        if "vídeo" in query:
+            query = query.replace("vídeo", "")  
 
-    def search(self, query) :        
-        self.send_to_voice(f"Pesquisando pelo video {query}")
+        elif "vídeos" in query:
+            query = query.replace("vídeos", "")  
+            self.send_to_voice(f"Pesquisando por vídeos {query}")
+            return 
+        
+        self.send_to_voice(f"Pesquisando pelo vídeo {query}")
+
+    def search(self, query) : 
+        self.handling_search_message(query)
+
         wait = WebDriverWait(self.driver, 3)
         visible = EC.visibility_of_element_located
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
@@ -57,10 +69,12 @@ class Assistant:
 
     def shutdown(self) :
         self.send_to_voice("Adeus, espero ter o ajudado")
-        self.running = False  # Set the control flag to stop the loop
+        self.running = False  
         print("Shutting down assistant...")
+
+        # To check if the user by mistake closes the browser, otherwise the browser will be closed
         if self.driver:
-            self.driver.quit()  # Clean up the Selenium WebDriver instance
+            self.driver.quit()  
 
 
     def load_page(self):
@@ -79,7 +93,7 @@ class Assistant:
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para pausar")
                 else:
-                   self.video.play_pause(self.driver,self.send_to_voice)
+                   self.video.handling_play_pause(self.driver,self.send_to_voice,nlu["intent"])
 
                 
 
