@@ -70,7 +70,7 @@ async def main():
               nlu = nlu_extrator(message)
               print("Message received")
 
-              await assistant.execute_action(nlu)
+              assistant.execute_action(nlu)
                       
           except Exception as e:
                 print(e)

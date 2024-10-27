@@ -63,6 +63,11 @@ class Assistant:
            # Verificar se o vídeo não é um anúncio
            if "promoted" not in video.get_attribute("class"):  # Assumindo que anúncios contêm 'ad' na classe
                video.click()  # Clicar no primeiro vídeo que não é um anúncio
+
+               if "shorts" in  self.driver.current_url:
+                   self.video = Video(True)
+                   break
+                
                self.video = Video(False)
                break  # Sai
 
