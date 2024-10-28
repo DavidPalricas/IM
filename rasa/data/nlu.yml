@@ -52,13 +52,13 @@ nlu:
 
 - intent: search_video
   examples: |
-    - Procura o video [Baby Shark Dance](video)
-    - Procura pelo video [How Animals Eat Their Food](video)
-    - Procure pelo video [Keyboard Cat](video)
-    - Procure o video [Qualquer um faz](video)
-    - Procure pelo video [Despacito](video)
-    - Pesquise o video [Como irritar um jogador de lol](video)
-    - Pesquise pelo video [O chão é lava](video)
+    - Procura o vídeo [Baby Shark Dance](video)
+    - Procura pelo vídeo [How Animals Eat Their Food](video)
+    - Procure pelo vídeo [Keyboard Cat](video)
+    - Procure o vídeo [Qualquer um faz](video)
+    - Procure pelo vídeo [Despacito](video)
+    - Pesquise o vídeo [Como irritar um jogador de lol](video)
+    - Pesquise pelo vídeo [O chão é lava](video)
     - Pesquisa ai por [tutorial de python](video)
     - Pesquise ai por [tutorial de java](video)
     - Procura ai por [tutorial de c](video)
@@ -76,17 +76,17 @@ nlu:
 
 - intent: pause_video
   examples: |
-    - Por favor pause o video
-    - Por favor pausa o video
-    - Pausa o video
-    - Pause o video
+    - Por favor pause o vídeo
+    - Por favor pausa o vídeo
+    - Pausa o vídeo
+    - Pause o vídeo
     - Pausa
     - Pause
-    - Para o video
-    - Pare o video
+    - Para o vídeo
+    - Pare o vídeo
     - Pare
     - Para
-    - Parar o video
+    - Parar o vídeo
     - Parar
 
 - intent: play_video
@@ -104,3 +104,18 @@ nlu:
     - Tirar da pausa
     - Tira da pausa
     - Tira o video da pausa
+
+- intent: increase_speed_default
+  examples: |
+    - Aumenta a velocidade do vídeo
+    - Aumenta a velocidade
+    - Aumente a velocidade do vídeo
+    - Aumente a velocidade
+
+
+- intent: decrease_speed_default
+  examples: |
+    - Diminui a velocidade do vídeo
+    - Diminui a velocidade
+    - Diminua a velocidade do vídeo
+    - Diminua a velocidade

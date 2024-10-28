@@ -65,10 +65,10 @@ class Assistant:
                video.click()  # Clicar no primeiro vídeo que não é um anúncio
 
                if "shorts" in  self.driver.current_url:
-                   self.video = Video(True)
+                   self.video = Video(True,self.driver)
                    break
                 
-               self.video = Video(False)
+               self.video = Video(False,self.driver)
                break  # Sai
 
 
@@ -98,7 +98,13 @@ class Assistant:
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para pausar")
                 else:
-                   self.video.handling_play_pause(self.driver,self.send_to_voice,nlu["intent"])
+                   self.video.handling_play_pause(self.send_to_voice,nlu["intent"])
+
+            case "increase_speed_default" | "decrease_speed_default":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para alterar a velocidade")
+                else:
+                    self.video.change_speed(self.send_to_voice,nlu["intent"])
 
                 
 

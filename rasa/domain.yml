@@ -7,6 +7,8 @@ intents:
 - search_video
 - pause_video
 - play_video
+- increase_speed_default
+- decrease_speed_default
 
 entities:
   - video
@@ -46,6 +48,13 @@ responses:
   utter_play_video:
   - text: Continuando o video
   - text: A tirar da pausa
+
+  utter_increase_speed_default:
+  - text: Aumentando a velocidade do video
+
+  utter_decrease_speed_default:
+  - text: Diminuindo a velocidade do video
+
 actions:
 - action_greet_user
 - utter_goodbye

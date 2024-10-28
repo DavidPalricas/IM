@@ -26,3 +26,13 @@ rules:
   steps:
   - intent: play_video
   - action: utter_play_video
+
+- rule: increase_speed_default  
+  steps:
+  - intent: increase_speed_default
+  - action: utter_increase_speed_default
+
+- rule: decrease_speed_default
+  steps:
+  - intent: decrease_speed_default
+  - action: utter_decrease_speed_default
