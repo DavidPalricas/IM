@@ -1,4 +1,6 @@
+import os
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,16 +20,36 @@ class Assistant:
     """
     def __init__(self): 
         """
-          Initializes a new instance of the Assistant class.
-          And calls the initialize_assistant method.
+          Initializes a new instance of the Assistant class, and initializes the TTS class and initializes the chrome driver by calling the chrome_config. 
+          The construcotr calls the initialize_assistant method.
         """
         self.tts = TTS(FusionAdd=f"https://{OUTPUT}/IM/USER1/APPSPEECH")
-        self.driver = webdriver.Chrome()
+        self.driver = self.chrome_config()
         self.video = False
         self.running = True
 
         self.initialize_assistant()
       
+
+    def chrome_config(self):
+       """ The chrome_config method is responsible for configuring the chrome options.
+          The method will add the user data directory and the profile directory to the chrome options.
+         Returns:
+              - An instance of the WebDriver class which repsents a chorme driver.
+       """
+       chrome_options = Options()
+       
+       # This line is equivalant to this : C:\Users\{user}\AppData\Local\Google\Chrome\User Data
+       user_data_dir = os.path.join(os.environ["USERPROFILE"], "AppData", "Local", "Google", "Chrome", "User Data")
+
+       chrome_options.add_argument(f"user-data-dir={user_data_dir}")
+
+       profile_directory = "Default"
+
+       chrome_options.add_argument(f"--profile-directory={profile_directory}")
+
+       return webdriver.Chrome(options=chrome_options)
+    
     def initialize_assistant(self):
         """
         The initialize_assistant method is responsible for initializing the assistant by opening the browser and sending a message to the user.
@@ -108,16 +130,15 @@ class Assistant:
         videos = self.driver.find_elements(By.ID, "video-title") 
 
         for video in videos:
-           # Verificar se o vídeo não é um anúncio
-           if "promoted" not in video.get_attribute("class"):  # Assumindo que anúncios contêm 'ad' na classe
-               video.click()  # Clicar no primeiro vídeo que não é um anúncio
+           if "promoted" not in video.get_attribute("class"):  
+               video.click()  
 
                if "shorts" in  self.driver.current_url:
                    self.video = Video(True,self.driver)
                    break
                 
                self.video = Video(False,self.driver)
-               break  # Sai
+               break  
 
 
     def shutdown(self) :

@@ -1,5 +1,16 @@
 # IM
 
+# Requirments
+* Windows Operative System
+* Python 3.10 or greater
+* Java 21
+* Node JS
+* Miniconda 3
+
+Execute the following command to install all the python ibraries requirments
+```ps
+pip install -r requirements.txt
+```
 # How to run
  ## First Step
   Open a `terminal` in this directory and start the `mmiframework` with this commands:
@@ -34,8 +45,16 @@
    cd .\WebAppAssistantV2\;   ./start_web_app.bat
   ````
 
-  ## Last Step
+  ## Fifth Step
    To run our `assistant` open a `terminal` in this folder and execute the next command
    ```ps
    cd ./assistant/; ./app.bat
    ```
+
+  ## Last Step
+   Ensure your chrome profile is set in the directory `C:\Users\{user}\AppData\Local\Google\Chrome\User Data\Default`. 
+   To check this path open the google chrome and write `chrome://version/`, like in the picture below
+
+   ![Chrome Profile Path](img/chrome_profile_path.png)
+
+   After that make sure your `google account` is logged in `youtube`.
