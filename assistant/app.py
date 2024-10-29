@@ -8,11 +8,15 @@ from consts import HOST
 from web_app_conextions_files.tts import TTS
 
 
-def nlu_extrator(message):
+def nlu_exctrator(message):
   """
-  Extracts the nlu from the websocket's message
-  Parameters: message (str): The message received from the websocket
-  Returns: dict: The nlu extracted from the message(contains the user's intent and entities found)
+  The nlu_exctrator exctracts the nlu from the websocket's message
+  
+  Args:
+    message (str): The message received from the websocket
+
+  Returns:
+    dict: The nlu extracted from the message(contains the user's intent and entities found)
   """ 
    # Remove the <comand> tag
   comand_tag = ET.fromstring(message).findall(".//command")
@@ -21,9 +25,6 @@ def nlu_extrator(message):
   message = json.loads(comand_tag.pop(0).text)
 
   nlu = json.loads(message["nlu"])
-
-
-
 
   if nlu["entities"] == []:
     return {"intent": nlu["intent"] ["name"]}
@@ -45,10 +46,10 @@ def ignore_certificates():
 
 async def main():
   """
-   The main function is responsible for starting the assistant, and make the conextion to the WebApp's websocket
-   It also is responsible for receiving messages and executing the aplication logic
+   The main function is responsible for starting the assistant, and make the conection to the WebApp's websocket
+   It also is responsible for receiving messages and calling the nlu_exctrator function to extract the nlu from the message
+   After that, the function calls the assistant's execute_action method to execute the action based on the nlu
   """
-
 
   assistant = Assistant()
 
@@ -67,7 +68,7 @@ async def main():
             
             if message not in ["OK","RENEW"]:  
               print(message)   
-              nlu = nlu_extrator(message)
+              nlu = nlu_exctrator(message)
               print("Message received")
 
               assistant.execute_action(nlu)
