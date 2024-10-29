@@ -119,3 +119,15 @@ nlu:
     - Diminui a velocidade
     - Diminua a velocidade do vídeo
     - Diminua a velocidade
+
+  
+- intent: write_comment
+  examples: |
+     - Escreve [Este vídeo poderia explicar melhor o filme](comment)
+     - Escreva [Que nojo](comment)
+     - Comenta [Gostei muito deste vídeo](comment)
+     - Comente [ótimo trabalho](comment)
+     - Comente aí [este vídeo está péssimo](comment)
+     - Comenta aí [perca de tempo](comment)
+     -  Escreve aí [este vídeo é muito engraçado](comment)
+      - Escreva aí [incrível](comment)

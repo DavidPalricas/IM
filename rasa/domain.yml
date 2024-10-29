@@ -9,9 +9,11 @@ intents:
 - play_video
 - increase_speed_default
 - decrease_speed_default
+- write_comment
 
 entities:
   - video
+  - comment
 
 slots:
   video:
@@ -20,6 +22,13 @@ slots:
     mappings:
     - type: from_entity
       entity: video
+
+  comment:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: comment
 
 responses:
   utter_greet:
@@ -54,6 +63,9 @@ responses:
 
   utter_decrease_speed_default:
   - text: Diminuindo a velocidade do video
+
+  utter_write_comment:
+  - text: Escrevendo o comentário {comment}...
 
 actions:
 - action_greet_user

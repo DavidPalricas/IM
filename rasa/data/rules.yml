@@ -36,3 +36,8 @@ rules:
   steps:
   - intent: decrease_speed_default
   - action: utter_decrease_speed_default
+
+- rule: write_comment
+  steps:
+  - intent: write_comment
+  - action: utter_write_comment
