@@ -9,7 +9,7 @@ class Video:
     - is_short: a boolean that indicates if the video is short or not.
     - is_playing: a boolean that indicates if the video is playing or not.
     - speed: a float that represents the speed of the video.
-    - driver: an instance of the WebDriver class.
+    - driver: a google chrome driver.
     - youtube: an instance of the WebElement class(body) that represents the YouTube page.
     """
     def __init__(self,is_short,driver):
@@ -116,8 +116,7 @@ class Video:
 
             Args:
                 - send_to_voice: a function that sends a message to the user.
-                - key_combination: an instance of the ActionChains class which represents the keys pressed by the user.
-            
+                - key_combination: an instance of the ActionChains class which represents the keys pressed by the user.    
         """
         if self.speed == 0.25:
             send_to_voice("A velocidade já está no mínimo")
