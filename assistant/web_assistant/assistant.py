@@ -4,12 +4,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 from web_app_conextions_files.tts import TTS
+from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
 from video import Video
 import time
 
-class Assistant:
+class Assistant(WebAssistant):
     """
       The Assistant class is responsible for handling the assistant's actions and interactions with the user.
       The class has the following attributes:
@@ -24,9 +28,12 @@ class Assistant:
           The construcotr calls the initialize_assistant method.
         """
         self.tts = TTS(FusionAdd=f"https://{OUTPUT}/IM/USER1/APPSPEECH")
+        self.send_to_voice("Iniciando o  assistente, aguarde um pouco")
+        super().__init__()
         self.driver = self.chrome_config()
         self.video = False
         self.running = True
+        self.wait = WebDriverWait(self.driver, 5)
 
         self.initialize_assistant()
       
@@ -55,7 +62,9 @@ class Assistant:
         The initialize_assistant method is responsible for initializing the assistant by opening the browser and sending a message to the user.
         """
         self.open("https://www.youtube.com")
-        self.send_to_voice("Olá, como posso ajudar?")
+        self.send_to_voice("Olá, como posso te ajudar?")
+
+        
            
     def send_to_voice(self, message):
         """
@@ -81,9 +90,8 @@ class Assistant:
         The accept_cookies method is responsible for accepting the cookies on the page.
         """
         try:
-            wait = WebDriverWait(self.driver, 5)
             # Identify and click the button to accept cookies using text content or classes
-            accept_button = wait.until(EC.element_to_be_clickable(
+            accept_button = self.wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//button[.//span[contains(text(), 'Aceitar tudo')] or .//span[contains(text(), 'Accept all')]]")
             ))
             accept_button.click()
@@ -121,11 +129,10 @@ class Assistant:
        """
         self.handling_search_message(query)
 
-        wait = WebDriverWait(self.driver, 3)
         visible = EC.visibility_of_element_located
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
     
-        wait.until(visible((By.ID, "video-title")))
+        self.wait.until(visible((By.ID, "video-title")))
 
         videos = self.driver.find_elements(By.ID, "video-title") 
 
@@ -159,7 +166,44 @@ class Assistant:
         """
         The load_page method is responsible for waiting for the page to load.
         """
-        time.sleep(5)
+        time.sleep(3)
+
+
+    def write_comment(self, comment):
+        """
+        The write_comment method is responsible for writing a comment on a YouTube video.
+        The method will scroll the page to the comment box, click on the comment box, write the comment and send the comment by pressing the control key plus the enter key.
+        After sending the comment, the method will send a message to the user informing that the comment was written successfully.
+
+        Args:
+            - comment: a string that represents the comment to be written.
+        """
+
+        self.send_to_voice(f"Escrevendo o comentário {comment}")
+
+        self.load_page()
+
+        try:
+    
+            add_comment = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//*[@id='simplebox-placeholder']")))
+            self.driver.execute_script("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center' });", add_comment)
+
+            ActionChains(self.driver).move_to_element(add_comment).click().perform()
+
+            self.load_page()
+
+      
+            comment_input = self.driver.find_element(By.XPATH, "//*[@id='contenteditable-root']")
+            comment_input.send_keys(comment)
+            comment_input.send_keys(Keys.CONTROL, Keys.ENTER)
+
+            self.load_page()
+
+            self.send_to_voice("Comentário escrito com sucesso")
+            
+        except Exception as e:
+            self.send_to_voice("Erro ao tentar escrever o comentário")
+            print(f"Erro: {e}")
 
     def execute_action(self, nlu):
         """
@@ -186,6 +230,14 @@ class Assistant:
                     self.send_to_voice("Não há nenhum vídeo para alterar a velocidade")
                 else:
                     self.video.change_speed(self.send_to_voice,nlu["intent"])
+            
+            case "write_comment":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para comentar")
+                else:
+                    self.write_comment(nlu["entities"])
+            case _:
+                self.send_to_voice("Desculpe, não entendi o que você disse")
 
                 
 

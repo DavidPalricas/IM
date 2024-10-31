@@ -1,11 +1,11 @@
-from assistant import Assistant
 import json
 import xml.etree.ElementTree as ET
 from web_app_conextions_files.conextion_config import *
 import asyncio
 import websockets
 from consts import HOST
-from web_app_conextions_files.tts import TTS
+from web_assistant.assistant import Assistant
+from web_assistant.index import Index
 
 
 def nlu_exctrator(message):
@@ -50,6 +50,8 @@ async def main():
    It also is responsible for receiving messages and calling the nlu_exctrator function to extract the nlu from the message
    After that, the function calls the assistant's execute_action method to execute the action based on the nlu
   """
+  
+  index = Index()
 
   assistant = Assistant()
 
