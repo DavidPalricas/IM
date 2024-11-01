@@ -54,7 +54,8 @@ class Assistant(WebAssistant):
        profile_directory = "Default"
 
        chrome_options.add_argument(f"--profile-directory={profile_directory}")
-
+       #chrome_options.add_argument("--disable-extensions")
+    
        return webdriver.Chrome(options=chrome_options)
     
     def initialize_assistant(self):
@@ -236,6 +237,19 @@ class Assistant(WebAssistant):
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
                     self.write_comment(nlu["entities"])
+
+            case "activate_video_subtitles" | "deactivate_video_subtitles":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para ativar ou desativar as legendas")
+                else:
+                    self.video.on_off_video_subtitles(self.send_to_voice,nlu["intent"])
+            
+            case "mute_video" | "unmute_video":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para ativar ou desativar o som")
+                else:
+                    self.video.mute_unmute_video(self.send_to_voice,nlu["intent"])
+
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
 

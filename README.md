@@ -1,13 +1,13 @@
 # IM
 
-# Requirments
+# Requirements
 * Windows Operative System
 * Python 3.10 or greater
 * Java 21
 * Node JS
 * Miniconda 3
 
-Execute the following command to install all the python ibraries requirments
+Execute the following command to install all the python ibraries requirements
 ```ps
 pip install -r requirements.txt
 ```
@@ -15,7 +15,7 @@ pip install -r requirements.txt
  ## First Step
   Open a `terminal` in this directory and start the `mmiframework` with this commands:
    ```ps
-   cd .\mmiframework2\; ./start.bat
+   cd .\mmiframeworkV2\; ./start.bat
    ```
 
    ## Second Step
@@ -58,3 +58,19 @@ pip install -r requirements.txt
    ![Chrome Profile Path](img/chrome_profile_path.png)
 
    After that make sure your `google account` is logged in `youtube`.
+
+  ## Optional Step
+    In case the last step didn't work, when you run "cd ./assistant/; ./app.bat" you maybe saw a message like this:
+    ```
+    (session not created: DevToolsActivePort file doesn't exist)
+    (The process started from chrome location C:\Program Files (x86)\Google\Chrome\Application\chrome.exe is no longer running, so ChromeDriver is assuming that Chrome has crashed.) 
+  Stacktrace: ...
+              ...
+    [19312:12548:1031/232204.442:ERROR:command_buffer_proxy_impl.cc(324)] GPU state invalid after WaitForGetOffsetInRange.
+    ```
+    Try to run the following command in the terminal:
+    ```ps
+      taskkill /F /IM chrome.exe /T
+    ```
+    And then run the assistant again.
+    This command will kill all the chrome processes running in the background. We need to do this or the assistant will not work properly.

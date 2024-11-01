@@ -22,6 +22,8 @@ class Video:
         """
         self.is_short = is_short
         self.is_playing = True
+        self.subtitles = False
+        self.muted = False
         self.speed = 1
         self.driver = driver
         self.youtube =self.driver.find_element("tag name", "body")
@@ -126,3 +128,79 @@ class Video:
         self.speed -= 0.25
         send_to_voice(f"Diminuindo a velocidade em 0.25x, a velocidade atual é de {self.speed}")
         key_combination.key_down(Keys.SHIFT).send_keys(',').key_up(Keys.SHIFT).perform()
+
+    def on_off_video_subtitles(self,send_to_voice,intent):
+        """
+            The method on_off_video_subtitles is responsible for turning on or off the subtitles of a video on YouTube.
+            If the intent is turn_on_subtitles, the assistant will call the turn_on_subtitles method to turn on the subtitles.
+            If the intent is turn_off_subtitles, the assistant will call the turn_off_subtitles method to turn off the subtitles.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - intent: a string that represents the intent's name of the user.
+        """
+        if self.subtitles:
+            if intent == "activate_video_subtitles":
+                send_to_voice("As legendas já estão ativadas")
+            else:
+                self.turn_on_off_subtitles(send_to_voice,False)
+        else:
+            if intent == "deactivate_video_subtitles":
+                send_to_voice("As legendas já estão desativadas")
+            else:
+                self.turn_on_off_subtitles(send_to_voice,True)
+
+    def turn_on_off_subtitles(self,send_to_voice,turn_on):
+        """
+            The method turn_on_off_subtitles is responsible for turning on or off the subtitles of a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - turn_on: a boolean that indicates if it is to turn on the subtitles or not.
+        """
+        if turn_on:
+            send_to_voice("Ativando as legendas")
+        else:
+            send_to_voice("Desativando as legendas")
+
+        self.youtube.send_keys('c')
+        self.subtitles = not self.subtitles
+
+    def mute_unmute_video(self,send_to_voice,intent):
+        """
+            The method mute_unmute_video is responsible for muting or unmuting a video on YouTube.
+            If the intent is mute_video, the assistant will call the mute_unmute method to mute the video.
+            If the intent is unmute_video, the assistant will call the mute_unmute method to unmute the video.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - intent: a string that represents the intent's name of the user.
+        """
+        if self.muted:
+            if intent == "mute_video":
+                send_to_voice("O vídeo já está mudo")
+            else:
+                self.mute_unmute(send_to_voice,False)
+        else:
+            if intent == "unmute_video":
+                send_to_voice("O vídeo já está com o som ativado")
+            else:
+                self.mute_unmute(send_to_voice,True)
+
+    def mute_unmute(self,send_to_voice,mute):
+        """
+            The method mute_unmute is responsible for muting or unmuting a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - mute: a boolean that indicates if it is to mute the video or not.
+        """
+        if mute:
+            send_to_voice("Mudando o vídeo")
+        else:
+            send_to_voice("Ativando o som do vídeo")
+
+        self.youtube.send_keys('m')
+        self.muted = not self.muted

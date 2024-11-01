@@ -8,9 +8,9 @@ from web_assistant.assistant import Assistant
 from web_assistant.index import Index
 
 
-def nlu_exctrator(message):
+def nlu_extractor(message):
   """
-  The nlu_exctrator exctracts the nlu from the websocket's message
+  The nlu_extractor exctracts the nlu from the websocket's message
   
   Args:
     message (str): The message received from the websocket
@@ -47,7 +47,7 @@ def ignore_certificates():
 async def main():
   """
    The main function is responsible for starting the assistant, and make the conection to the WebApp's websocket
-   It also is responsible for receiving messages and calling the nlu_exctrator function to extract the nlu from the message
+   It also is responsible for receiving messages and calling the nlu_extractor function to extract the nlu from the message
    After that, the function calls the assistant's execute_action method to execute the action based on the nlu
   """
   
@@ -70,7 +70,7 @@ async def main():
             
             if message not in ["OK","RENEW"]:  
               print(message)   
-              nlu = nlu_exctrator(message)
+              nlu = nlu_extractor(message)
               print("Message received")
 
               assistant.execute_action(nlu)

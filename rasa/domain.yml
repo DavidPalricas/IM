@@ -6,6 +6,8 @@ intents:
 - deny
 - search_video
 - pause_video
+- activate_video_subtitles
+- deactivate_video_subtitles
 - play_video
 - increase_speed_default
 - decrease_speed_default
@@ -52,11 +54,26 @@ responses:
   utter_search_video:
   - text: Procurando o video {video}...
   - text: Pesquisando pelo video {video}...
+
   utter_pause_video:
   - text: Pausando o video
   utter_play_video:
   - text: Continuando o video
   - text: A tirar da pausa
+
+  utter_activate_video_subtitles:
+  - text: Ativando as legendas
+  - text: Ativando as legendas do video
+  utter_deactivate_video_subtitles:
+  - text: Desativando as legendas
+  - text: Desativando as legendas do video
+
+  utter_mute_video:
+  - text: Silenciando o video
+  - text: Silenciando o video
+  utter_unmute_video:
+  - text: Retirando o silêncio do video
+  - text: Retirando o silêncio do video
 
   utter_increase_speed_default:
   - text: Aumentando a velocidade do video
