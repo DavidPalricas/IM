@@ -60,17 +60,18 @@ pip install -r requirements.txt
    After that make sure your `google account` is logged in `youtube`.
 
   ## Optional Step
-    In case the last step didn't work, when you run "cd ./assistant/; ./app.bat" you maybe saw a message like this:
-    ```
+  In case the last step didn't work, when you run "cd ./assistant/; ./app.bat" you maybe saw a message like this:
+  ```ps
     (session not created: DevToolsActivePort file doesn't exist)
     (The process started from chrome location C:\Program Files (x86)\Google\Chrome\Application\chrome.exe is no longer running, so ChromeDriver is assuming that Chrome has crashed.) 
-  Stacktrace: ...
+  Stacktrace: 
+              ...
               ...
     [19312:12548:1031/232204.442:ERROR:command_buffer_proxy_impl.cc(324)] GPU state invalid after WaitForGetOffsetInRange.
-    ```
-    Try to run the following command in the terminal:
-    ```ps
+  ```
+  Try to run the following command in the terminal:
+  ```ps
       taskkill /F /IM chrome.exe /T
-    ```
-    And then run the assistant again.
-    This command will kill all the chrome processes running in the background. We need to do this or the assistant will not work properly.
+  ```
+  And then run the assistant again.
+  This command will kill all the chrome processes running in the background. We need to do this or the assistant will not work properly.

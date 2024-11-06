@@ -12,10 +12,13 @@ intents:
 - increase_speed_default
 - decrease_speed_default
 - write_comment
+- seek_forward_video
+- seek_backward_video
 
 entities:
   - video
   - comment
+  - time
 
 slots:
   video:
@@ -31,6 +34,13 @@ slots:
     mappings:
     - type: from_entity
       entity: comment
+
+  time:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: time
 
 responses:
   utter_greet:
@@ -83,6 +93,12 @@ responses:
 
   utter_write_comment:
   - text: Escrevendo o comentário {comment}...
+
+  utter_seek_forward_video:
+  - text: Avançando {time}
+
+  utter_seek_backward_video:
+  - text: Retrocedendo {time}
 
 actions:
 - action_greet_user

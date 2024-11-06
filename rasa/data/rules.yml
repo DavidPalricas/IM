@@ -61,3 +61,13 @@ rules:
   steps:
   - intent: write_comment
   - action: utter_write_comment
+
+- rule: seek_forward_video
+  steps:
+  - intent: seek_forward_video
+  - action: utter_seek_forward_video
+
+- rule: seek_backward_video
+  steps:
+  - intent: seek_backward_video
+  - action: utter_seek_backward_video

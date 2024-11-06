@@ -146,6 +146,7 @@ class Assistant(WebAssistant):
                    break
                 
                self.video = Video(False,self.driver)
+               self.video.url = self.driver.current_url
                break  
 
 
@@ -249,6 +250,15 @@ class Assistant(WebAssistant):
                     self.send_to_voice("Não há nenhum vídeo para ativar ou desativar o som")
                 else:
                     self.video.mute_unmute_video(self.send_to_voice,nlu["intent"])
+
+            case "seek_forward_video" | "seek_backward_video":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
+                else:
+                    video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entities"])
+
+                    if video_url != None:
+                        self.open(video_url)
 
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")

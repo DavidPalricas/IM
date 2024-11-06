@@ -13,7 +13,6 @@ nlu:
     - viva
     - via assistente
 
-    
 - intent: shutdown_assistant
   examples: |
     - Xau, Assistente
@@ -208,7 +207,6 @@ nlu:
     - Tire o mute do video por favor
     - Tire o mute
     - Tire o mute por favor
-    
 
 - intent: increase_speed_default
   examples: |
@@ -217,7 +215,6 @@ nlu:
     - Aumente a velocidade do vídeo
     - Aumente a velocidade
 
-
 - intent: decrease_speed_default
   examples: |
     - Diminui a velocidade do vídeo
@@ -225,7 +222,6 @@ nlu:
     - Diminua a velocidade do vídeo
     - Diminua a velocidade
 
-  
 - intent: write_comment
   examples: |
      - Escreve [Este vídeo poderia explicar melhor o filme](comment)
@@ -235,4 +231,49 @@ nlu:
      - Comente aí [este vídeo está péssimo](comment)
      - Comenta aí [perca de tempo](comment)
      -  Escreve aí [este vídeo é muito engraçado](comment)
-      - Escreva aí [incrível](comment)
+     - Escreva aí [incrível](comment)
+
+- intent: seek_forward_video
+  examples: |
+    - Avança [10 minutos](time) por favor
+    - Avança [30 segundos](time) no vídeo
+    - Avança [10 segundos](time) no vídeo por favor
+    - Avança [30 minutos](time)
+    - Avance [10 minutos](time)
+    - Avance [10 segundos](time) por favor
+    - Avance [1 minutos](time) no vídeo
+    - Avance [2 horas](time) no vídeo por favor
+    - Avançar [30 segundos](time) por favor
+    - Avançar [1 hora](time) no vídeo
+    - Avançar [10 segundos](time) no vídeo por favor
+    - Avançar [30 segundos](time)
+    - Anda [3 minutos](time)
+    - Anda [10 segundos](time) por favor
+    - Anda [10 minutos](time) no vídeo
+    - Anda [10 segundos](time) no vídeo por favor
+    - Andar [10 segundos](time) por favor
+    - Andar [30 minutos](time) no vídeo
+    - Andar [10 segundos](time) no vídeo por favor
+    - Andar [10 segundos](time)
+
+- intent: seek_backward_video
+  examples: |
+    - Recua [10 segundos](time) por favor
+    - Recua [30 segundos](time) no vídeo
+    - Recua [10 segundos](time) no vídeo por favor
+    - Recua [30 minutos](time)
+    - Recue [10 minutos](time)
+    - Recue [10 segundos](time) por favor
+    - Recue [1 minutos](time) no vídeo
+    - Recue [2 horas](time) no vídeo por favor
+    - Recuar [30 segundos](time) por favor
+    - Recuar [1 minutos](time) no vídeo
+    - Recuar [10 segundos](time) no vídeo por favor
+    - Recuar [30 segundos](time)
+    - Retrocede [1 hora](time)
+    - Retrocede [10 segundos](time) por favor
+    - Retrocede [10 minutos](time) no vídeo
+    - Retrocede [10 segundos](time) no vídeo por favor
+    - Retroceder [10 segundos](time) por favor
+    - Retroceder [30 minutos](time) no vídeo
+    - Retroceder [10 segundos](time) no vídeo por favor

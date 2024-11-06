@@ -1,6 +1,9 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
+
 
 class Video:
     """
@@ -27,6 +30,40 @@ class Video:
         self.speed = 1
         self.driver = driver
         self.youtube =self.driver.find_element("tag name", "body")
+
+
+    def get_video_time(self):
+        """
+        Retrieves the current time and total duration of the YouTube video.
+        
+        Returns:
+            tuple: A tuple containing the current time and total duration as strings.
+        """
+        try:
+            # Locate the elements containing the current and total time
+            print("ggllglgllglgllglglgllglg")
+            # Pause video first
+            if self.is_playing:
+                self.youtube.send_keys('k')
+
+            current_time_element = self.driver.find_element(By.CLASS_NAME, 'ytp-time-current')
+            total_time_element = self.driver.find_element(By.CLASS_NAME, 'ytp-time-duration')
+            print(f"current_time_element: {current_time_element}, total_time_element: {total_time_element}")
+
+            # Extract the text (time) from the elements
+            current_time = current_time_element.text
+            total_time = total_time_element.text
+            print(f"current_time: {current_time}, total_time: {total_time}")
+
+            # Play video again
+            self.youtube.send_keys('k')
+            # Print or return the time values
+            return current_time, total_time
+        
+        except Exception as e:
+            print(f"Error while retrieving video times: {e}")
+            return None, None
+
 
     def handling_play_pause(self,send_to_voice,intent):      
          """
@@ -204,3 +241,87 @@ class Video:
 
         self.youtube.send_keys('m')
         self.muted = not self.muted
+
+    def seek_forward_backward(self,send_to_voice,intent,entities):
+        """
+            The method seek_forward_backward is responsible for seeking forward or backward a video on YouTube.
+            If the intent is seek_forward, the assistant will call the seek method to seek forward the video.
+            If the intent is seek_backward, the assistant will call the seek method to seek backward the video.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - intent: a string that represents the intent's name of the user.
+                - entities: a dictionary that contains the entities found in the user's message.
+        """
+        if intent == "seek_forward_video":
+            return self.seek(send_to_voice,entities,True)
+        else:
+            time = entities["time"]
+            return self.seek(send_to_voice,entities,False)
+
+    def seek(self,send_to_voice,entities,forward):
+        """
+            The method seek is responsible for seeking forward or backward a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - entities: a dictionary that contains the entities found in the user's message.
+                - forward: a boolean that indicates if it is to seek forward or backward the video.
+        """
+        print("eeeeeeeeeeeeeeeeeeeeeeee : "+entities)
+        if forward:
+            send_to_voice(f"Avançando {entities}")
+        else:
+            send_to_voice(f"Retrocedendo {entities}")
+
+        time = self.convert_time(entities)
+        print("timeeeeeeeeeeeeeeeeeeeeeeeee : "+str(time))
+        if time >= 36000: 
+            send_to_voice("O tempo é muito grande, não é possível avançar ou retroceder")
+            return
+
+        if time <= 90:
+
+            for _ in range(round(time / 10)):
+                self.youtube.send_keys('l' if forward else 'j')
+
+
+        else: 
+            return f"{self.driver.current_url}&t={time}s"
+
+        return None
+
+
+
+        
+
+    def convert_time(self,entities):
+        """
+            The method convert_time is responsible for converting the time to seconds.
+
+            Args:
+                - time: a string that represents the time.
+
+            Returns:
+                - int: the time converted to seconds.
+        """
+
+        time_units = ["segundos","minutos","horas"]
+
+        type_time = entities.split(" ")[1]
+        time = int(entities.split(" ")[0])
+
+        # get video time in seconds, and add it to the current time
+        current_time, total_time = self.get_video_time()
+        
+        current_time = current_time.split(":")
+
+        time_append = (int(current_time[0]) * 3600 + int(current_time[1]) * 60 + int(current_time[2])) if len(current_time) == 3 else (int(current_time[0]) * 60 + int(current_time[1]))
+
+
+        for i in range(len(time_units)):
+            if type_time == time_units[i] or type_time == time_units[i][:-1]:
+                return time * 60 ** i + time_append, total_time
+        
+        return time, total_time
