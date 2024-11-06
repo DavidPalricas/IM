@@ -40,20 +40,25 @@ class Video:
             tuple: A tuple containing the current time and total duration as strings.
         """
         try:
-            # Locate the elements containing the current and total time
-            print("ggllglgllglgllglglgllglg")
+            # print("ggllglgllglgllglglgllglg")
+            # print(f"driver: {self.driver}")
+            # print(f"driver url: {self.driver.current_url}")
+            # print(f"drive body: {self.driver.find_element('tag name', 'body')}")
+            #self.youtube =self.driver.find_element("tag name", "body")
+
             # Pause video first
             if self.is_playing:
                 self.youtube.send_keys('k')
 
+            # Locate the elements containing the current and total time
             current_time_element = self.driver.find_element(By.CLASS_NAME, 'ytp-time-current')
             total_time_element = self.driver.find_element(By.CLASS_NAME, 'ytp-time-duration')
-            print(f"current_time_element: {current_time_element}, total_time_element: {total_time_element}")
+            #print(f"current_time_element: {current_time_element}, total_time_element: {total_time_element}")
 
             # Extract the text (time) from the elements
             current_time = current_time_element.text
             total_time = total_time_element.text
-            print(f"current_time: {current_time}, total_time: {total_time}")
+            #print(f"current_time: {current_time}, total_time: {total_time}")
 
             # Play video again
             self.youtube.send_keys('k')
@@ -256,7 +261,6 @@ class Video:
         if intent == "seek_forward_video":
             return self.seek(send_to_voice,entities,True)
         else:
-            time = entities["time"]
             return self.seek(send_to_voice,entities,False)
 
     def seek(self,send_to_voice,entities,forward):
@@ -269,24 +273,25 @@ class Video:
                 - entities: a dictionary that contains the entities found in the user's message.
                 - forward: a boolean that indicates if it is to seek forward or backward the video.
         """
-        print("eeeeeeeeeeeeeeeeeeeeeeee : "+entities)
+        time, current_seconds = self.convert_time(entities,forward)
+
+        #print("timeeeeeeeeeeeeeeeeeeeeeeeee : "+str(time))
+        # if time >= 36000: 
+        #     send_to_voice("O tempo é muito grande, não é possível avançar ou retroceder")
+        #     return
+
+        #print("eeeeeeeeeeeeeeeeeeeeeeee : "+entities)
+
         if forward:
             send_to_voice(f"Avançando {entities}")
         else:
             send_to_voice(f"Retrocedendo {entities}")
 
-        time = self.convert_time(entities)
-        print("timeeeeeeeeeeeeeeeeeeeeeeeee : "+str(time))
-        if time >= 36000: 
-            send_to_voice("O tempo é muito grande, não é possível avançar ou retroceder")
-            return
-
+        
         if time <= 90:
-
-            for _ in range(round(time / 10)):
+            #print(f"Time2: {time}")
+            for _ in range(round(abs(time-current_seconds)/10)):
                 self.youtube.send_keys('l' if forward else 'j')
-
-
         else: 
             return f"{self.driver.current_url}&t={time}s"
 
@@ -296,32 +301,40 @@ class Video:
 
         
 
-    def convert_time(self,entities):
+    def convert_time(self, entities, forward):
         """
             The method convert_time is responsible for converting the time to seconds.
 
             Args:
-                - time: a string that represents the time.
+                - entities: a string that represents the time.
+                - forward: a boolean that indicates if it is to seek forward or backward the video.
 
             Returns:
                 - int: the time converted to seconds.
         """
 
-        time_units = ["segundos","minutos","horas"]
+        time_units = ["segundos", "minutos", "horas"]
 
         type_time = entities.split(" ")[1]
         time = int(entities.split(" ")[0])
 
-        # get video time in seconds, and add it to the current time
         current_time, total_time = self.get_video_time()
         
         current_time = current_time.split(":")
+        total_time = total_time.split(":")
 
-        time_append = (int(current_time[0]) * 3600 + int(current_time[1]) * 60 + int(current_time[2])) if len(current_time) == 3 else (int(current_time[0]) * 60 + int(current_time[1]))
-
+        current_seconds = (int(current_time[0]) * 3600 + int(current_time[1]) * 60 + int(current_time[2])) if len(current_time) == 3 else (int(current_time[0]) * 60 + int(current_time[1]))
+        total_seconds = (int(total_time[0]) * 3600 + int(total_time[1]) * 60 + int(total_time[2])) if len(total_time) == 3 else (int(total_time[0]) * 60 + int(total_time[1]))
 
         for i in range(len(time_units)):
             if type_time == time_units[i] or type_time == time_units[i][:-1]:
-                return time * 60 ** i + time_append, total_time
-        
-        return time, total_time
+                time_in_seconds = time * 60 ** i
+                if forward:
+                    new_time = current_seconds + time_in_seconds
+                    return min(new_time, total_seconds), current_seconds
+                else:
+                    new_time = current_seconds - time_in_seconds
+                    return max(new_time, 0), current_seconds
+
+        #print(f"Time: {time}")
+        return time, current_seconds

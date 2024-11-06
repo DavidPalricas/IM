@@ -259,6 +259,8 @@ class Assistant(WebAssistant):
 
                     if video_url != None:
                         self.open(video_url)
+                        self.video.youtube = self.driver.find_element("tag name", "body")
+                        
 
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
