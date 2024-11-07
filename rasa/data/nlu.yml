@@ -11,7 +11,7 @@ nlu:
     - olá
     - olá assistente
     - viva
-    - via assistente
+    - viva assistente
 
 - intent: shutdown_assistant
   examples: |
@@ -88,7 +88,6 @@ nlu:
     - Procede
     - Proceda com o vídeo
 
-
 - intent: activate_video_subtitles
   examples: |
     - Ativa as legendas
@@ -97,8 +96,12 @@ nlu:
     - Ativa as legendas do vídeo por favor
     - Ativa as legendas do vídeo, por favor
     - Ativa as legendas, por favor
-    - Ative as legendas
-    - Ativar as legendas
+    - Liga as legendas
+    - Liga as legendas do vídeo
+    - Liga as legendas por favor
+    - Liga as legendas do vídeo por favor
+    - Liga as legendas do vídeo, por favor
+    - Liga as legendas, por favor
 
 - intent: deactivate_video_subtitles
   examples: |
@@ -108,8 +111,12 @@ nlu:
     - Desativa as legendas do vídeo por favor
     - Desativa as legendas do vídeo, por favor
     - Desativa as legendas, por favor
-    - Desative as legendas
-    - Desativar as legendas
+    - Desliga as legendas
+    - Desliga as legendas do vídeo
+    - Desliga as legendas por favor
+    - Desliga as legendas do vídeo por favor
+    - Desliga as legendas do vídeo, por favor
+    - Desliga as legendas, por favor
 
 - intent: mute_video
   examples: |
@@ -121,38 +128,40 @@ nlu:
     - Mute o som por favor
     - Desliga o som
     - Desliga o som por favor
-    - Desligue o som
     - Tira o som
     - Tira o som por favor
-    - Tire o som
     - Tira o som do vídeo
 
 - intent: unmute_video
   examples: |
     - Ativa o som
     - Ativa o som por favor
-    - Ative o som
     - Tira do silêncio
     - Tira do silêncio por favor
-    - Tire do silêncio
     - Ligar o som
     - Liga o som por favor
-    - Ligue o som
     - Unmute
     - Unmute o vídeo
     - Unmute o vídeo por favor
     - Ativa o som do vídeo
     - Ativa o som do vídeo por favor
-    - Ative o som do vídeo
     - Tira o mute do video
     - Tira o mute do video por favor
-    - Tire o mute
 
 - intent: increase_speed
   examples: |
     - Aumenta a velocidade do vídeo
     - Aumente a velocidade do vídeo em [0.5] (speed)
-    
+    - Acelera a velocidade do vídeo
+    - Acelera a velocidade do vídeo em [1.75] (speed)
+    - Eleva a velocidade do vídeo
+    - Eleva a velocidade do vídeo em [1.25] (speed)
+    - Amplifica a velocidade do vídeo
+    - Amplifica a velocidade do vídeo em [1.5] (speed)
+    - Por favor aumente a velocidade em [1] (speed)
+    - Por favor acelere a velocidade em [1.75] (speed)
+    - Por favor eleve a velocidade em [0.25] (speed)
+    - Por favor amplifique a velocidade em [0.5] (speed)
 
 - intent: decrease_speed
   examples: |
@@ -166,7 +175,7 @@ nlu:
     - Por favor baixe a velocidade em [1.75] (speed)
     - Por favor reduza a velocidade em [0.25] (speed)
     - Diminua a velocidade em [0.25] (speed), se faz favor
-    
+    - Desacelere a velocidade em [0.5] (speed), por favor
 
 - intent: write_comment
   examples: |
@@ -185,47 +194,23 @@ nlu:
   examples: |
     - Avança [10 minutos](time) por favor
     - Avança [30 segundos](time) no vídeo
-    - Avança [10 segundos](time) no vídeo por favor
-    - Avança [30 minutos](time)
-    - Avance [10 minutos](time)
-    - Avance [10 segundos](time) por favor
-    - Avance [1 minutos](time) no vídeo
-    - Avance [2 horas](time) no vídeo por favor
-    - Avançar [30 segundos](time) por favor
-    - Avançar [1 hora](time) no vídeo
-    - Avançar [10 segundos](time) no vídeo por favor
-    - Avançar [30 segundos](time)
+    - Avança [1 hora](time) no vídeo por favor
+    - Avança [2 horas](time)
     - Anda [3 minutos](time)
     - Anda [10 segundos](time) por favor
     - Anda [10 minutos](time) no vídeo
     - Anda [10 segundos](time) no vídeo por favor
-    - Andar [10 segundos](time) por favor
-    - Andar [30 minutos](time) no vídeo
-    - Andar [10 segundos](time) no vídeo por favor
-    - Andar [10 segundos](time)
-
+    
 - intent: seek_backward_video
   examples: |
     - Recua [10 segundos](time) por favor
-    - Recua [30 segundos](time) no vídeo
-    - Recua [10 segundos](time) no vídeo por favor
+    - Recua [1 hora](time) no vídeo
+    - Recua [2 horas](time) no vídeo por favor
     - Recua [30 minutos](time)
-    - Recue [10 minutos](time)
-    - Recue [10 segundos](time) por favor
-    - Recue [1 minutos](time) no vídeo
-    - Recue [2 horas](time) no vídeo por favor
-    - Recuar [30 segundos](time) por favor
-    - Recuar [1 minutos](time) no vídeo
-    - Recuar [10 segundos](time) no vídeo por favor
-    - Recuar [30 segundos](time)
     - Retrocede [1 hora](time)
     - Retrocede [10 segundos](time) por favor
     - Retrocede [10 minutos](time) no vídeo
     - Retrocede [10 segundos](time) no vídeo por favor
-    - Retroceder [10 segundos](time) por favor
-    - Retroceder [30 minutos](time) no vídeo
-    - Retroceder [10 segundos](time) no vídeo por favor
-
 
 - intent: subscribe_channel
   examples: |
@@ -252,7 +237,6 @@ nlu:
     - Quero enviar este vídeo para a [Sofia](user)
     - Por favor manda este vídeo para o [Miguel](user)
     - Por favor reencaminhe este vídeo para a [Ana](user)
-
 
 - intent: save_to_playlist
   examples: |
