@@ -40,15 +40,17 @@ class Video:
             tuple: A tuple containing the current time and total duration as strings.
         """
         try:
-            # print("ggllglgllglgllglglgllglg")
-            # print(f"driver: {self.driver}")
-            # print(f"driver url: {self.driver.current_url}")
-            # print(f"drive body: {self.driver.find_element('tag name', 'body')}")
-            #self.youtube =self.driver.find_element("tag name", "body")
+            #print("ggllglgllglgllglglgllglg")
+            #print(f"driver: {self.driver}")
+            #print(f"driver url: {self.driver.current_url}")
+            #print(f"drive body: {self.driver.find_element('tag name', 'body')}")
+            self.youtube =self.driver.find_element("tag name", "body")
 
             # Pause video first
             if self.is_playing:
                 self.youtube.send_keys('k')
+
+            #print(f"youtube: {self.youtube}")
 
             # Locate the elements containing the current and total time
             current_time_element = self.driver.find_element(By.CLASS_NAME, 'ytp-time-current')
@@ -240,7 +242,7 @@ class Video:
                 - mute: a boolean that indicates if it is to mute the video or not.
         """
         if mute:
-            send_to_voice("Mudando o vídeo")
+            send_to_voice("Desativando o som do vídeo")
         else:
             send_to_voice("Ativando o som do vídeo")
 
@@ -293,8 +295,12 @@ class Video:
             for _ in range(round(abs(time-current_seconds)/10)):
                 self.youtube.send_keys('l' if forward else 'j')
         else: 
-            return f"{self.driver.current_url}&t={time}s"
-
+            # if current_url has the time parameter, it will be updated, otherwise it will be added
+            if "t=" in self.driver.current_url:
+                return f"{self.driver.current_url.split('&t=')[0]}&t={time}s"
+            else:
+                self.driver.get(self.driver.current_url + f"&t={time}")
+            
         return None
 
 
@@ -320,6 +326,7 @@ class Video:
 
         current_time, total_time = self.get_video_time()
         
+        #print(f"current_time: {current_time}, total_time: {total_time}")
         current_time = current_time.split(":")
         total_time = total_time.split(":")
 
