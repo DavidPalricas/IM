@@ -14,11 +14,16 @@ intents:
 - write_comment
 - seek_forward_video
 - seek_backward_video
+- share_video
+- save_to_playlist 
+- subscribe_channel
 
 entities:
   - video
   - comment
   - time
+  - user
+  - playlist
 
 slots:
   video:
@@ -41,6 +46,21 @@ slots:
     mappings:
     - type: from_entity
       entity: time
+
+  user:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: user
+
+  
+  playlist:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: playlist
 
 responses:
   utter_greet:
@@ -99,6 +119,15 @@ responses:
 
   utter_seek_backward_video:
   - text: Retrocedendo {time}
+
+  utter_share_video:
+  - text: Compartilhando o video com o {user}...
+
+  utter_save_to_playlist:
+  - text: Guardando o video na playlist {playlist}...
+
+  utter_subscribe_channel:
+  - text: Inscrevendo-se no canal 
 
 actions:
 - action_greet_user

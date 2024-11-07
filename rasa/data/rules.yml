@@ -71,3 +71,18 @@ rules:
   steps:
   - intent: seek_backward_video
   - action: utter_seek_backward_video
+
+- rule: share_video
+  steps:
+  - intent: share_video
+  - action: utter_share_video
+
+- rule: save_to_playlist
+  steps:
+  - intent: save_to_playlist
+  - action: utter_save_to_playlist
+
+- rule: subscribe_channel
+  steps:
+  - intent: subscribe_channel
+  - action: utter_subscribe_channel
