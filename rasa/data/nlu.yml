@@ -53,56 +53,41 @@ nlu:
   examples: |
     - Procura o vídeo [Baby Shark Dance](video)
     - Procura pelo vídeo [How Animals Eat Their Food](video)
-    - Procure pelo vídeo [Keyboard Cat](video)
-    - Procure o vídeo [Qualquer um faz](video)
-    - Procure pelo vídeo [Despacito](video)
     - Pesquise o vídeo [Como irritar um jogador de lol](video)
     - Pesquise pelo vídeo [O chão é lava](video)
-    - Pesquisa ai por [tutorial de python](video)
-    - Pesquise ai por [tutorial de java](video)
-    - Procura ai por [tutorial de c](video)
+    - Pesquisa ai por [tutoriais de python](video)
     - Procure ai por [tutorial de c++](video)
-    - Procure por [tutorial de c#](video)
-    - Procura por [tutorial de javascript](video)
+    - Procure pela música [Despacito](video)
     - Pesquise por [tutorial de html](video)
-    - Pesquisa por [tutorial de css](video)
-    - Procure [vídeos engraçados](video)
-    - Procura [videos de gatos](video)
-    - Pesquise [vídeos de carros](video)
-    - Pesquisa [vídeos de animais](video)
     - Encontre [vídeos de culinária](video)
     - Encontra [vídeos de desporto](video)
 
 - intent: pause_video
   examples: |
     - Por favor pause o vídeo
-    - Por favor pausa o vídeo
+    - Por favor pare o vídeo
     - Pausa o vídeo
-    - Pause o vídeo
-    - Pausa
-    - Pause
     - Para o vídeo
-    - Pare o vídeo
-    - Pare
-    - Para
-    - Parar o vídeo
-    - Parar
+    - Interrompa o vídeo
+    - Parou
+    - Pause 
+    - Pause aí o vídeo
+    - Pare aí o vídeo
+    - Interrompa aí o vídeo
 
 - intent: play_video
   examples: |
     - Por favor continua o video
-    - Por favor continue o video
-    - Continua o video
-    - Continue o video
-    - Continua
+    - Continua com o video
     - Continue
-    - Continuar o video
-    - Continuar
-    - Dá play
-    - Play
-    - Tirar da pausa
-    - Tira da pausa
+    - Retome
+    - Prossiga
+    - Tire da pausa
     - Tira o video da pausa
+    - Retoma o vídeo
+    - Procede
+    - Proceda com o vídeo
+
 
 - intent: activate_video_subtitles
   examples: |
@@ -208,30 +193,38 @@ nlu:
     - Tire o mute
     - Tire o mute por favor
 
-- intent: increase_speed_default
+- intent: increase_speed
   examples: |
     - Aumenta a velocidade do vídeo
-    - Aumenta a velocidade
-    - Aumente a velocidade do vídeo
-    - Aumente a velocidade
+    - Aumente a velocidade do vídeo em [0.5] (speed)
+    
 
-- intent: decrease_speed_default
+- intent: decrease_speed
   examples: |
     - Diminui a velocidade do vídeo
-    - Diminui a velocidade
-    - Diminua a velocidade do vídeo
-    - Diminua a velocidade
+    - Baixa a velocidade do vídeo
+    - Reduza a velocidade do vídeo
+    - Diminua a velocidade em [0.5] (speed)
+    - Baixa a velocidade em [1.75] (speed)
+    - Reduza a velocidade em [1.25] (speed)
+    - Por favor diminua a velocidade em [1] (speed)
+    - Por favor baixe a velocidade em [1.75] (speed)
+    - Por favor reduza a velocidade em [0.25] (speed)
+    - Diminua a velocidade em [0.25] (speed), se faz favor
+    
 
 - intent: write_comment
   examples: |
      - Escreve [Este vídeo poderia explicar melhor o filme](comment)
-     - Escreva [Que nojo](comment)
+     - Esvreva nos comentários [Quero continuação](comment)
+     - Digita [Adorei este vídeo](comment)
      - Comenta [Gostei muito deste vídeo](comment)
-     - Comente [ótimo trabalho](comment)
-     - Comente aí [este vídeo está péssimo](comment)
-     - Comenta aí [perca de tempo](comment)
-     -  Escreve aí [este vídeo é muito engraçado](comment)
      - Escreva aí [incrível](comment)
+     - Digite aí [este vídeo é muito bom](comment)
+     - Comente aí [este vídeo está péssimo](comment)
+     - Quero comentar [este vídeo é muito bom](comment)
+     - Quero escrever [este vídeo está péssimo](comment)
+     - Por favor comente [este vídeo está péssimo](comment)
 
 - intent: seek_forward_video
   examples: |

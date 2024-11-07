@@ -24,6 +24,7 @@ entities:
   - time
   - user
   - playlist
+  - speed
 
 slots:
   video:
@@ -53,7 +54,13 @@ slots:
     mappings:
     - type: from_entity
       entity: user
-
+  
+  speed:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: speed
   
   playlist:
     type: text
@@ -105,11 +112,11 @@ responses:
   - text: Retirando o silêncio do video
   - text: Retirando o silêncio do video
 
-  utter_increase_speed_default:
-  - text: Aumentando a velocidade do video
+  utter_increase_speed:
+  - text: Aumentando a velocidade do video para {speed}
 
-  utter_decrease_speed_default:
-  - text: Diminuindo a velocidade do video
+  utter_decrease_speed:
+  - text: Diminuindo a velocidade do video para {speed}
 
   utter_write_comment:
   - text: Escrevendo o comentário {comment}...

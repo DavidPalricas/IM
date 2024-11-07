@@ -47,15 +47,15 @@ rules:
   - intent: unmute_video
   - action: utter_unmute_video
 
-- rule: increase_speed_default  
+- rule: increase_speed
   steps:
-  - intent: increase_speed_default
-  - action: utter_increase_speed_default
+  - intent: increase_speed
+  - action: utter_increase_speed
 
-- rule: decrease_speed_default
+- rule: decrease_speed
   steps:
-  - intent: decrease_speed_default
-  - action: utter_decrease_speed_default
+  - intent: decrease_speed
+  - action: utter_decrease_speed
 
 - rule: write_comment
   steps:
