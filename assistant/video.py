@@ -130,7 +130,7 @@ class Video:
          
         key_combination = ActionChains(self.driver)
 
-        if intent == "increase_speed_default":
+        if intent == "increase_speed":
             self.increase_speed(send_to_voice,key_combination)
 
         else:

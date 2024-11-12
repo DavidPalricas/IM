@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException
 from web_app_conextions_files.tts import TTS
 from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
@@ -37,7 +38,6 @@ class Assistant(WebAssistant):
 
         self.initialize_assistant()
       
-
     def chrome_config(self):
        """ The chrome_config method is responsible for configuring the chrome options.
           The method will add the user data directory and the profile directory to the chrome options.
@@ -65,8 +65,7 @@ class Assistant(WebAssistant):
         self.open("https://www.youtube.com")
         self.send_to_voice("Olá, como posso te ajudar?")
 
-        
-           
+                  
     def send_to_voice(self, message):
         """
         The send_to_voice method is responsible for sending a message to the user using the TTS class's sendo_voice method.
@@ -149,7 +148,6 @@ class Assistant(WebAssistant):
                self.video.url = self.driver.current_url
                break  
 
-
     def shutdown(self) :
         """
         The shutdown method is responsible for shutting down the assistant.
@@ -163,49 +161,114 @@ class Assistant(WebAssistant):
         if self.driver:
             self.driver.quit()  
 
-
     def load_page(self):
         """
         The load_page method is responsible for waiting for the page to load.
         """
         time.sleep(3)
 
-
     def write_comment(self, comment):
         """
-        The write_comment method is responsible for writing a comment on a YouTube video.
-        The method will scroll the page to the comment box, click on the comment box, write the comment and send the comment by pressing the control key plus the enter key.
-        After sending the comment, the method will send a message to the user informing that the comment was written successfully.
-
+        The write_comment method is responsible for calling the right method to  write a comment on a YouTube video, and warning the user that the assistant is writing the comment.
+        If the video is a short video, the method will call the write_comment_short_video method otherwise it will call the write_comment_long_video method.
+    
         Args:
             - comment: a string that represents the comment to be written.
         """
 
         self.send_to_voice(f"Escrevendo o comentário {comment}")
 
-        self.load_page()
+        if self.video.is_short:
+            self.write_comment_short_video(comment)
+
+        else:
+            self.write_comment_long_video(comment)
+        
+    
+    def write_comment_short_video(self, comment):
+        """
+        The write_comment_short_video method is responsible for writing a comment on a short video.
+        The method will click on the comment button, and try to find the comment box, if the comment box is not found, the method will send a message to the user informing that the comment box was not found or the comments are disabled.
+        Otherwise, the find_comment_box method will be called to write the comment.
+
+        Args:
+            - comment: a string that represents the comment to be written.
+   
+        """
+
+        comment_button = self.driver.find_element(By.ID, "comments-button")
+        comment_button.click()
+       
+        # Time to the comment box to load
+        time.sleep(3)
 
         try:
-    
-            add_comment = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//*[@id='simplebox-placeholder']")))
-            self.driver.execute_script("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center' });", add_comment)
+            self.find_comment_box(comment)
 
-            ActionChains(self.driver).move_to_element(add_comment).click().perform()
+        except NoSuchElementException:
+            self.send_to_voice("Erro ao escrever o comentário, a caixa de comentários não foi encontrada ou os comentários estão desativados")
 
-            self.load_page()
 
-      
-            comment_input = self.driver.find_element(By.XPATH, "//*[@id='contenteditable-root']")
-            comment_input.send_keys(comment)
-            comment_input.send_keys(Keys.CONTROL, Keys.ENTER)
+    def write_comment_long_video(self, comment):
+        """
+        The write_comment_long_video method is responsible for writing a comment on a long video.
+        The method will scroll down the yotube page to find the comment box, if the comment box is not found, the method will send a message to the user informing that the comment box was not found or the comments are disabled.
+        Otherwise, the find_comment_box method will be called to write the comment.
+        In the end, the method will scroll to the beginning of the page.
 
-            self.load_page()
+        Args:
+            - comment: a string that represents the comment to be written. 
+        """
 
-            self.send_to_voice("Comentário escrito com sucesso")
+        scroll_to_comments = 0
+
+        while True:
+            # To give time to the comment box to load
+            time.sleep(3)
             
-        except Exception as e:
-            self.send_to_voice("Erro ao tentar escrever o comentário")
-            print(f"Erro: {e}")
+            try:
+                self.find_comment_box(comment)
+                 
+                # Time to the user to see the comment
+                time.sleep(5)
+
+                break
+
+            except NoSuchElementException: 
+                scroll_to_comments += 500
+                self.driver.execute_script(f"window.scrollTo(0,{scroll_to_comments});")
+
+                if scroll_to_comments > 1500:
+                    self.send_to_voice("Erro ao escrever o comentário, a caixa de comentários não foi encontrada ou os comentários estão desativados")
+                    break
+
+        # Scroll to the beginning of the page
+        self.driver.execute_script("window.scrollTo(0,0);")
+
+             
+    def find_comment_box(self, comment):
+        """
+        The find_comment_box method is responsible for finding the comment box, clicking on it, and writing the comment in this box.
+    
+        After that, the method will send a message to the user informing that the comment was written successfully.
+
+        Args:
+            - comment: a string that represents the comment to be written.
+
+        """
+
+        comment_box = self.driver.find_element(By.ID, "simplebox-placeholder")
+
+        comment_box.click()
+
+        add_comment_box = self.driver.find_element(By.ID, "contenteditable-root")
+
+        add_comment_box.send_keys(comment)
+        
+        ActionChains(self.driver).key_down(Keys.CONTROL).send_keys(Keys.RETURN).key_up(Keys.CONTROL).perform()
+            
+        self.send_to_voice("Comentário escrito com sucesso")
+
 
     def execute_action(self, nlu):
         """
@@ -227,7 +290,7 @@ class Assistant(WebAssistant):
                 else:
                    self.video.handling_play_pause(self.send_to_voice,nlu["intent"])
 
-            case "increase_speed_default" | "decrease_speed_default":
+            case "increase_speed" | "decrease_speed":
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para alterar a velocidade")
                 else:
