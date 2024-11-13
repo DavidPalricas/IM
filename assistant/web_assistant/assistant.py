@@ -270,6 +270,103 @@ class Assistant(WebAssistant):
         self.send_to_voice("Comentário escrito com sucesso")
 
 
+    def save_to_playlist(self, playlist):
+        """The save_to_playlist method is responsible for trying to save a video into a playlist.
+           This methods starts to inform the user that the video is being saved in the playlist.
+           The method will call the find_save_option method to find the save option, and the playlist to save the video.
+           If the save option is not found, the method will send a message to the user informing that the save option was not found.
+
+            Args:
+                - playlist: a string that represents the name of the  playlist to save the video.
+        """
+        
+        self.send_to_voice(f"Guardando o vídeo na playlist {playlist}")
+
+        try:
+    
+            self.find_save_option(playlist)
+           
+        except NoSuchElementException:
+            self.send_to_voice("Erro ao guardar o vídeo na playlist, o botão para guardar o vídeo não foi encontrado")
+        
+    def find_save_option(self, playlist):
+        """
+            The find_save_option method is responsible for finding the save option and the playlist to save the video.
+            After the save option is found, the method will store the playlists names ands its checkboxes in a list, and  call the playlist_exits method to check if the searched playlist exists.
+            If the searched playlist does not exist, the method will send a message to the user informing that the playlist was not found.
+            In the end, the method will call the close_playlist_menu method to close the playlist menu.
+
+            Args:
+                - playlist: a string that represents the name of the playlist to save the video.   
+        """
+
+        more_options = self.driver.find_element(By.XPATH, '//*[@id="button-shape"]/button')
+
+        more_options.click()
+
+        save_option = self.driver.find_element(By.XPATH, '//*[@id="items"]/ytd-menu-service-item-renderer[2]')
+
+        save_option.click()
+
+        time.sleep(2)
+
+        playlists_container = self.driver.find_elements(By.XPATH, '//ytd-playlist-add-to-option-renderer//tp-yt-paper-checkbox[@id="checkbox"]')
+
+        if not (self.playlist_exits(playlists_container, playlist)):
+             self.send_to_voice(f"Erro ao guardar o vídeo na playlist, a playlist {playlist} não foi encontrada")
+
+        time.sleep(2)
+
+        self.close_playlist_menu()
+
+    def playlist_exits(self, playlists_container, playlist):
+       """
+         The playlist_exits method is responsible for checking if the playlist exists.
+         The method will iterate over the playlists founded and check if the searched playlist name matches for any playlist.
+         If the playlist is found, the method will click on the playlist checkbox and send a message to the user informing that the video was saved in the playlist.
+
+         Args:
+            - playlists_container: a list that contains the container of the playlists(names and checkboxes).
+            - playlist: a string that represents the name of the playlist to save the video.
+
+        Returns:
+            - True if the playlist was found, otherwise False.
+       """
+
+       for playlist_container in playlists_container:
+            playlist_name = playlist_container.find_element(By.XPATH, './/yt-formatted-string[@id="label"]').text.lower()
+
+            if playlist_name == playlist.lower():
+                playlist_container.click()
+                self.send_to_voice("Vídeo guardado na playlist com sucesso")
+                return True
+            
+       return False
+    
+
+    def close_playlist_menu(self):
+        """
+        The close_playlist_menu method is responsible for closing the playlist menu.
+        The method will try to find the close palylist menu button in two different languages(english and portuguese), if the button is found, the method will click on it.
+        Otherwise, the method will send a message to the user informing that there was an error closing the menu, and refresh the page.
+
+        """
+        try:
+            close_menu = self.driver.find_element(By.XPATH, '//*[@id="button" and @aria-label="Cancel"]')
+
+        except NoSuchElementException:
+            try:    
+                close_menu = self.driver.find_element(By.XPATH, '//*[@id="button" and @aria-label="Cancelar"]')
+
+            except NoSuchElementException:
+                close_menu = None  
+
+        if close_menu:
+            close_menu.click()
+        else:
+            self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
+            self.driver.refresh()
+                   
     def execute_action(self, nlu):
         """
         The execute_action method is responsible for executing the action based on the user's intent.
@@ -323,8 +420,13 @@ class Assistant(WebAssistant):
                     if video_url != None:
                         self.open(video_url)
                         self.video.youtube = self.driver.find_element("tag name", "body")
-                        
 
+            case "save_to_playlist":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
+                else:
+                    self.save_to_playlist(nlu["entities"])
+                        
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
 
