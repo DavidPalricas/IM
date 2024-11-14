@@ -366,6 +366,44 @@ class Assistant(WebAssistant):
         else:
             self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
             self.driver.refresh()
+
+
+    def subscribe_channel(self):
+        """
+        The subscribe_channel method is responsible for subscribing to a YouTube channel.
+        The method will try to find the subscribe button, if the button is found, the method will click on it and send a message to the user informing that the channel was subscribed successfully.
+        Otherwise, the method will send a message to the user informing that there was an error subscribing to the channel.
+        """
+        try:
+            subscribe_button = self.driver.find_element(By.ID, "subscribe-button")
+            
+            subscribe_button_label = subscribe_button.find_element(By.XPATH, ".//span[@class='yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap' and @role='text']")
+            
+       
+
+        except Exception:
+            self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
+            return
+        
+        subscribe_button_label_text = self.driver.execute_script("return arguments[0].innerText;", subscribe_button_label)
+
+        print(subscribe_button_label_text)
+        
+        if subscribe_button_label_text in ["Inscrito", "Subscribed"]:
+            self.send_to_voice("Você já subscreveu este canal")
+            return
+         
+        elif subscribe_button_label_text in ["Inscrever-se", "Subscribe"]:
+            
+            subscribe_button.click()
+            self.send_to_voice("Canal inscrito com sucesso")
+            return
+        
+        self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
+        
+
+    def share_video(self):
+        self.send_to_voice("Funcionalidade de compartilhar vídeo não implementada")
                    
     def execute_action(self, nlu):
         """
@@ -426,6 +464,18 @@ class Assistant(WebAssistant):
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
                     self.save_to_playlist(nlu["entities"])
+
+            case "share_video":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para compartilhar")
+                else:
+                    self.video.share_video(self.send_to_voice)
+
+            case "subscribe_channel":
+                if self.video == None:
+                    self.send_to_voice("Não há nenhum vídeo para se inscrever")
+                else:
+                    self.subscribe_channel()
                         
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")

@@ -50,7 +50,7 @@ async def main():
    It also is responsible for receiving messages and calling the nlu_extractor function to extract the nlu from the message
    After that, the function calls the assistant's execute_action method to execute the action based on the nlu
   """
-  
+  # Opens the html index file
   index = Index()
 
   assistant = Assistant()
