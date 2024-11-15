@@ -102,6 +102,8 @@ nlu:
     - Liga as legendas do vídeo por favor
     - Liga as legendas do vídeo, por favor
     - Liga as legendas, por favor
+    - Quero as legendas
+    - Preciso das legendas por favor
 
 - intent: deactivate_video_subtitles
   examples: |
@@ -237,6 +239,7 @@ nlu:
     - Quero enviar este vídeo para a [Sofia](user)
     - Por favor manda este vídeo para o [Miguel](user)
     - Por favor reencaminhe este vídeo para a [Ana](user)
+    - Por favor envie este vídeo para o [Cigano](user)
 
 - intent: save_to_playlist
   examples: |

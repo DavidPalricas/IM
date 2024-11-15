@@ -2,6 +2,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 import time
 
 
@@ -345,3 +346,65 @@ class Video:
 
         #print(f"Time: {time}")
         return time, current_seconds
+
+    def share_video(self,send_to_voice,entities):
+        """
+            The method share_video is responsible for sharing a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+                - entities: a string that represents the entities found in the user's message.
+        """
+        send_to_voice(f"Compartilhando o vídeo com {entities}")
+        youtube_link = self.driver.current_url
+        contact_name = entities
+        self.send_whatsapp_message(self.driver, contact_name, youtube_link)
+    
+    def send_whatsapp_message(self, driver, contact_name, message):
+        """
+            The method send_whatsapp_message is responsible for sending a message to a contact on WhatsApp.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - driver: an instance of the WebDriver class.
+                - contact_name: a string that represents the name of the contact.
+                - message: a string that represents the message to be sent.
+        """
+        # Abre uma nova aba e acessa o WhatsApp Web
+        driver.execute_script("window.open('');")
+        driver.switch_to.window(driver.window_handles[1])  # Muda para a nova aba
+        driver.get("https://web.whatsapp.com/")
+
+        # Aguarda o usuário escanear o QR Code no WhatsApp Web
+        time.sleep(15)  # Ajuste o tempo conforme necessário
+
+        # Busca pelo contato e envia a mensagem
+        inp_xpath_search = '//*[@id="side"]/div[1]/div/div[2]/div[2]/div/div'
+        # driver.find_element("xpath", '
+        input_box_search = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath_search)))
+        input_box_search.click()
+        print(f"contact_name: {contact_name}")
+        input_box_search.send_keys(contact_name)
+        time.sleep(2)
+
+        # Needs improvements for the case that the contact is not found
+        
+        print(f"enter")
+        input_box_search.send_keys(Keys.ENTER)
+        inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
+        input_box = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
+        time.sleep(2)
+        # write message
+        print(f"message")
+        input_box.send_keys(message)
+        print(f"enter2")
+        input_box.send_keys(Keys.ENTER)
+        time.sleep(2)
+
+        # Fecha a aba do WhatsApp Web
+        driver.close()
+
+        # Retorna para a aba anterior
+        driver.switch_to.window(driver.window_handles[0])
+        

@@ -129,9 +129,11 @@ class Assistant(WebAssistant):
        """
         self.handling_search_message(query)
 
-        visible = EC.visibility_of_element_located
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
-    
+        
+        self.load_page()
+
+        visible = EC.visibility_of_element_located
         self.wait.until(visible((By.ID, "video-title")))
 
         videos = self.driver.find_elements(By.ID, "video-title") 
@@ -140,13 +142,13 @@ class Assistant(WebAssistant):
            if "promoted" not in video.get_attribute("class"):  
                video.click()  
 
-               if "shorts" in  self.driver.current_url:
-                   self.video = Video(True,self.driver)
-                   break
-                
-               self.video = Video(False,self.driver)
+               if "shorts" in self.driver.current_url:
+                self.video = Video(True, self.driver)
+                break
+            
+               self.video = Video(False, self.driver)
                self.video.url = self.driver.current_url
-               break  
+               break
 
     def shutdown(self) :
         """
@@ -469,7 +471,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
-                    self.video.share_video(self.send_to_voice)
+                    self.video.share_video(self.send_to_voice,nlu["entities"])
 
             case "subscribe_channel":
                 if self.video == None:
