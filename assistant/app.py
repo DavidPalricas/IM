@@ -7,7 +7,6 @@ from consts import HOST
 from web_assistant.assistant import Assistant
 from web_assistant.index import Index
 
-
 def nlu_extractor(message):
   """
   The nlu_extractor exctracts the nlu from the websocket's message
@@ -16,7 +15,7 @@ def nlu_extractor(message):
     message (str): The message received from the websocket
 
   Returns:
-    dict: The nlu extracted from the message(contains the user's intent and entities found)
+    dict: The nlu extracted from the message(contains the user's intent, entity and the entity's confidence)
   """ 
    # Remove the <comand> tag
   comand_tag = ET.fromstring(message).findall(".//command")
@@ -29,9 +28,9 @@ def nlu_extractor(message):
   if nlu["entities"] == []:
     return {"intent": nlu["intent"] ["name"]}
   
-  print(nlu["entities"])
+  confidance = round(nlu["entities"][0]["confidence_entity"] * 100) 
   
-  return {"intent": nlu["intent"] ["name"], "entities": nlu["entities"][0]["value"]}
+  return {"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidance}
 
 
 def ignore_certificates():
@@ -50,7 +49,7 @@ async def main():
    It also is responsible for receiving messages and calling the nlu_extractor function to extract the nlu from the message
    After that, the function calls the assistant's execute_action method to execute the action based on the nlu
   """
-  # Opens the html index file
+  # Opens the html index file, the variable is not used, but it is necessary to open the file
   index = Index()
 
   assistant = Assistant()
@@ -69,9 +68,8 @@ async def main():
             message = await websocket.recv()
             
             if message not in ["OK","RENEW"]:  
-              print(message)   
               nlu = nlu_extractor(message)
-              print("Message received")
+              print(f"Message received:  {nlu}")
 
               assistant.execute_action(nlu)
                       

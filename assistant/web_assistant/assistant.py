@@ -1,4 +1,5 @@
 import os
+import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -8,9 +9,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
-from web_app_conextions_files.tts import TTS
 from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
+from web_app_conextions_files.index_connections import TTS, Confirmation
 from video import Video
 import time
 
@@ -22,19 +23,23 @@ class Assistant(WebAssistant):
         - driver: a google chrome driver.
         - video: an instance of the Video class.
         - running: a boolean that indicates if the assistant is running or not.
+        - action_to_be_confirmed: a dictionary that contains the nlu to be confirmed.
     """
+
     def __init__(self): 
         """
           Initializes a new instance of the Assistant class, and initializes the TTS class and initializes the chrome driver by calling the chrome_config. 
           The construcotr calls the initialize_assistant method.
         """
         self.tts = TTS(FusionAdd=f"https://{OUTPUT}/IM/USER1/APPSPEECH")
+        self.confirmation = Confirmation(FusionAdd=f"https://{OUTPUT}/IM/USER1/SPEECH_ANSWER")
         self.send_to_voice("Iniciando o  assistente, aguarde um pouco")
         super().__init__()
         self.driver = self.chrome_config()
         self.video = False
         self.running = True
         self.wait = WebDriverWait(self.driver, 5)
+        self.action_to_be_confirmed = None
 
         self.initialize_assistant()
       
@@ -64,8 +69,7 @@ class Assistant(WebAssistant):
         """
         self.open("https://www.youtube.com")
         self.send_to_voice("Olá, como posso te ajudar?")
-
-                  
+            
     def send_to_voice(self, message):
         """
         The send_to_voice method is responsible for sending a message to the user using the TTS class's sendo_voice method.
@@ -95,8 +99,8 @@ class Assistant(WebAssistant):
                 (By.XPATH, "//button[.//span[contains(text(), 'Aceitar tudo')] or .//span[contains(text(), 'Accept all')]]")
             ))
             accept_button.click()
-        except Exception as e:
-            print(f"Cookie accept button not found or couldn't be clicked: {e}")
+        except Exception:
+            pass
     
     def handling_search_message(self, query):
         """
@@ -186,7 +190,6 @@ class Assistant(WebAssistant):
         else:
             self.write_comment_long_video(comment)
         
-    
     def write_comment_short_video(self, comment):
         """
         The write_comment_short_video method is responsible for writing a comment on a short video.
@@ -210,7 +213,6 @@ class Assistant(WebAssistant):
         except NoSuchElementException:
             self.send_to_voice("Erro ao escrever o comentário, a caixa de comentários não foi encontrada ou os comentários estão desativados")
 
-
     def write_comment_long_video(self, comment):
         """
         The write_comment_long_video method is responsible for writing a comment on a long video.
@@ -233,7 +235,6 @@ class Assistant(WebAssistant):
                  
                 # Time to the user to see the comment
                 time.sleep(5)
-
                 break
 
             except NoSuchElementException: 
@@ -246,8 +247,7 @@ class Assistant(WebAssistant):
 
         # Scroll to the beginning of the page
         self.driver.execute_script("window.scrollTo(0,0);")
-
-             
+           
     def find_comment_box(self, comment):
         """
         The find_comment_box method is responsible for finding the comment box, clicking on it, and writing the comment in this box.
@@ -271,7 +271,6 @@ class Assistant(WebAssistant):
             
         self.send_to_voice("Comentário escrito com sucesso")
 
-
     def save_to_playlist(self, playlist):
         """The save_to_playlist method is responsible for trying to save a video into a playlist.
            This methods starts to inform the user that the video is being saved in the playlist.
@@ -285,7 +284,6 @@ class Assistant(WebAssistant):
         self.send_to_voice(f"Guardando o vídeo na playlist {playlist}")
 
         try:
-    
             self.find_save_option(playlist)
            
         except NoSuchElementException:
@@ -345,7 +343,6 @@ class Assistant(WebAssistant):
             
        return False
     
-
     def close_playlist_menu(self):
         """
         The close_playlist_menu method is responsible for closing the playlist menu.
@@ -369,7 +366,6 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
             self.driver.refresh()
 
-
     def subscribe_channel(self):
         """
         The subscribe_channel method is responsible for subscribing to a YouTube channel.
@@ -381,8 +377,6 @@ class Assistant(WebAssistant):
             
             subscribe_button_label = subscribe_button.find_element(By.XPATH, ".//span[@class='yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap' and @role='text']")
             
-       
-
         except Exception:
             self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
             return
@@ -395,28 +389,75 @@ class Assistant(WebAssistant):
             self.send_to_voice("Você já subscreveu este canal")
             return
          
-        elif subscribe_button_label_text in ["Inscrever-se", "Subscribe"]:
-            
+        elif subscribe_button_label_text in ["Inscrever-se", "Subscribe"]:      
             subscribe_button.click()
             self.send_to_voice("Canal inscrito com sucesso")
             return
         
         self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
         
-
     def share_video(self):
         self.send_to_voice("Funcionalidade de compartilhar vídeo não implementada")
-                   
+   
+    def confirm_action(self, nlu):
+        if nlu["confidence"] >= 45 :
+           self.action_to_be_confirmed = nlu
+           self.ask_confirmation(nlu["intent"], nlu["entity"])
+        else:
+            self.not_understood(nlu["intent"])
+
+    def ask_confirmation(self, intent, entity):
+        """ The ask_confirmation method is responsible for asking the user to confirm the action.
+            The method will load the confirmation_messages.json file, and send a message to the user asking for confirmation.
+
+            Args:
+                - intent: a string that represents the intent of the user's message.
+                - entity: a string that represents the entity of the user's message.
+        """
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_dir, "confirmation_messages.json")
+
+            with open(file_path, "r", encoding = "utf-8") as file:
+                message = json.load(file)
+                self.send_to_voice(message[intent].format(entity = entity))
+
+            self.confirmation.confirm()
+
+        except Exception as ex:
+            print(ex)
+            self.send_to_voice("Erro ao confirmar o seu pedido")
+            return
+
+    def not_understood(self, intent):
+        """The not_understood method is responsible for sending a message to the user informing that the assistant did not understand the user's message.
+        """
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_dir, "not_understood_messages.json")
+
+            with open(file_path, "r", encoding = "utf-8") as file:
+                message = json.load(file)
+                self.send_to_voice(message[intent])
+
+        except Exception as ex:
+            print(ex)
+            self.send_to_voice("Erro ao entender o seu pedido")
+            return
+            
     def execute_action(self, nlu):
         """
         The execute_action method is responsible for executing the action based on the user's intent.
 
         Args:
-            - nlu: a dictionary that contains the intent and entities of the user's message.
+            - nlu: a dictionary that contains the intent and entity of the user's message.
         """
         match nlu["intent"]:
             case "search_video":
-                self.search(nlu["entities"])
+                if nlu["confidence"] < 80:
+                    self.confirm_action(nlu)
+                else:
+                    self.search(nlu["entity"])
 
             case "shutdown_assistant":
                 self.shutdown()
@@ -437,7 +478,10 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
-                    self.write_comment(nlu["entities"])
+                      if nlu["confidence"] < 80:
+                        self.confirm_action(nlu)
+                      else:
+                        self.write_comment(nlu["entity"])
 
             case "activate_video_subtitles" | "deactivate_video_subtitles":
                 if self.video == None:
@@ -455,36 +499,53 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
                 else:
-                    video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entities"])
+                    if nlu["confidence"] < 80:
+                        self.confirm_action(nlu)
+                    else:
+                        video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entity"])
 
-                    if video_url != None:
-                        self.open(video_url)
-                        self.video.youtube = self.driver.find_element("tag name", "body")
+                        if video_url != None:
+                            self.open(video_url)
+                            self.video.youtube = self.driver.find_element("tag name", "body")
 
             case "save_to_playlist":
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
-                    self.save_to_playlist(nlu["entities"])
+                    if nlu["confidence"] < 80:
+                        self.confirm_action(nlu)
+                    else:
+                        self.save_to_playlist(nlu["entity"])
 
             case "share_video":
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
-                    self.video.share_video(self.send_to_voice,nlu["entities"])
+                    if nlu["confidence"] < 80:
+                        self.confirm_action(nlu)
+                    else:
+                        self.video.share_video(self.send_to_voice,nlu["entity"])
 
             case "subscribe_channel":
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para se inscrever")
                 else:
-                    self.subscribe_channel()
-                        
+                    self.subscribe_channel()        
+
+            case "affirm":
+                if self.action_to_be_confirmed == None:
+                    self.send_to_voice("Não há nenhuma ação para confirmar")
+
+                else:
+                    self.action_to_be_confirmed["confidence"] = 100
+                    self.execute_action(self.action_to_be_confirmed)
+                    self.action_to_be_confirmed = None
+
+            case "deny":
+                 if self.action_to_be_confirmed == None:
+                    self.send_to_voice("Não há nenhuma ação para negar")
+                 else:
+                     self.action_to_be_confirmed = None
+                     self.send_to_voice("Peço desculpa pela confusão")            
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
-
-                
-
-
-            
-
-      
