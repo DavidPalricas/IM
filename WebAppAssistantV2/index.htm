@@ -519,7 +519,7 @@ InitializeKWS();
     // The run_delay function is used to wait for 5 seconds before starting the speech recognition
     async function run_delay() {
       console.log("Starting delay...");
-      await delay(5000); // Wait for 3 seconds
+      await delay(2500); // Wait for 2.5 seconds
       console.log("Delay finished.");
       recognition.start();
       circle.animate(20, 0, 'now').attr({ fill: '#00a431' });

@@ -86,3 +86,8 @@ rules:
   steps:
   - intent: subscribe_channel
   - action: utter_subscribe_channel
+
+- rule: unsubscribe_channel
+  steps:
+  - intent: unsubscribe_channel
+  - action: utter_unsubscribe_channel

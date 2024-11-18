@@ -1,18 +1,5 @@
 version: "3.1"
 nlu:
-- intent: greet
-  examples: |
-    - Oi Assistente
-    - Bom dia, Assistente
-    - Boa tarde, Assistente
-    - Boa noite, Assistente
-    - Olá Assistente
-    - Olá assistente
-    - olá
-    - olá assistente
-    - viva
-    - viva assistente
-
 - intent: shutdown_assistant
   examples: |
     - Xau, Assistente
@@ -226,6 +213,22 @@ nlu:
     - Quero inscrever-me
     - Quero seguir este canal
     - Siga este canal
+
+- intent: unsubscribe_channel
+  examples: |
+    - Desinscreve o canal
+    - Desinscreva-me a este  canal
+    - Desinscreva-me neste canal
+    - Desinscreve
+    - Quero desinscrever-me a este canal
+    - Quero desinscrever-me neste canal
+    - Quero desinscrever
+    - Quero deixar de seguir este canal
+    - Deixe de seguir este canal
+    - Anule a subscrição
+    - Anule a subscrição deste canal
+    - Cancela a subscrição
+    - Cancela a subscrição deste canal
 
 - intent: share_video
   examples: |

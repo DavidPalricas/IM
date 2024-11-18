@@ -39,7 +39,7 @@ class Assistant(WebAssistant):
         self.video = False
         self.running = True
         self.wait = WebDriverWait(self.driver, 5)
-        self.action_to_be_confirmed = None
+        self.intent_to_be_confirmed = None
 
         self.initialize_assistant()
       
@@ -366,45 +366,66 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
             self.driver.refresh()
 
-    def subscribe_channel(self):
+    def handle_channel_subscription(self,intent):
         """
         The subscribe_channel method is responsible for subscribing to a YouTube channel.
         The method will try to find the subscribe button, if the button is found, the method will click on it and send a message to the user informing that the channel was subscribed successfully.
         Otherwise, the method will send a message to the user informing that there was an error subscribing to the channel.
         """
-        try:
-            subscribe_button = self.driver.find_element(By.ID, "subscribe-button")
-            
-            subscribe_button_label = subscribe_button.find_element(By.XPATH, ".//span[@class='yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap' and @role='text']")
-            
-        except Exception:
-            self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
-            return
-        
-        subscribe_button_label_text = self.driver.execute_script("return arguments[0].innerText;", subscribe_button_label)
 
-        print(subscribe_button_label_text)
-        
-        if subscribe_button_label_text in ["Inscrito", "Subscribed"]:
-            self.send_to_voice("Você já subscreveu este canal")
+        try:
+            subscribe_button = self.driver.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[1]/div/ytd-subscribe-button-renderer")
+
+        except Exception as ex:
+            self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
+            print(ex)
             return
-         
-        elif subscribe_button_label_text in ["Inscrever-se", "Subscribe"]:      
-            subscribe_button.click()
-            self.send_to_voice("Canal inscrito com sucesso")
+            
+        if intent == "subscribe_channel":
+            self.subscribe_channel(subscribe_button)
+        else:
+            self.unsubscribe_channel(subscribe_button)
+            
+        
+    def subscribe_channel(self, subscribe_button): 
+        if  subscribe_button.get_attribute("subscribed")== "true":
+            self.send_to_voice("Você já está inscrito neste canal")
+            time.sleep(2)
+            self.intent_to_be_confirmed = {"intent":"unsubscribe_channel"}
+            self.send_to_voice("Deseja cancelar a inscrição?")
+            self.confirmation.confirm()
             return
         
-        self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
+        subscribe_button.click()
+        self.send_to_voice("Canal inscrito com sucesso")
+
+    def unsubscribe_channel(self, subscribe_button):
+        if  subscribe_button.get_attribute("subscribed")== "false":
+            self.send_to_voice("Você não está inscrito neste canal")
+            return
         
+        subscribe_button.click()
+        self.send_to_voice("Inscrição cancelada com sucesso")
+
     def share_video(self):
         self.send_to_voice("Funcionalidade de compartilhar vídeo não implementada")
    
     def confirm_action(self, nlu):
-        if nlu["confidence"] >= 45 :
-           self.action_to_be_confirmed = nlu
-           self.ask_confirmation(nlu["intent"], nlu["entity"])
-        else:
+        """The confirm_action method is responsible for confirming the action based on the user's intent.
+            If the entity's confidence is less than 45 or the assistant did not recognize any entity, the method will call the not_understood method.
+            Otherwise, the method will call the ask_confirmation method to ask the user to confirm the action.
+            These entiy confidance values are based on the values given by the slides of the course.
+
+            Args:
+                - nlu: a dictionary that contains the intent , entity and the entiy's confidance of the user's message.
+        """
+
+        if nlu["confidence"] is None or nlu["confidence"] < 45:
             self.not_understood(nlu["intent"])
+        else: 
+           self.intent_to_be_confirmed = nlu
+           self.ask_confirmation(nlu["intent"], nlu["entity"])
+    
 
     def ask_confirmation(self, intent, entity):
         """ The ask_confirmation method is responsible for asking the user to confirm the action.
@@ -454,7 +475,7 @@ class Assistant(WebAssistant):
         """
         match nlu["intent"]:
             case "search_video":
-                if nlu["confidence"] < 80:
+                if nlu["confidence"] < 80 or nlu["confidence"] is None:
                     self.confirm_action(nlu)
                 else:
                     self.search(nlu["entity"])
@@ -478,7 +499,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
-                      if nlu["confidence"] < 80:
+                      if nlu["confidence"] < 80 or nlu["confidence"] is None:
                         self.confirm_action(nlu)
                       else:
                         self.write_comment(nlu["entity"])
@@ -499,7 +520,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
                 else:
-                    if nlu["confidence"] < 80:
+                    if nlu["confidence"] < 80 or nlu["confidence"] is None:
                         self.confirm_action(nlu)
                     else:
                         video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entity"])
@@ -512,7 +533,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
-                    if nlu["confidence"] < 80:
+                    if nlu["confidence"] < 80 or nlu["confidence"]  is None:
                         self.confirm_action(nlu)
                     else:
                         self.save_to_playlist(nlu["entity"])
@@ -521,31 +542,33 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
-                    if nlu["confidence"] < 80:
+                    if nlu["confidence"] < 80 or nlu["confidence"]  is None:
                         self.confirm_action(nlu)
                     else:
                         self.video.share_video(self.send_to_voice,nlu["entity"])
 
-            case "subscribe_channel":
+            case "subscribe_channel" | "unsubscribe_channel":
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para se inscrever")
                 else:
-                    self.subscribe_channel()        
+                    self.handle_channel_subscription(nlu["intent"])        
 
             case "affirm":
-                if self.action_to_be_confirmed == None:
+                if self.intent_to_be_confirmed is None:
                     self.send_to_voice("Não há nenhuma ação para confirmar")
 
                 else:
-                    self.action_to_be_confirmed["confidence"] = 100
-                    self.execute_action(self.action_to_be_confirmed)
-                    self.action_to_be_confirmed = None
+                    if "confidence" in self.intent_to_be_confirmed:
+                        self.intent_to_be_confirmed["confidence"] = 100
+
+                    self.execute_action(self.intent_to_be_confirmed)
+                    self.intent_to_be_confirmed = None
 
             case "deny":
-                 if self.action_to_be_confirmed == None:
+                 if self.intent_to_be_confirmed is None:
                     self.send_to_voice("Não há nenhuma ação para negar")
                  else:
-                     self.action_to_be_confirmed = None
+                     self.intent_to_be_confirmed = None
                      self.send_to_voice("Peço desculpa pela confusão")            
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
