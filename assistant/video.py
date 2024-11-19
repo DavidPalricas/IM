@@ -26,7 +26,6 @@ class Video:
         """
         self.is_short = is_short
         self.is_playing = True
-        self.subtitles = False
         self.muted = False
         self.speed = 1
         self.driver = driver
@@ -184,7 +183,7 @@ class Video:
                 - send_to_voice: a function that sends a message to the user.
                 - intent: a string that represents the intent's name of the user.
         """
-        if self.subtitles:
+        if self.verify_subtitles(self.driver):
             if intent == "activate_video_subtitles":
                 send_to_voice("As legendas já estão ativadas")
             else:
@@ -194,6 +193,23 @@ class Video:
                 send_to_voice("As legendas já estão desativadas")
             else:
                 self.turn_on_off_subtitles(send_to_voice,True)
+
+    def verify_subtitles(self,driver):
+        """
+            The method verify_subtitles is responsible for verifying if the subtitles are on or off.
+
+            Returns:
+                - bool: a boolean that indicates if the subtitles are on or off.
+        """
+        try:
+            # Locate the element containing the subtitles
+            subtitles_element = '//*[@id="caption-window-1"]'
+            subtitles = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, subtitles_element)))
+            #print(f"Subtitles -----------: {subtitles.is_displayed()}")
+            return subtitles.is_displayed()
+        except Exception as e:
+            print(f"Error while verifying subtitles: {e}")
+            return False
 
     def turn_on_off_subtitles(self,send_to_voice,turn_on):
         """
@@ -210,7 +226,6 @@ class Video:
             send_to_voice("Desativando as legendas")
 
         self.youtube.send_keys('c')
-        self.subtitles = not self.subtitles
 
     def mute_unmute_video(self,send_to_voice,intent):
         """
