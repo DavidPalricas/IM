@@ -11,7 +11,6 @@ class Video:
     The class Video is responsible for handling events related to a video on YouTube.
     The class has the following attributes:
     - is_short: a boolean that indicates if the video is short or not.
-    - is_playing: a boolean that indicates if the video is playing or not.
     - speed: a float that represents the speed of the video.
     - driver: an instance of the WebDriver class.
     - youtube: an instance of the WebElement class(body) that represents the YouTube page.
@@ -25,7 +24,6 @@ class Video:
             - driver: a google chrome driver.
         """
         self.is_short = is_short
-        self.is_playing = True
         self.muted = False
         self.speed = 1
         self.driver = driver
@@ -47,7 +45,7 @@ class Video:
             self.youtube =self.driver.find_element("tag name", "body")
 
             # Pause video first
-            if self.is_playing:
+            if not self.verify_video_playing(self.driver):
                 self.youtube.send_keys('k')
 
             #print(f"youtube: {self.youtube}")
@@ -71,6 +69,23 @@ class Video:
             print(f"Error while retrieving video times: {e}")
             return None, None
 
+    def verify_video_playing(self,driver):
+        """
+        Verifies if the video is playing or not.
+
+        Returns:
+            bool: A boolean that indicates if the video is playing or not.
+        """
+        try:
+            video_element = '//*[@id="movie_player"]/div[10]/div[2]'
+            
+            video = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, video_element)))
+            
+            #print(f"Video -----------: {video.get_attribute('aria-label')}")
+            return video.get_attribute('aria-label') == "Pause"
+        except Exception as e:
+            print(f"Error while verifying video playing: {e}")
+            return False
 
     def handling_play_pause(self,send_to_voice,intent):      
          """
@@ -82,7 +97,7 @@ class Video:
                 - send_to_voice: a function that sends a message to the user.
                 - intent: a string that represents the intent's name of the user.
          """
-         if self.is_playing :
+         if not self.verify_video_playing(self.driver) :
             if intent == "play_video":
                 send_to_voice("O vídeo já está sendo reproduzido")
             else:
@@ -110,7 +125,6 @@ class Video:
         
         self.youtube.send_keys('k')
 
-        self.is_playing = not self.is_playing
 
     def change_speed(self,send_to_voice,intent):
         """
@@ -124,7 +138,7 @@ class Video:
                 - intent: a string that represents the intent's name of the user.
             """
         
-        if not self.is_playing:
+        if self.verify_video_playing(self.driver):
             send_to_voice("O vídeo está pausado, não é possível alterar a velocidade")
             return
          
@@ -374,9 +388,9 @@ class Video:
         send_to_voice(f"Compartilhando o vídeo com {entities}")
         youtube_link = self.driver.current_url
         contact_name = entities
-        self.send_whatsapp_message(self.driver, contact_name, youtube_link)
+        self.send_whatsapp_message(self.driver, contact_name, youtube_link,send_to_voice)
     
-    def send_whatsapp_message(self, driver, contact_name, message):
+    def send_whatsapp_message(self, driver, contact_name, message,send_to_voice):
         """
             The method send_whatsapp_message is responsible for sending a message to a contact on WhatsApp.
             The method also sends a message to the user to inform the action.
@@ -386,40 +400,63 @@ class Video:
                 - contact_name: a string that represents the name of the contact.
                 - message: a string that represents the message to be sent.
         """
-        # Abre uma nova aba e acessa o WhatsApp Web
+        # Open a new tab and navigate to WhatsApp Web
         driver.execute_script("window.open('');")
-        driver.switch_to.window(driver.window_handles[1])  # Muda para a nova aba
+        driver.switch_to.window(driver.window_handles[1])  # Change the focus to the new tab
         driver.get("https://web.whatsapp.com/")
 
-        # Aguarda o usuário escanear o QR Code no WhatsApp Web
-        time.sleep(15)  # Ajuste o tempo conforme necessário
+        # Wait for the user to scan the QR code
+        time.sleep(15)
 
-        # Busca pelo contato e envia a mensagem
+        # Search for the contact and send the message
         inp_xpath_search = '//*[@id="side"]/div[1]/div/div[2]/div[2]/div/div'
-        # driver.find_element("xpath", '
+
         input_box_search = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath_search)))
         input_box_search.click()
         print(f"contact_name: {contact_name}")
         input_box_search.send_keys(contact_name)
         time.sleep(2)
 
-        # Needs improvements for the case that the contact is not found
-        
-        print(f"enter")
-        input_box_search.send_keys(Keys.ENTER)
-        inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
-        input_box = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
-        time.sleep(2)
-        # write message
-        print(f"message")
-        input_box.send_keys(message)
-        print(f"enter2")
-        input_box.send_keys(Keys.ENTER)
-        time.sleep(2)
+        # Verify if the contact is found
+        if self.verify_contact(driver):
+            print(f"enter")
+            input_box_search.send_keys(Keys.ENTER)
+            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
+            input_box = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
+            time.sleep(2)
+            # write message
+            print(f"message")
+            input_box.send_keys(message)
+            print(f"enter2")
+            input_box.send_keys(Keys.ENTER)
+            time.sleep(2)
 
-        # Fecha a aba do WhatsApp Web
-        driver.close()
+            # Close the WhatsApp tab
+            driver.close()
 
-        # Retorna para a aba anterior
-        driver.switch_to.window(driver.window_handles[0])
+            # Return to the YouTube tab
+            driver.switch_to.window(driver.window_handles[0])
+        else:
+            send_to_voice("Contato não encontrado")
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+
+    def verify_contact(self, driver):
+        """
+            The method verify_contact is responsible for verifying if a contact is found on WhatsApp.
+
+            Args:
+                - driver: an instance of the WebDriver class.
+
+            Returns:
+                - bool: a boolean that indicates if the contact is found.
+        """
+        try:
+            # If the contact is not found
+            contanct_not_found = '//*[@id="pane-side"]/div/div/span'
+            contact = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, contanct_not_found)))
+            #print(f"contact displayed: {contact.is_displayed()}")
+            return not contact.is_displayed()
+        except Exception as e:
+            return True
         
