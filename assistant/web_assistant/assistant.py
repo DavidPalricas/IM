@@ -38,6 +38,7 @@ class Assistant(WebAssistant):
         self.driver = self.chrome_config()
         self.video = False
         self.running = True
+        self.user_subscibed_channel = False
         self.wait = WebDriverWait(self.driver, 5)
         self.intent_to_be_confirmed = None
 
@@ -372,7 +373,6 @@ class Assistant(WebAssistant):
         The method will try to find the subscribe button, if the button is found, the method will click on it and send a message to the user informing that the channel was subscribed successfully.
         Otherwise, the method will send a message to the user informing that there was an error subscribing to the channel.
         """
-
         try:
             subscribe_button = self.driver.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[1]/div/ytd-subscribe-button-renderer")
 
@@ -399,16 +399,82 @@ class Assistant(WebAssistant):
         subscribe_button.click()
         self.send_to_voice("Canal inscrito com sucesso")
 
+        time.sleep(2)
+
+        self.send_to_voice("Desja ativar todas as notifcações do canal,desativa-las ou manter as configurações atuais?")
+       
+        self.user_subscibed_channel = True
+
+        self.confirmation.confirm()
+
+
+    def handling_notifications(self, intent):
+
+        if intent == "mantain_notifications":
+            self.send_to_voice("Preferências atuais, mantida com sucesso")     
+        else:   
+           xpath = None
+
+           if intent == "activate_notifications":
+              xpath = "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[1]/div/ytd-subscribe-button-renderer"
+           else:
+                xpath = "/html/body/ytd-app/ytd-popup-container/tp-yt-iron-dropdown/div/ytd-menu-popup-renderer/tp-yt-paper-listbox/ytd-menu-service-item-renderer[3]"
+            
+           self.desactive_activate_notifications(xpath,intent)
+   
+        self.user_subscibed_channel = False
+
+    
+    def desactive_activate_notifications(self, xpath,intent):
+        try:
+          subscribe_button = self.driver.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[1]/div/ytd-subscribe-button-renderer")
+          subscribe_button.click()
+
+          time.sleep(2)
+
+          activate_notifications_button = self.driver.find_element(By.XPATH, xpath)
+          activate_notifications_button.click()
+
+        except Exception as ex:
+            self.send_to_voice("Erro ao alterar as notificações do canal")
+            print(ex)
+            return
+        
+        if intent == "activate_notifications":
+          self.send_to_voice("Todas as notificações do canal foram ativadas com sucesso")
+
+        else:
+            self.send_to_voice("Todas as notificações do canal foram desativadas com sucesso")
+
     def unsubscribe_channel(self, subscribe_button):
         if  subscribe_button.get_attribute("subscribed")== "false":
             self.send_to_voice("Você não está inscrito neste canal")
             return
         
         subscribe_button.click()
-        self.send_to_voice("Inscrição cancelada com sucesso")
 
-    def share_video(self):
-        self.send_to_voice("Funcionalidade de compartilhar vídeo não implementada")
+        try:
+            unsubscribe_button = self.driver.find_element(By.XPATH, "/html/body/ytd-app/ytd-popup-container/tp-yt-iron-dropdown/div/ytd-menu-popup-renderer/tp-yt-paper-listbox/ytd-menu-service-item-renderer[4]")
+            unsubscribe_button.click()
+
+        except Exception as ex:
+            self.send_to_voice("Erro ao cancelar a inscrição no canal, botão de inscrição não encontrado") 
+            print(ex)
+            return
+        
+        time.sleep(2)
+        
+        try:
+            confirm_unsubscribe_button = self.driver.find_element(By.XPATH, '//*[@id="confirm-button"]')
+            confirm_unsubscribe_button.click()
+
+        except Exception as ex:
+            self.send_to_voice("Erro ao cancelar a inscrição no canal, botão de confirmação não encontrado")
+            print(ex)
+            return
+        
+ 
+        self.send_to_voice("Inscrição cancelada com sucesso")
    
     def confirm_action(self, nlu):
         """The confirm_action method is responsible for confirming the action based on the user's intent.
@@ -465,6 +531,7 @@ class Assistant(WebAssistant):
             print(ex)
             self.send_to_voice("Erro ao entender o seu pedido")
             return
+        
             
     def execute_action(self, nlu):
         """
@@ -551,7 +618,13 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para se inscrever")
                 else:
-                    self.handle_channel_subscription(nlu["intent"])        
+                    self.handle_channel_subscription(nlu["intent"])       
+
+            case  "activate_notifications" | "mantain_notifications" | "desactivate_notifications":
+                if not self.user_subscibed_channel:
+                    self.send_to_voice("Não se subscreveu a nenhum canal. para gerir as notificações")
+                else:
+                    self.handling_notifications(nlu["intent"])
 
             case "affirm":
                 if self.intent_to_be_confirmed is None:

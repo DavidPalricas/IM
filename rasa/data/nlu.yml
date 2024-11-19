@@ -256,4 +256,42 @@ nlu:
    - Por favor coloque a música na playlist [Músicas de Natal](playlist)
    - Guarda este vídeo na playlist [prime youtube](playlist), se faz favor 
    - Adicione esta música à playlist [músicas de relaxamento](playlist), se faz favor
+
+- intent: activate_notifications
+  examples: |
+    - Ativa as notificações
+    - Ativa as notificações do canal
+    - Ativa as notificações por favor
+    - Ativa as notificações do canal por favor
+    - Ativa as notificações do canal, por favor
+    - Ativa as notificações, por favor
+    - Liga as notificações
+    - Liga as notificações do canal
+    - Liga as notificações por favor
+    - Liga as notificações do canal por favor
+    - Liga as notificações do canal, por favor
+    - Liga as notificações, por favor
+    - Quero as notificações
+    - Preciso das notificações por favor
+    
+- intent: mantain_notifications
+  examples: |
+    - Mantém as notificações
+    - Mantenha
+    - Não altere
+    - Não mude
+    - Não faça nehuma alteração
+    - Quero manter as notificações
+
+  
+- intent: desactivate_notifications
+  examples: |
+    - Desativa as notificações
+    - Desativa as notificações do canal
+    - Desativa as notificações por favor
+    - Desativa as notificações do canal por favor
+    - Quero desativar as notificações
+    - Desliga as notificações
+    - Quero desligar as notificações
+
       

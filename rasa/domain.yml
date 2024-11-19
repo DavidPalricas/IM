@@ -17,6 +17,9 @@ intents:
 - save_to_playlist 
 - subscribe_channel
 - unsubscribe_channel
+- activate_notifications
+- mantain_notifications
+- desactivate_notifications
 
 entities:
   - video
