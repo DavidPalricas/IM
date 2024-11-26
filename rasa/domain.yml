@@ -8,8 +8,8 @@ intents:
 - activate_video_subtitles
 - deactivate_video_subtitles
 - play_video
-- increase_speed_default
-- decrease_speed_default
+- increase_speed
+- decrease_speed
 - write_comment
 - seek_forward_video
 - seek_backward_video

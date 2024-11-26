@@ -378,7 +378,7 @@ class Assistant(WebAssistant):
 
         except Exception as ex:
             self.send_to_voice("Erro ao se inscrever no canal, botão de inscrição não encontrado")
-            print(ex)
+            print(f"Exception {ex}")
             return
             
         if intent == "subscribe_channel":
@@ -437,7 +437,7 @@ class Assistant(WebAssistant):
 
         except Exception as ex:
             self.send_to_voice("Erro ao alterar as notificações do canal")
-            print(ex)
+            print(f"Exception {ex}")
             return
         
         if intent == "activate_notifications":
@@ -459,7 +459,7 @@ class Assistant(WebAssistant):
 
         except Exception as ex:
             self.send_to_voice("Erro ao cancelar a inscrição no canal, botão de inscrição não encontrado") 
-            print(ex)
+            print(f"Exception {ex}")
             return
         
         time.sleep(2)
@@ -470,7 +470,7 @@ class Assistant(WebAssistant):
 
         except Exception as ex:
             self.send_to_voice("Erro ao cancelar a inscrição no canal, botão de confirmação não encontrado")
-            print(ex)
+            print(f"Exception {ex}")
             return
         
  
@@ -486,13 +486,12 @@ class Assistant(WebAssistant):
                 - nlu: a dictionary that contains the intent , entity and the entiy's confidance of the user's message.
         """
 
-        if nlu["confidence"] is None or nlu["confidence"] < 45:
+        if "confidence" not in nlu or nlu["confidence"] < 45:
             self.not_understood(nlu["intent"])
         else: 
            self.intent_to_be_confirmed = nlu
            self.ask_confirmation(nlu["intent"], nlu["entity"])
     
-
     def ask_confirmation(self, intent, entity):
         """ The ask_confirmation method is responsible for asking the user to confirm the action.
             The method will load the confirmation_messages.json file, and send a message to the user asking for confirmation.
@@ -512,7 +511,7 @@ class Assistant(WebAssistant):
             self.confirmation.confirm()
 
         except Exception as ex:
-            print(ex)
+            print(f"Exception {ex}")
             self.send_to_voice("Erro ao confirmar o seu pedido")
             return
 
@@ -528,7 +527,7 @@ class Assistant(WebAssistant):
                 self.send_to_voice(message[intent])
 
         except Exception as ex:
-            print(ex)
+            print(f"Exception {ex}")
             self.send_to_voice("Erro ao entender o seu pedido")
             return
         
@@ -542,7 +541,7 @@ class Assistant(WebAssistant):
         """
         match nlu["intent"]:
             case "search_video":
-                if nlu["confidence"] < 80 or nlu["confidence"] is None:
+                if nlu["confidence"] < 80 or "confidence" not in nlu:
                     self.confirm_action(nlu)
                 else:
                     self.search(nlu["entity"])
@@ -566,7 +565,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
-                      if nlu["confidence"] < 80 or nlu["confidence"] is None:
+                      if nlu["confidence"] < 80 or  "confidence" not in nlu:
                         self.confirm_action(nlu)
                       else:
                         self.write_comment(nlu["entity"])
@@ -587,7 +586,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
                 else:
-                    if nlu["confidence"] < 80 or nlu["confidence"] is None:
+                    if nlu["confidence"] < 80 or "confidence" not in nlu:
                         self.confirm_action(nlu)
                     else:
                         video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entity"])
@@ -600,7 +599,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
-                    if nlu["confidence"] < 80 or nlu["confidence"]  is None:
+                    if nlu["confidence"] < 80 or "confidence" not in nlu:
                         self.confirm_action(nlu)
                     else:
                         self.save_to_playlist(nlu["entity"])
@@ -609,7 +608,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
-                    if nlu["confidence"] < 80 or nlu["confidence"]  is None:
+                    if nlu["confidence"] < 80 or "confidence" not in nlu:
                         self.confirm_action(nlu)
                     else:
                         self.video.share_video(self.send_to_voice,nlu["entity"])

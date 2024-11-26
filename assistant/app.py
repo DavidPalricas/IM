@@ -25,12 +25,12 @@ def nlu_extractor(message):
 
   nlu = json.loads(message["nlu"])
 
-  if nlu["entities"] == []:
+  if "entities" not in nlu:
     return {"intent": nlu["intent"] ["name"]}
   
-  confidance = round(nlu["entities"][0]["confidence_entity"] * 100) 
+  confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
   
-  return {"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidance}
+  return {"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidence}
 
 
 def ignore_certificates():
@@ -73,8 +73,8 @@ async def main():
 
               assistant.execute_action(nlu)
                       
-          except Exception as e:
-                print(e)
+          except Exception as ex:
+                print(f"Exception {ex} cona")
                       
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
