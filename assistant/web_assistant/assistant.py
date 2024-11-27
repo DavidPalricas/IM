@@ -134,10 +134,7 @@ class Assistant(WebAssistant):
             print(progress_bar_color)
 
             return
-
-
-         
-            
+    
             self.send_to_voice("Um anúncio está sendo reproduzido")
 
 
@@ -634,19 +631,23 @@ class Assistant(WebAssistant):
                 self.shutdown()
 
             case "pause_video" | "play_video":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para pausar")
                 else:
                    self.video.handling_play_pause(self.send_to_voice,nlu["intent"])
 
             case "increase_speed" | "decrease_speed":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para alterar a velocidade")
                 else:
-                    self.video.change_speed(self.send_to_voice,nlu["intent"])
+                    if "confidence" not in nlu or nlu["confidence"] < 80:
+                        self.confirm_action(nlu)
+                    else:
+                        del nlu["confidence"]
+                        self.video.change_speed(self.send_to_voice,nlu)
             
             case "write_comment":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
                       if "confidence" not in nlu or nlu["confidence"] < 80:
@@ -655,19 +656,19 @@ class Assistant(WebAssistant):
                         self.write_comment(nlu["entity"])
 
             case "activate_video_subtitles" | "deactivate_video_subtitles":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para ativar ou desativar as legendas")
                 else:
                     self.video.on_off_video_subtitles(self.send_to_voice,nlu["intent"])
             
             case "mute_video" | "unmute_video":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para ativar ou desativar o som")
                 else:
                     self.video.mute_unmute_video(self.send_to_voice,nlu["intent"])
 
             case "seek_forward_video" | "seek_backward_video":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
                 else:
                     if "confidence" not in nlu or nlu["confidence"] < 80:
@@ -675,12 +676,12 @@ class Assistant(WebAssistant):
                     else:
                         video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entity"])
 
-                        if video_url != None:
+                        if video_url is not None:
                             self.open(video_url)
                             self.video.youtube = self.driver.find_element("tag name", "body")
 
             case "save_to_playlist":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
                     if "confidence" not in nlu or nlu["confidence"] < 80:
@@ -689,7 +690,7 @@ class Assistant(WebAssistant):
                         self.save_to_playlist(nlu["entity"])
 
             case "share_video":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
                     if "confidence" not in nlu or nlu["confidence"] < 80:
@@ -698,7 +699,7 @@ class Assistant(WebAssistant):
                         self.video.share_video(self.send_to_voice,nlu["entity"])
 
             case "subscribe_channel" | "unsubscribe_channel":
-                if self.video == None:
+                if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para se inscrever")
                 else:
                     self.handle_channel_subscription(nlu["intent"])       
