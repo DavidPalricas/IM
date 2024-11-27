@@ -25,7 +25,9 @@ def nlu_extractor(message):
 
   nlu = json.loads(message["nlu"])
 
-  if "entities" not in nlu:
+  print(f"nlu: {nlu}")
+
+  if "entities" not in nlu or len(nlu["entities"]) == 0:
     return {"intent": nlu["intent"] ["name"]}
   
   confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
@@ -74,7 +76,7 @@ async def main():
               assistant.execute_action(nlu)
                       
           except Exception as ex:
-                print(f"Exception {ex} cona")
+                print(f"Exception {ex}")
                       
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())

@@ -102,7 +102,87 @@ class Assistant(WebAssistant):
             accept_button.click()
         except Exception:
             pass
+   
+
+    def skip_ad(self):
+        """
+        The skip_ad method is responsible for skipping the ad on the video.
+        The method will try to find the skip button, if the button is found, the method will click on it.
+        Otherwise, the method will send a message to the user informing that the skip button was not found.
+        """
+        self.driver.find_element("tag name", "body").send_keys('k')
+        try:
+            skip_button = self.driver.find_element(By.XPATH, '//*[@id="skip-button:6"]')
+            skip_button.click()
+
+        except Exception:
+            self.send_to_voice("Botão de pular anúncio não encontrado")
+
+    def check_adds(self):
+        """
+        The check_adds method is responsible for checking if there are any ads on the video.
+        If there are ads, the method will skip the ads.
+        """
+        
+        try:
+            progress_bar = self.driver.find_element(By.XPATH, '//*[@id="movie_player"]/div[28]/div[1]/div[2]/div[1]/div/div[2]/div[1]')
+
+
+            progress_bar_color = progress_bar.value_of_css_property("background-color")
+
+
+            print(progress_bar_color)
+
+            return
+
+
+         
+            
+            self.send_to_voice("Um anúncio está sendo reproduzido")
+
+
+        except Exception as exc:
+            print(f"Exception {exc}, no ads found")
+            return
+        
+        try:
+            skip_button = WebDriverWait(self.driver, 7).until(EC.presence_of_element_located((By.XPATH, '//*[@id="skip-button:6"]')))
+            skip_button.click()
+
+            self.confirm_action({"intent":"skip_ad"})
+            
+            self.driver.find_element("tag name", "body").send_keys('k')
+            self.confirmation.confirm()
+        
+        except Exception:
+            self.send_to_voice("Anúncio não ignorável, aguarde o anúncio terminar")
+            time_to_wait = self.get_add_time()
+
+            if time_to_wait is not None:
+                time.sleep(time_to_wait)
+                self.skip_ad()
+ 
+
+
+    def get_add_time(self):
+        """
+        The get_add_time method is responsible for getting the time of the ad.
+        The method will try to find the ad time, if the time is found, the method will return the time.
+        Otherwise, the method will return 5 seconds.
+        """
+        try:
+            add_current_time = self.driver.find_element(By.XPATH, '//div[@class="ytp-ad-preview-container"]//span[@class="ytp-ad-preview-time"]')
+            add_max_time = self.driver.find_element(By.XPATH, '//div[@class="ytp-ad-preview-container"]//span[@class="ytp-ad-preview-total-time"]')
+             
+            add_current_time = add_current_time.text.split(":")[1]
+            add_max_time = add_max_time.text.split(":")[1]
+
+            return int(add_max_time) - int(add_current_time)
     
+        except Exception:
+            return  None
+         
+                                       
     def handling_search_message(self, query):
         """
         The handling_search_message method is responsible for handling the search message.
@@ -122,7 +202,7 @@ class Assistant(WebAssistant):
         
         self.send_to_voice(f"Pesquisando pelo vídeo {query}")
 
-    def search(self, query) : 
+    def search_video(self, query) : 
         """
         The search method is responsible for searching for a video on YouTube.
         This method will call the handling_search_message method to handle the search message, after that, the method will open the YouTube page and search for the video.
@@ -148,11 +228,12 @@ class Assistant(WebAssistant):
                video.click()  
 
                if "shorts" in self.driver.current_url:
-                self.video = Video(True, self.driver)
-                break
-            
-               self.video = Video(False, self.driver)
-               self.video.url = self.driver.current_url
+                self.video = Video(True, self.driver)       
+                
+               else:            
+                self.video = Video(False, self.driver)
+                self.video.url = self.driver.current_url
+                self.check_adds()
                break
 
     def shutdown(self) :
@@ -541,10 +622,13 @@ class Assistant(WebAssistant):
         """
         match nlu["intent"]:
             case "search_video":
-                if nlu["confidence"] < 80 or "confidence" not in nlu:
+                if "confidence" not in nlu or nlu["confidence"] < 80:
                     self.confirm_action(nlu)
                 else:
-                    self.search(nlu["entity"])
+                    self.search_video(nlu["entity"])
+
+            case "skip_ad":
+                self.skip_ad()
 
             case "shutdown_assistant":
                 self.shutdown()
@@ -565,7 +649,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para comentar")
                 else:
-                      if nlu["confidence"] < 80 or  "confidence" not in nlu:
+                      if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                       else:
                         self.write_comment(nlu["entity"])
@@ -586,7 +670,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para avançar ou retroceder")
                 else:
-                    if nlu["confidence"] < 80 or "confidence" not in nlu:
+                    if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
                         video_url = self.video.seek_forward_backward(self.send_to_voice,nlu["intent"], nlu["entity"])
@@ -599,7 +683,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para salvar na playlist")
                 else:
-                    if nlu["confidence"] < 80 or "confidence" not in nlu:
+                    if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
                         self.save_to_playlist(nlu["entity"])
@@ -608,7 +692,7 @@ class Assistant(WebAssistant):
                 if self.video == None:
                     self.send_to_voice("Não há nenhum vídeo para compartilhar")
                 else:
-                    if nlu["confidence"] < 80 or "confidence" not in nlu:
+                    if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
                         self.video.share_video(self.send_to_voice,nlu["entity"])

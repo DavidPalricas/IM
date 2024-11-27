@@ -4,17 +4,6 @@ nlu:
   examples: |
     - [0-9]+ (segundos|segundo|minutos|minuto|hora|horas)
 
-- lookup: speed
-  examples: |
-    - 0.25
-    - 0.5
-    - 0.75
-    - 1
-    - 1.25
-    - 1.5
-    - 1.75
-    - 2
-
 - intent: shutdown_assistant
   examples: |
     - Xau, Assistente
@@ -155,31 +144,32 @@ nlu:
 - intent: increase_speed
   examples: |
     - Aumenta a velocidade do vídeo
-    - Aumente a velocidade do vídeo em [0.5] (speed)
+    - Aumente a velocidade do vídeo em [0.5](speed)
+    - Aumnete em [0.75] (speed) a velocidade do vídeo
     - Acelera a velocidade do vídeo
-    - Acelera a velocidade do vídeo em [1.75] (speed)
+    - Acelera a velocidade do vídeo em [1.75](speed)
     - Eleva a velocidade do vídeo
-    - Eleva a velocidade do vídeo em [1.25] (speed)
+    - Eleva a velocidade do vídeo em [1.25](speed)
     - Amplifica a velocidade do vídeo
-    - Amplifica a velocidade do vídeo em [1.5] (speed)
-    - Por favor aumente a velocidade em [1] (speed)
-    - Por favor acelere a velocidade em [1.75] (speed)
-    - Por favor eleve a velocidade em [0.25] (speed)
-    - Por favor amplifique a velocidade em [0.5] (speed)
+    - Amplifica a velocidade do vídeo em [1.5](speed)
+    - Por favor aumente a velocidade em [2](speed)
+    - Por favor acelere a velocidade em [1.75](speed)
+    - Por favor eleve a velocidade em [0.25](speed)
+    - Por favor amplifique a velocidade em [0.5](speed)
 
 - intent: decrease_speed
   examples: |
     - Diminui a velocidade do vídeo
     - Baixa a velocidade do vídeo
     - Reduza a velocidade do vídeo
-    - Diminua a velocidade em [0.5] (speed)
-    - Baixa a velocidade em [1.75] (speed)
-    - Reduza a velocidade em [1.25] (speed)
-    - Por favor diminua a velocidade em [1] (speed)
-    - Por favor baixe a velocidade em [1.75] (speed)
-    - Por favor reduza a velocidade em [0.25] (speed)
-    - Diminua a velocidade em [0.25] (speed), se faz favor
-    - Desacelere a velocidade em [0.5] (speed), por favor
+    - Diminua a velocidade em [0.5](speed)
+    - Baixa a velocidade em [1.75](speed)
+    - Reduza a velocidade em [1.25](speed)
+    - Por favor diminua a velocidade em [1](speed)
+    - Por favor baixe a velocidade em [1.75](speed)
+    - Por favor reduza a velocidade em [0.25](speed)
+    - Diminua a velocidade em [0.25](speed), se faz favor
+    - Desacelere a velocidade em [0.5](speed), por favor
 
 - intent: write_comment
   examples: |
