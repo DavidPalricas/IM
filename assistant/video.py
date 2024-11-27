@@ -126,7 +126,7 @@ class Video:
         self.youtube.send_keys('k')
 
 
-    def change_speed(self,send_to_voice,intent):
+    def change_speed(self,send_to_voice,nlu):
         """
             The method change_speed is responsible for changing the speed of a video on YouTube.
             If the video is not playing, the assistant will inform the user that the video is paused and it is not possible to change the speed.
@@ -144,48 +144,81 @@ class Video:
          
         key_combination = ActionChains(self.driver)
 
-        if intent == "increase_speed":
-            self.increase_speed(send_to_voice,key_combination)
+        if nlu["intent"] == "increase_speed":
+            if "entity"  not in nlu:
+                self.increase_speed(send_to_voice,key_combination)
+            else:
+                self.increase_speed(send_to_voice,key_combination,nlu["entity"])
 
         else:
-            self.decrease_speed(send_to_voice,key_combination)
+            if "entity"  not in nlu:
+                self.decrease_speed(send_to_voice,key_combination)
+            else:
+                self.decrease_speed(send_to_voice,key_combination,nlu["entity"])
 
-    def increase_speed(self,send_to_voice,key_combination):
+    def increase_speed(self,send_to_voice,key_combination,speed=None):
         """
             The method increase_speed is responsible for increasing the speed of a video on YouTube.
             If the speed is already at the maximum, the assistant will inform the user that the speed is already at the maximum.
-            The method increases the speed by 0.25x and sends a message to the user informing the current speed.
+            The method increases the speed by the speed passed as an argument or by 0.25x and sends a message to the user informing the current speed.
 
             Args:
                 - send_to_voice: a function that sends a message to the user.
                 - key_combination: an instance of the ActionChains class which represents the keys pressed by the user.
+                - speed: a float that represents the speed of the video, if it is not passed, the speed will be 0.25 (default value).
             """
         if self.speed == 2:
-            send_to_voice("A velocidade já está no máximo")
+            send_to_voice("Não é possível aumentar a velocidade, pois já está no máximo")
             return
-              
-        self.speed += 0.25
-        send_to_voice(f"Aumentando a velocidade em 0.25x, a velocidade atual é de {self.speed}")
-        key_combination.key_down(Keys.SHIFT).send_keys('.').key_up(Keys.SHIFT).perform()
+        
+        speed = 0.25 if speed is None else float(speed.replace(",","."))
 
-    def decrease_speed(self,send_to_voice,key_combination):
+        self.speed += speed
+
+        if self.speed > 2:
+            self.speed = 2
+            
+        send_to_voice(f"Aumentando a velocidade em {speed}x, a velocidade atual é de {self.speed}")
+        
+        # Increase the speed by pressing the '.' key
+        for _ in range(int(speed/0.25)):
+            key_combination.key_down(Keys.SHIFT).send_keys('.').key_up(Keys.SHIFT).perform()
+
+        if self.speed == 2:
+            send_to_voice("A velocidade já está no máximo")
+
+  
+    def decrease_speed(self,send_to_voice,key_combination,speed=None):
         """
             The method decrease_speed is responsible for decreasing the speed of a video on YouTube.
             If the speed is already at the minimum, the assistant will inform the user that the speed is already at the minimum.
-            The method decreases the speed by 0.25x and sends a message to the user informing the current speed.
+            The method decreases the speed by the speed passed as an argument or by 0.25x and sends a message to the user informing the current speed.
 
             Args:
                 - send_to_voice: a function that sends a message to the user.
                 - key_combination: an instance of the ActionChains class which represents the keys pressed by the user.
-            
+                - speed: a float that represents the speed of the video, if it is not passed, the speed will be 0.25 (default value).         
         """
+
         if self.speed == 0.25:
-            send_to_voice("A velocidade já está no mínimo")
+            send_to_voice("Não é possível diminuir a velocidade, pois já está no mínimo")
             return 
         
-        self.speed -= 0.25
-        send_to_voice(f"Diminuindo a velocidade em 0.25x, a velocidade atual é de {self.speed}")
-        key_combination.key_down(Keys.SHIFT).send_keys(',').key_up(Keys.SHIFT).perform()
+        speed = 0.25 if speed is None else float(speed.replace(",","."))
+
+        self.speed -= speed
+
+        if self.speed < 0.25:
+            self.speed = 0.25
+
+        send_to_voice(f"Diminuindo a velocidade em {speed}x, a velocidade atual é de {self.speed}")
+        
+        # Decrease the speed by pressing the ',' key
+        for _ in range(int(speed/0.25)):
+            key_combination.key_down(Keys.SHIFT).send_keys(',').key_up(Keys.SHIFT).perform()
+
+        if self.speed == 0.25:
+            send_to_voice("A velocidade já está no mínimo")
 
     def on_off_video_subtitles(self,send_to_voice,intent):
         """
