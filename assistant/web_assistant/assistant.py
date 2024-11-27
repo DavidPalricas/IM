@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
 from web_app_conextions_files.index_connections import TTS, Confirmation
@@ -41,6 +41,8 @@ class Assistant(WebAssistant):
         self.user_subscibed_channel = False
         self.wait = WebDriverWait(self.driver, 5)
         self.intent_to_be_confirmed = None
+
+        self.videos_to_be_searched = []
 
         self.initialize_assistant()
       
@@ -199,18 +201,18 @@ class Assistant(WebAssistant):
         
         self.send_to_voice(f"Pesquisando pelo vídeo {query}")
 
-    def search_video(self, query) : 
+    def search_video(self, query):
         """
-        The search method is responsible for searching for a video on YouTube.
-        This method will call the handling_search_message method to handle the search message, after that, the method will open the YouTube page and search for the video.
-         will search for the video and click on the first video that is not a sponsered video.
-        The method will create a new instance of the Video class and assign it to the video attribute and updates the is_short attribute of the video, if the video is a short video.
+        Searches for a video on YouTube and lets the user choose one of the top three results.
+        This method searches YouTube for the provided query, presents the top three results to the user,
+        and lets them choose which video to play.
 
         Args:
             - query: a string that represents the video to be searched.
-       """
+        """
         self.handling_search_message(query)
 
+        # Open YouTube search results page
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
         
         self.load_page()
@@ -218,20 +220,87 @@ class Assistant(WebAssistant):
         visible = EC.visibility_of_element_located
         self.wait.until(visible((By.ID, "video-title")))
 
-        videos = self.driver.find_elements(By.ID, "video-title") 
+        # Get all visible video elements
+        videos = self.driver.find_elements(By.ID, "video-title")
+        
+        time.sleep(2.5)
 
+        # Extract the top three non-promoted videos
         for video in videos:
-           if "promoted" not in video.get_attribute("class"):  
-               video.click()  
+            if "promoted" not in video.get_attribute("class"):
+                self.videos_to_be_searched.append(video)
+            if len(self.videos_to_be_searched) == 3:  # Limit to top 3 videos
+                break
 
-               if "shorts" in self.driver.current_url:
-                self.video = Video(True, self.driver)       
-                
-               else:            
+        if self.videos_to_be_searched == []:
+            self.send_to_voice("Nenhum vídeo encontrado")
+            return
+
+        # Display the options to the user
+        message = "Vídeos encontrados:\n"
+
+        for i, title in enumerate(self.videos_to_be_searched):
+            message += f"{i + 1} - {title.text}\n"
+        print(message)
+
+        self.send_to_voice(message)
+        
+        # Delay to wait to assistant to finish speaking
+        time.sleep(15)
+
+        self.send_to_voice("Escolha um dos vídeos por ordem, ou seja, primeiro, segundo ou terceiro")
+        
+        # Delay to wait to assistant to finish speaking
+        time.sleep(2)
+
+        self.confirmation.confirm()
+
+    def select_video(self, choice):
+        """
+        The select_video method is responsible for selecting the video based on the user's choice.
+        The method will try to find the video based on the user's choice, if the video is found, the method will click on it.
+        Otherwise, the method will send a message to the user informing that the video was not found.
+
+        Args:
+            - choice: a string that represents the user's choice.
+        """
+        possible_choices = ["primeiro", "segundo", "terceiro", "1º", "2º", "3º"]
+
+        if choice.lower() in possible_choices:
+            if choice in ["primeiro", "1º"]:
+                choice = 0
+            elif choice in ["segundo", "2º"]:
+                choice = 1
+            else:
+                choice = 2
+            
+            video = self.videos_to_be_searched[choice]
+            self.send_to_voice(f"Selecionando o vídeo {video.text}")
+            self.videos_to_be_searched = []
+
+            video.click()
+            
+            if "shorts" in self.driver.current_url:
+                self.video = Video(True, self.driver)
+            else:
                 self.video = Video(False, self.driver)
                 self.video.url = self.driver.current_url
-                self.check_adds()
-               break
+                #self.check_adds()
+        else:
+            self.send_to_voice("Escolha inválida, tente novamente")
+            self.confirmation.confirm()
+            return
+        
+        
+
+        # # Determine if the video is a short and create the Video instance
+        # if "shorts" in self.driver.current_url:
+        #     self.video = Video(True, self.driver)
+        # else:
+        #     self.video = Video(False, self.driver)
+        #     self.video.url = self.driver.current_url
+        #     self.check_adds()
+
 
     def shutdown(self) :
         """
@@ -618,6 +687,11 @@ class Assistant(WebAssistant):
             - nlu: a dictionary that contains the intent and entity of the user's message.
         """
         match nlu["intent"]:
+            case "choose_video":
+                if "confidence" not in nlu or nlu["confidence"] < 80:
+                    self.confirm_action(nlu)
+                else:
+                    self.select_video(nlu["entity"])
             case "search_video":
                 if "confidence" not in nlu or nlu["confidence"] < 80:
                     self.confirm_action(nlu)

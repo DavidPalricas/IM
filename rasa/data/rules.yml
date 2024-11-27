@@ -12,6 +12,11 @@ rules:
   - intent: goodbye
   - action: utter_goodbye
 
+- rule: choose_video
+  steps:
+  - intent: choose_video
+  - action: utter_choose_video
+
 - rule: search_video
   steps:
   - intent: search_video

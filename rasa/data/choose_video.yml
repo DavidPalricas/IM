@@ -1,0 +1,10 @@
+version: "3.1"
+nlu:
+- lookup: choose_video
+  examples: |
+    - primeiro
+    - 1º
+    - segundo
+    - 2º
+    - terceiro
+    - 3º

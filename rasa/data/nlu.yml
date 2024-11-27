@@ -40,6 +40,17 @@ nlu:
     - Não gosto assim
     - Nem por isso
 
+- intent: choose_video
+  examples: |
+    - Escolha o [primeiro](choosen_video)
+    - [segundo](choosen_video)
+    - [terceiro](choosen_video), por favor
+    - Escolhe o [1º](choosen_video), por favor
+    - Quero o [2º](choosen_video)
+    - Por favor escolha o [3º](choosen_video)
+    - Pode escolher o [2º](choosen_video)
+    - Quero o [terceiro](choosen_video), por favor
+
 - intent: search_video
   examples: |
     - Procura o vídeo [Baby Shark Dance](video)
