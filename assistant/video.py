@@ -17,7 +17,7 @@ class Video:
     - driver: an instance of the WebDriver class.
     - youtube: an instance of the WebElement class(body) that represents the YouTube page.
     """
-    def __init__(self,is_short,driver):
+    def __init__(self,is_short,driver, speed = None):
         """
          Initializes a new instance of the Video class.
 
@@ -28,7 +28,8 @@ class Video:
         self.confirmation = Confirmation(FusionAdd=f"https://{OUTPUT}/IM/USER1/SPEECH_ANSWER")
         self.is_short = is_short
         self.muted = False
-        self.speed = 1
+     
+        self.speed =  1 if speed is None else speed
         self.driver = driver
         self.youtube =self.driver.find_element("tag name", "body")
 
@@ -411,7 +412,7 @@ class Video:
         #print(f"Time: {time}")
         return time, current_seconds
 
-    def share_video(self,send_to_voice,entities,items_to_be_searched,message_to_be_sent,video_or_contact):
+    def share_video(self,send_to_voice,entities,items_to_be_searched):
         """
             The method share_video is responsible for sharing a video on YouTube.
             The method also sends a message to the user to inform the action.
@@ -423,9 +424,9 @@ class Video:
         send_to_voice(f"Compartilhando o vídeo com {entities}")
         youtube_link = self.driver.current_url
         contact_name = entities
-        self.send_whatsapp_message(self.driver, contact_name, youtube_link,send_to_voice,items_to_be_searched,message_to_be_sent,video_or_contact)
+        return self.send_whatsapp_message(self.driver, contact_name, youtube_link,send_to_voice,items_to_be_searched)
     
-    def send_whatsapp_message(self, driver, contact_name, message,send_to_voice,items_to_be_searched,message_to_be_sent,video_or_contact):
+    def send_whatsapp_message(self, driver, contact_name, message_link,send_to_voice,items_to_be_searched):
         """
             The method send_whatsapp_message is responsible for sending a message to a contact on WhatsApp.
             The method also sends a message to the user to inform the action.
@@ -448,39 +449,39 @@ class Video:
 
         input_box_search = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath_search)))
         input_box_search.click()
-        print(f"contact_name: {contact_name}")
+        #print(f"contact_name: {contact_name}")
         input_box_search.send_keys(contact_name)
         time.sleep(2)
 
         # Verify if the contact is found
         if self.verify_contact(driver):
-            print(f"enter")
-            #input_box_search.send_keys(Keys.ENTER)
+            
             # Find the search results
-            search_results_xpath = '//div[@data-testid="cell-frame-container"]'
-            search_results = driver.find_elements(By.XPATH, search_results_xpath)
+            contact_spans_xpath = '//span[@dir="auto" and @title and @class="x1iyjqo2 x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1rg5ohu _ao3e"]'
+
+            # Find all matching span elements (e.g., top 3 contacts)
+            contact_spans = driver.find_elements(By.XPATH, contact_spans_xpath)
+            
             
             # Collect the names of the top three results
-            for result in search_results[:3]:  # Limit to top 3 results
+            for result in contact_spans[:3]:  # Limit to top 3 results
                 try:
-                    contact_name_element = result.find_element(By.XPATH, './/span[@dir="auto"]')
-                    items_to_be_searched.append(contact_name_element.text)
-                    video_or_contact = True
+                    contact_title = result.get_attribute("title") 
+                    items_to_be_searched.append(result)
                 except Exception as e:
                     print(f"Error extracting contact name: {e}")
-            
+
             # Display the options to the user
             message = "Contactos encontrados: "
-            for i, name in enumerate(items_to_be_searched):
-                print(f"{i + 1}. {name.text}")
-                print("contactos encontrados")
-                print(f"{i + 1}. {name}")
-                message += f"{i + 1}. {name} "
-            
-            print(f"message")
-            send_to_voice(message)
+            # reverse the list to display the most recent contacts first
+            contact_spans.reverse()
+            items_to_be_searched.reverse()
 
-            message_to_be_sent = message
+            for i, name in enumerate(contact_spans[:3]):
+                message += f"{i + 1}. {name.get_attribute('title')}, "
+            
+            #print(f"message")
+            send_to_voice(message)
 
             time.sleep(10)
             
@@ -489,10 +490,12 @@ class Video:
             time.sleep(2)
 
             self.confirmation.confirm()
+            return True, message_link
         else:
-            send_to_voice("Contato não encontrado")
+            send_to_voice("Contacto não encontrado")
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
+            return False, ""
 
     def verify_contact(self, driver):
         """

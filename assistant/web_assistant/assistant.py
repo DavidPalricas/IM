@@ -36,7 +36,7 @@ class Assistant(WebAssistant):
         self.send_to_voice("Iniciando o  assistente, aguarde um pouco")
         super().__init__()
         self.driver = self.chrome_config()
-        self.video = False
+        self.video = None
         self.running = True
         self.user_subscibed_channel = False
         self.wait = WebDriverWait(self.driver, 5)
@@ -277,15 +277,14 @@ class Assistant(WebAssistant):
                 choice = 1
             else:
                 choice = 2
-            
             if self.video_or_contact:
+                chosen_span = self.items_to_be_searched[choice]
+                chosen_span.click()
                 inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
                 input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
                 time.sleep(2)
                 # write message
-                print(f"message")
                 input_box.send_keys(self.message_to_be_sent)
-                print(f"enter2")
                 input_box.send_keys(Keys.ENTER)
                 time.sleep(2)
 
@@ -307,7 +306,10 @@ class Assistant(WebAssistant):
                 if "shorts" in self.driver.current_url:
                     self.video = Video(True, self.driver)
                 else:
-                    self.video = Video(False, self.driver)
+
+                   
+                    self.video = Video(False, self.driver) if self.video is None else Video(False, self.driver, self.video.speed)
+                    print(f"speed {self.video.speed}")
                     self.video.url = self.driver.current_url
                     #self.check_adds()
         else:
@@ -783,7 +785,7 @@ class Assistant(WebAssistant):
                     if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
-                        self.video.share_video(self.send_to_voice,nlu["entity"], self.items_to_be_searched, self.message_to_be_sent, self.video_or_contact)
+                        self.video_or_contact, self.message_to_be_sent = self.video.share_video(self.send_to_voice,nlu["entity"], self.items_to_be_searched)
 
             case "subscribe_channel" | "unsubscribe_channel":
                 if self.video is None:
