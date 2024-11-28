@@ -42,7 +42,11 @@ class Assistant(WebAssistant):
         self.wait = WebDriverWait(self.driver, 5)
         self.intent_to_be_confirmed = None
 
-        self.videos_to_be_searched = []
+        self.items_to_be_searched = []
+        
+        self.video_or_contact = None
+
+        self.message_to_be_sent = ""
 
         self.initialize_assistant()
       
@@ -228,18 +232,20 @@ class Assistant(WebAssistant):
         # Extract the top three non-promoted videos
         for video in videos:
             if "promoted" not in video.get_attribute("class"):
-                self.videos_to_be_searched.append(video)
-            if len(self.videos_to_be_searched) == 3:  # Limit to top 3 videos
+                self.items_to_be_searched.append(video)
+            if len(self.items_to_be_searched) == 3:  # Limit to top 3 videos
                 break
 
-        if self.videos_to_be_searched == []:
+        if self.items_to_be_searched == []:
             self.send_to_voice("Nenhum vídeo encontrado")
             return
+        
+        self.video_or_contact = False
 
         # Display the options to the user
         message = "Vídeos encontrados:\n"
 
-        for i, title in enumerate(self.videos_to_be_searched):
+        for i, title in enumerate(self.items_to_be_searched):
             message += f"{i + 1} - {title.text}\n"
         print(message)
 
@@ -255,15 +261,13 @@ class Assistant(WebAssistant):
 
         self.confirmation.confirm()
 
-    def select_video(self, choice):
+    def select_item(self, choice):
         """
-        The select_video method is responsible for selecting the video based on the user's choice.
-        The method will try to find the video based on the user's choice, if the video is found, the method will click on it.
-        Otherwise, the method will send a message to the user informing that the video was not found.
+        The select_item method is responsible for selecting the item based on the user's choice.
+        The method will check the user's choice and select the video based on the choice.
+        If the choice is invalid, the method will send a message to the user informing that the choice is invalid and ask the user to try again.
+        """
 
-        Args:
-            - choice: a string that represents the user's choice.
-        """
         possible_choices = ["primeiro", "segundo", "terceiro", "1º", "2º", "3º"]
 
         if choice.lower() in possible_choices:
@@ -274,33 +278,42 @@ class Assistant(WebAssistant):
             else:
                 choice = 2
             
-            video = self.videos_to_be_searched[choice]
-            self.send_to_voice(f"Selecionando o vídeo {video.text}")
-            self.videos_to_be_searched = []
+            if self.video_or_contact:
+                inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
+                input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
+                time.sleep(2)
+                # write message
+                print(f"message")
+                input_box.send_keys(self.message_to_be_sent)
+                print(f"enter2")
+                input_box.send_keys(Keys.ENTER)
+                time.sleep(2)
 
-            video.click()
-            
-            if "shorts" in self.driver.current_url:
-                self.video = Video(True, self.driver)
+                # Close the WhatsApp tab
+                self.driver.close()
+
+                # Return to the YouTube tab
+                self.driver.switch_to.window(self.driver.window_handles[0])
+                self.items_to_be_searched = []
+                self.video_or_contact = None
             else:
-                self.video = Video(False, self.driver)
-                self.video.url = self.driver.current_url
-                #self.check_adds()
+                video = self.items_to_be_searched[choice]
+                self.send_to_voice(f"Selecionando o vídeo {video.text}")
+                self.items_to_be_searched = []
+                self.video_or_contact = None
+
+                video.click()
+                
+                if "shorts" in self.driver.current_url:
+                    self.video = Video(True, self.driver)
+                else:
+                    self.video = Video(False, self.driver)
+                    self.video.url = self.driver.current_url
+                    #self.check_adds()
         else:
             self.send_to_voice("Escolha inválida, tente novamente")
             self.confirmation.confirm()
             return
-        
-        
-
-        # # Determine if the video is a short and create the Video instance
-        # if "shorts" in self.driver.current_url:
-        #     self.video = Video(True, self.driver)
-        # else:
-        #     self.video = Video(False, self.driver)
-        #     self.video.url = self.driver.current_url
-        #     self.check_adds()
-
 
     def shutdown(self) :
         """
@@ -687,11 +700,11 @@ class Assistant(WebAssistant):
             - nlu: a dictionary that contains the intent and entity of the user's message.
         """
         match nlu["intent"]:
-            case "choose_video":
+            case "choose_item":
                 if "confidence" not in nlu or nlu["confidence"] < 80:
                     self.confirm_action(nlu)
                 else:
-                    self.select_video(nlu["entity"])
+                    self.select_item(nlu["entity"])
             case "search_video":
                 if "confidence" not in nlu or nlu["confidence"] < 80:
                     self.confirm_action(nlu)
@@ -770,7 +783,7 @@ class Assistant(WebAssistant):
                     if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
-                        self.video.share_video(self.send_to_voice,nlu["entity"])
+                        self.video.share_video(self.send_to_voice,nlu["entity"], self.items_to_be_searched, self.message_to_be_sent, self.video_or_contact)
 
             case "subscribe_channel" | "unsubscribe_channel":
                 if self.video is None:

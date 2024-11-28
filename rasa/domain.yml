@@ -20,7 +20,7 @@ intents:
 - activate_notifications
 - mantain_notifications
 - desactivate_notifications
-- choose_video
+- choose_item
 
 entities:
   - video
@@ -29,7 +29,7 @@ entities:
   - user
   - playlist
   - speed
-  - choosen_video
+  - choosen_item
 
 slots:
   video:
@@ -74,12 +74,12 @@ slots:
     - type: from_entity
       entity: playlist
 
-  choosen_video:
+  choosen_item:
     type: text
     influence_conversation: false
     mappings:
     - type: from_entity
-      entity: choosen_video
+      entity: choosen_item
 
 responses:
   utter_greet:
@@ -95,8 +95,8 @@ responses:
   utter_default:
   - text: Desculpe, não percebi. Pode repetir?
 
-  utter_choose_video:
-  - text: Escolhendo o {choosen_video} video...
+  utter_choose_item:
+  - text: Escolhendo o {choosen_item} item...
 
   utter_search_video:
   - text: Procurando o video {video}...

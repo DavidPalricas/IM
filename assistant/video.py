@@ -3,6 +3,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from consts import OUTPUT
+from web_app_conextions_files.index_connections import Confirmation
 import time
 
 
@@ -23,12 +25,12 @@ class Video:
             - is_short: a boolean that indicates if the video is short or not.
             - driver: a google chrome driver.
         """
+        self.confirmation = Confirmation(FusionAdd=f"https://{OUTPUT}/IM/USER1/SPEECH_ANSWER")
         self.is_short = is_short
         self.muted = False
         self.speed = 1
         self.driver = driver
         self.youtube =self.driver.find_element("tag name", "body")
-
 
     def get_video_time(self):
         """
@@ -409,7 +411,7 @@ class Video:
         #print(f"Time: {time}")
         return time, current_seconds
 
-    def share_video(self,send_to_voice,entities):
+    def share_video(self,send_to_voice,entities,items_to_be_searched,message_to_be_sent,video_or_contact):
         """
             The method share_video is responsible for sharing a video on YouTube.
             The method also sends a message to the user to inform the action.
@@ -421,9 +423,9 @@ class Video:
         send_to_voice(f"Compartilhando o vídeo com {entities}")
         youtube_link = self.driver.current_url
         contact_name = entities
-        self.send_whatsapp_message(self.driver, contact_name, youtube_link,send_to_voice)
+        self.send_whatsapp_message(self.driver, contact_name, youtube_link,send_to_voice,items_to_be_searched,message_to_be_sent,video_or_contact)
     
-    def send_whatsapp_message(self, driver, contact_name, message,send_to_voice):
+    def send_whatsapp_message(self, driver, contact_name, message,send_to_voice,items_to_be_searched,message_to_be_sent,video_or_contact):
         """
             The method send_whatsapp_message is responsible for sending a message to a contact on WhatsApp.
             The method also sends a message to the user to inform the action.
@@ -453,22 +455,40 @@ class Video:
         # Verify if the contact is found
         if self.verify_contact(driver):
             print(f"enter")
-            input_box_search.send_keys(Keys.ENTER)
-            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
-            input_box = WebDriverWait(driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
-            time.sleep(2)
-            # write message
+            #input_box_search.send_keys(Keys.ENTER)
+            # Find the search results
+            search_results_xpath = '//div[@data-testid="cell-frame-container"]'
+            search_results = driver.find_elements(By.XPATH, search_results_xpath)
+            
+            # Collect the names of the top three results
+            for result in search_results[:3]:  # Limit to top 3 results
+                try:
+                    contact_name_element = result.find_element(By.XPATH, './/span[@dir="auto"]')
+                    items_to_be_searched.append(contact_name_element.text)
+                    video_or_contact = True
+                except Exception as e:
+                    print(f"Error extracting contact name: {e}")
+            
+            # Display the options to the user
+            message = "Contactos encontrados: "
+            for i, name in enumerate(items_to_be_searched):
+                print(f"{i + 1}. {name.text}")
+                print("contactos encontrados")
+                print(f"{i + 1}. {name}")
+                message += f"{i + 1}. {name} "
+            
             print(f"message")
-            input_box.send_keys(message)
-            print(f"enter2")
-            input_box.send_keys(Keys.ENTER)
+            send_to_voice(message)
+
+            message_to_be_sent = message
+
+            time.sleep(10)
+            
+            send_to_voice("Escolha um dos contactos para enviar a mensagem, ou seja, primeiro, segundo ou terceiro")
+
             time.sleep(2)
 
-            # Close the WhatsApp tab
-            driver.close()
-
-            # Return to the YouTube tab
-            driver.switch_to.window(driver.window_handles[0])
+            self.confirmation.confirm()
         else:
             send_to_voice("Contato não encontrado")
             driver.close()

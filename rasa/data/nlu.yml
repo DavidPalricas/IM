@@ -40,16 +40,16 @@ nlu:
     - Não gosto assim
     - Nem por isso
 
-- intent: choose_video
+- intent: choose_item
   examples: |
-    - Escolha o [primeiro](choosen_video)
-    - [segundo](choosen_video)
-    - [terceiro](choosen_video), por favor
-    - Escolhe o [1º](choosen_video), por favor
-    - Quero o [2º](choosen_video)
-    - Por favor escolha o [3º](choosen_video)
-    - Pode escolher o [2º](choosen_video)
-    - Quero o [terceiro](choosen_video), por favor
+    - Escolha o [primeiro](choosen_item)
+    - [segundo](choosen_item)
+    - [terceiro](choosen_item), por favor
+    - Escolhe o [1º](choosen_item), por favor
+    - Quero o [2º](choosen_item)
+    - Por favor escolha o [3º](choosen_item)
+    - Pode escolher o [2º](choosen_item)
+    - Quero o [terceiro](choosen_item), por favor
 
 - intent: search_video
   examples: |

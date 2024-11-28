@@ -1,6 +1,6 @@
 version: "3.1"
 nlu:
-- lookup: choose_video
+- lookup: choose_item
   examples: |
     - primeiro
     - 1º

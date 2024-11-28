@@ -12,10 +12,10 @@ rules:
   - intent: goodbye
   - action: utter_goodbye
 
-- rule: choose_video
+- rule: choose_item
   steps:
-  - intent: choose_video
-  - action: utter_choose_video
+  - intent: choose_item
+  - action: utter_choose_item
 
 - rule: search_video
   steps:
