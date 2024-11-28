@@ -72,7 +72,7 @@ class Video:
             print(f"Error while retrieving video times: {e}")
             return None, None
 
-    def verify_video_playing(self,driver):
+    def verify_video_playing(self,driver,is_short):
         """
         Verifies if the video is playing or not.
 
@@ -80,8 +80,15 @@ class Video:
             bool: A boolean that indicates if the video is playing or not.
         """
         try:
-            video_element = '//*[@id="movie_player"]/div[10]/div[2]'
+            video_element = '//*[@id="movie_player"]/div[10]/div[2]' if not is_short else '//*[@id="shorts-player"]/div[8]/div[2]'
             
+            # if is_short:
+            #     try:
+            #         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="play-pause-button-shape"]/button/div/yt-icon/span/div/svg/path')))
+            #         return True
+            #     except Exception as e:
+            #         return False
+
             video = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, video_element)))
             
             #print(f"Video -----------: {video.get_attribute('aria-label')}")
@@ -91,21 +98,22 @@ class Video:
             return False
 
     def handling_play_pause(self,send_to_voice,intent):      
-         """
-             The method handling_play_pause is responsible for handling the player or pause of a youtube event.
-             If the intent is play_video and the video is already playing, the assistant will say that the video is already playing, if is not playing, the assistant will call the play_pause method to play the video.
-             If the intent is play_video and the video is already playing, the assistant will say that the video is not playing, if is playing, the assistant will call the play_pause method to pause the video.
+        """
+            The method handling_play_pause is responsible for handling the player or pause of a youtube event.
+            If the intent is play_video and the video is already playing, the assistant will say that the video is already playing, if is not playing, the assistant will call the play_pause method to play the video.
+            If the intent is play_video and the video is already playing, the assistant will say that the video is not playing, if is playing, the assistant will call the play_pause method to pause the video.
 
-             Args:
-                - send_to_voice: a function that sends a message to the user.
-                - intent: a string that represents the intent's name of the user.
-         """
-         if not self.verify_video_playing(self.driver) :
+            Args:
+               - send_to_voice: a function that sends a message to the user.
+               - intent: a string that represents the intent's name of the user.
+        """
+    
+        if not self.verify_video_playing(self.driver,self.is_short) :
             if intent == "play_video":
                 send_to_voice("O vídeo já está sendo reproduzido")
             else:
                 self.play_pause(send_to_voice,False)
-         else:
+        else:
             if intent == "pause_video":
                 send_to_voice("O vídeo já está pausado")
             else:
@@ -298,9 +306,9 @@ class Video:
                 - turn_on: a boolean that indicates if it is to turn on the subtitles or not.
         """
         if turn_on:
-            send_to_voice("Ativando as legendas")
-        else:
             send_to_voice("Desativando as legendas")
+        else:
+            send_to_voice("Ativando as legendas")
 
         self.youtube.send_keys('c')
 

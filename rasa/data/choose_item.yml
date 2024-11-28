@@ -4,6 +4,7 @@ nlu:
   examples: |
     - primeiro
     - 1º
+    - Selecionar o primeiro
     - segundo
     - 2º
     - terceiro
