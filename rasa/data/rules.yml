@@ -62,6 +62,11 @@ rules:
   - intent: decrease_speed
   - action: utter_decrease_speed
 
+- rule: alternate_speed
+  steps:
+  - intent: alternate_speed
+  - action: utter_alternate_speed
+
 - rule: write_comment
   steps:
   - intent: write_comment

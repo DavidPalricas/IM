@@ -10,6 +10,9 @@ intents:
 - play_video
 - increase_speed
 - decrease_speed
+- alternate_speed
+- mute_video
+- unmute_video
 - write_comment
 - seek_forward_video
 - seek_backward_video
@@ -130,6 +133,9 @@ responses:
 
   utter_decrease_speed:
   - text: Diminuindo a velocidade do video para {speed}
+
+  utter_alternate_speed:
+  - text: Alterando a velocidade do video para {speed}
 
   utter_write_comment:
   - text: Escrevendo o comentário {comment}...

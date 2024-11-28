@@ -182,6 +182,20 @@ nlu:
     - Diminua a velocidade em [0,25](speed), se faz favor
     - Desacelere a velocidade em [0,5](speed), por favor
 
+
+- intent: alternate_speed
+  examples: |
+    - Altera a velocidade do vídeo para [1,5](speed)
+    - Altere a velocidade do vídeo para [0,75](speed), por favor
+    - Mude a velocidade do vídeo para [1,75](speed)
+    - Muda a velocidade do vídeo para [1](speed), por favor
+    - Quero a velocidade do vídeo em [2](speed)
+    - Quero a velocidade do vídeo em [0,5](speed), por favor
+    - Por favor altere a velocidade do vídeo para [1,25](speed)
+    - Por favor mude a velocidade do vídeo para [1,75](speed)
+    - Por favor quero a velocidade do vídeo em [1,5](speed)
+
+
 - intent: write_comment
   examples: |
      - Escreve [Este vídeo poderia explicar melhor o filme](comment)

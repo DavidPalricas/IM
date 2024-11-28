@@ -110,63 +110,7 @@ class Assistant(WebAssistant):
             pass
    
 
-    def skip_ad(self):
-        """
-        The skip_ad method is responsible for skipping the ad on the video.
-        The method will try to find the skip button, if the button is found, the method will click on it.
-        Otherwise, the method will send a message to the user informing that the skip button was not found.
-        """
-        self.driver.find_element("tag name", "body").send_keys('k')
-        try:
-            skip_button = self.driver.find_element(By.XPATH, '//*[@id="skip-button:6"]')
-            skip_button.click()
-
-        except Exception:
-            self.send_to_voice("Botão de pular anúncio não encontrado")
-
-    def check_adds(self):
-        """
-        The check_adds method is responsible for checking if there are any ads on the video.
-        If there are ads, the method will skip the ads.
-        """
-        
-        try:
-            progress_bar = self.driver.find_element(By.XPATH, '//*[@id="movie_player"]/div[28]/div[1]/div[2]/div[1]/div/div[2]/div[1]')
-
-
-            progress_bar_color = progress_bar.value_of_css_property("background-color")
-
-
-            print(progress_bar_color)
-
-            return
-    
-            self.send_to_voice("Um anúncio está sendo reproduzido")
-
-
-        except Exception as exc:
-            print(f"Exception {exc}, no ads found")
-            return
-        
-        try:
-            skip_button = WebDriverWait(self.driver, 7).until(EC.presence_of_element_located((By.XPATH, '//*[@id="skip-button:6"]')))
-            skip_button.click()
-
-            self.confirm_action({"intent":"skip_ad"})
-            
-            self.driver.find_element("tag name", "body").send_keys('k')
-            self.confirmation.confirm()
-        
-        except Exception:
-            self.send_to_voice("Anúncio não ignorável, aguarde o anúncio terminar")
-            time_to_wait = self.get_add_time()
-
-            if time_to_wait is not None:
-                time.sleep(time_to_wait)
-                self.skip_ad()
- 
-
-
+  
     def get_add_time(self):
         """
         The get_add_time method is responsible for getting the time of the ad.
@@ -311,7 +255,7 @@ class Assistant(WebAssistant):
                     self.video = Video(False, self.driver) if self.video is None else Video(False, self.driver, self.video.speed)
                     print(f"speed {self.video.speed}")
                     self.video.url = self.driver.current_url
-                    #self.check_adds()
+
         else:
             self.send_to_voice("Escolha inválida, tente novamente")
             self.confirmation.confirm()
@@ -725,10 +669,14 @@ class Assistant(WebAssistant):
                 else:
                    self.video.handling_play_pause(self.send_to_voice,nlu["intent"])
 
-            case "increase_speed" | "decrease_speed":
+            case "increase_speed" | "decrease_speed" | "alternate_speed":
                 if self.video is None:
                     self.send_to_voice("Não há nenhum vídeo para alterar a velocidade")
                 else:
+                    if self.video.is_short:
+                        self.send_to_voice("Não é possível alterar a velocidade de shorts")
+                        return
+                    
                     if "confidence" not in nlu or nlu["confidence"] < 80:
                         self.confirm_action(nlu)
                     else:
