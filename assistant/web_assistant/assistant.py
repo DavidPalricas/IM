@@ -212,54 +212,55 @@ class Assistant(WebAssistant):
         If the choice is invalid, the method will send a message to the user informing that the choice is invalid and ask the user to try again.
         """
 
-        possible_choices = ["primeiro", "segundo", "terceiro", "1º", "2º", "3º"]
+       # possible_choices = ["primeiro", "segundo", "terceiro", "1º", "2º", "3º", "Selecionar o primeiro", "Selecionar o segundo", "Selecionar o terceiro", "Seleciona o primeiro", "Seleciona o segundo", "Seleciona o terceiro"]
 
-        if choice.lower() in possible_choices:
-            if choice in ["primeiro", "1º"]:
-                choice = 0
-            elif choice in ["segundo", "2º"]:
-                choice = 1
-            else:
-                choice = 2
-            if self.video_or_contact:
-                chosen_span = self.items_to_be_searched[choice]
-                chosen_span.click()
-                inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
-                input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
-                time.sleep(2)
-                # write message
-                input_box.send_keys(self.message_to_be_sent)
-                input_box.send_keys(Keys.ENTER)
-                time.sleep(2)
-
-                # Close the WhatsApp tab
-                self.driver.close()
-
-                # Return to the YouTube tab
-                self.driver.switch_to.window(self.driver.window_handles[0])
-                self.items_to_be_searched = []
-                self.video_or_contact = None
-            else:
-                video = self.items_to_be_searched[choice]
-                self.send_to_voice(f"Selecionando o vídeo {video.text}")
-                self.items_to_be_searched = []
-                self.video_or_contact = None
-
-                video.click()
-                
-                if "shorts" in self.driver.current_url:
-                    self.video = Video(True, self.driver)
-                else:
-
-                   
-                    self.video = Video(False, self.driver) if self.video is None else Video(False, self.driver, self.video.speed)
-                    print(f"speed {self.video.speed}")
-                    self.video.url = self.driver.current_url
-
+       
+        if "1º" in choice.lower() or "primeiro" in choice.lower():
+            choice = 0
+        elif "2º" in choice.lower() or "segundo" in choice.lower():
+            choice = 1
+        elif "3º" in choice.lower() or "terceiro" in choice.lower():
+            choice = 2
         else:
             self.send_to_voice("Escolha inválida, tente novamente")
             self.confirmation.confirm()
             return
+        if self.video_or_contact:
+            chosen_span = self.items_to_be_searched[choice]
+            chosen_span.click()
+            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
+            input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
+            time.sleep(2)
+            # write message
+            input_box.send_keys(self.message_to_be_sent)
+            input_box.send_keys(Keys.ENTER)
+            time.sleep(2)
+
+            # Close the WhatsApp tab
+            self.driver.close()
+
+            # Return to the YouTube tab
+            self.driver.switch_to.window(self.driver.window_handles[0])
+            self.items_to_be_searched = []
+            self.video_or_contact = None
+        else:
+            video = self.items_to_be_searched[choice]
+            self.send_to_voice(f"Selecionando o vídeo {video.text}")
+            self.items_to_be_searched = []
+            self.video_or_contact = None
+
+            video.click()
+                
+            if "shorts" in self.driver.current_url:
+                self.video = Video(True, self.driver)
+            else:
+
+                   
+                self.video = Video(False, self.driver) if self.video is None else Video(False, self.driver, self.video.speed)
+                print(f"speed {self.video.speed}")
+                self.video.url = self.driver.current_url
+
+
 
     def shutdown(self) :
         """

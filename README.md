@@ -1,12 +1,5 @@
 # IM
 
-# Requirements
-* Windows Operative System
-* Python 3.10 or greater
-* Java 21
-* Node JS
-* Miniconda 3
-
 Execute the following command to install all the python ibraries requirements
 ```ps
 pip install -r requirements.txt
@@ -75,3 +68,62 @@ pip install -r requirements.txt
   ```
   And then run the assistant again.
   This command will kill all the chrome processes running in the background. We need to do this or the assistant will not work properly.
+
+# Guia de Utilização do Assistente de Vídeo
+
+## Pesquisa de Vídeos
+
+- "Procura o vídeo [video]"
+- "Pesquisa pelo vídeo [video]"
+
+## Controlos de Reprodução de Vídeo
+
+### Reprodução Básica
+
+- **Reproduzir**: Utilizar comandos como "Continuar", "Retome" ou "Proceda com o vídeo"
+- **Parar**: Dizer "Parar o vídeo" ou "Pausar o vídeo"
+
+### Navegação no Vídeo
+
+- **Avançar/Recuar**: Avançar ou recuar no vídeo por um período específico de tempo
+  - Exemplo: "Avançar 10 minutos" ou "Recua 30 segundos"
+- **Alterar Velocidade de Reprodução**: 
+  - Aumentar: "Aumenta a velocidade do vídeo em 1,5"
+  - Diminuir: "Baixe a velocidade do vídeo em 0,5"
+  - Definir Velocidade Específica: "Mude a velocidade do vídeo para 1,75"
+
+### Áudio e Legendas
+
+- **Silenciar/Ativar Som**: 
+  - "Silenciar o som" ou "Desligar som"
+  - "Ativar som" ou "Ligar som"
+- **Legendas**: 
+  - "Ativar legendas"
+  - "Desativar legendas"
+
+## Funcionalidades de Interação
+
+### Gestão de Canais e Vídeos
+
+- **Subscrever/Anular Subscrição**: 
+  - "Subscrever este canal"
+  - "Anular subscrição deste canal"
+- **Notificações (Só funciona depois de ser efetuada a subscrição)**: 
+  - "Ativa as notificações do canal"
+  - "Desativa as notificações"
+  - "Quero manter as notificações"
+
+### Partilha e Guardar
+
+- **Partilhar Vídeo**: 
+  - "Partilha este vídeo com o [Nome]"
+- **Guardar Video numa Playlist**: 
+  - "Guarda este vídeo na playlist [Nome da Lista]"
+- **Comentar**: 
+  - "Comentar '[Sua mensagem]'"
+
+## Interações Adicionais
+
+- **Terminar Conversa**: Utilizar expressões como "Adeus", "Até logo", "Até à próxima"
+- **Confirmar/Negar**: Responder com "Sim", "Não", "Está bem"
+- **Seleção de Itens (o Assistente pedirá ao utilizador, quando for necessário )**: Escolher itens dizendo "Selecionar o primeiro", "Selecionar o segundo", etc.
