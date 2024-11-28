@@ -94,7 +94,7 @@ class Assistant(WebAssistant):
         self.driver.get(url)
         self.driver.maximize_window()
         self.accept_cookies()
-        self.load_page()
+        time.sleep(2)
 
     def accept_cookies(self):
         """
@@ -163,7 +163,7 @@ class Assistant(WebAssistant):
         # Open YouTube search results page
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
         
-        self.load_page()
+        self.time.sleep(2)
 
         visible = EC.visibility_of_element_located
         self.wait.until(visible((By.ID, "video-title")))
@@ -267,18 +267,13 @@ class Assistant(WebAssistant):
         Before shutting down the assistant, the method will send a message to the user informing that the assistant is shutting down.
         """
         self.send_to_voice("Adeus, espero ter o ajudado")
+        time.sleep(2)
         self.running = False  
         print("Shutting down assistant...")
 
         # To check if the user by mistake closes the browser, otherwise the browser will be closed
         if self.driver:
             self.driver.quit()  
-
-    def load_page(self):
-        """
-        The load_page method is responsible for waiting for the page to load.
-        """
-        time.sleep(3)
 
     def write_comment(self, comment):
         """
@@ -637,7 +632,25 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao entender o seu pedido")
             return
         
-            
+    def help(self):
+        """The help method is responsible for showing the list of the asistant funcioniolaities by voice to the user.
+           The method will open the help_message.txt file, and send by voice each line of the file.
+           This file contains a message that lists the assistant's functionalities.
+        """
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_dir, "help_message.txt")
+
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    self.send_to_voice(line)
+                    time.sleep(3.5)
+
+        except Exception as ex:
+            print(f"Exception {ex}")
+            self.send_to_voice("Erro ao mostrar a ajuda")
+
+    
     def execute_action(self, nlu):
         """
         The execute_action method is responsible for executing the action based on the user's intent.
@@ -763,6 +776,9 @@ class Assistant(WebAssistant):
                     self.send_to_voice("Não há nenhuma ação para negar")
                  else:
                      self.intent_to_be_confirmed = None
-                     self.send_to_voice("Peço desculpa pela confusão")            
+                     self.send_to_voice("Peço desculpa pela confusão")
+
+            case "help":
+                 self.help()            
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")

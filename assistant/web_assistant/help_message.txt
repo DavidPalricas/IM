@@ -1,0 +1,13 @@
+Segue-se a lista das minhas funcionalidades :
+Pesquisa de vídeos
+Reproduzir ou Parar um vídeo
+Ativar ou Desativar as legendas de um vídeo
+Alterar a velocidade de reprodução de um vídeo
+Subscrever ou cancelar a inscrição do canal do vídeo selecionado
+Silenciar ou ligar o som de um vídeo
+Guardar um vídeo numa playlist
+Escrever comentários acerca do vídeo selecionado
+Partilhar um vídeo por Whatsapp
+Avançar ou recuar num vídeo
+Desligar me
+Comando de ajuda para mostrar as minhas funcionalidades

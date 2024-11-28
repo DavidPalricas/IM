@@ -24,6 +24,7 @@ intents:
 - mantain_notifications
 - desactivate_notifications
 - choose_item
+- help
 
 entities:
   - video

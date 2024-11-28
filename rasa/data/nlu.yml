@@ -20,7 +20,13 @@ nlu:
     - Até breve
     - Até um dia, Assistente
     - Até um dia
-
+    - Fechar
+    - Desligar
+    - Desliga-te
+    - Desliga-te, por favor
+    - Fecha-te
+    - Fecha-te, por favor
+    
 - intent: affirm
   examples: |
     - Sim
@@ -262,7 +268,7 @@ nlu:
 
 - intent: share_video
   examples: |
-    - Partilha este vídeo com o [António](user)
+    - Partilha este vídeo com o [Henrique](user)
     - Envie este vídeo para o [Nuno](user)
     - Reencaminhe este vídeo para o [Cunha](user)
     - Comparti-lhe o vídeo com  a [Susana](user)
@@ -272,7 +278,7 @@ nlu:
     - Quero enviar este vídeo para a [Sofia](user)
     - Por favor manda este vídeo para o [Miguel](user)
     - Por favor reencaminhe este vídeo para a [Ana](user)
-    - Por favor envie este vídeo para o [Cigano](user)
+    - Por favor envie este vídeo para o [António](user)
 
 - intent: save_to_playlist
   examples: |
@@ -313,7 +319,6 @@ nlu:
     - Não faça nehuma alteração
     - Quero manter as notificações
 
-  
 - intent: desactivate_notifications
   examples: |
     - Desativa as notificações
@@ -323,3 +328,18 @@ nlu:
     - Quero desativar as notificações
     - Desliga as notificações
     - Quero desligar as notificações
+
+- intent: help
+  examples: |
+    - Ajuda
+    - Perciso de ajuda
+    - Ajuda-me
+    - Pode me ajudar
+    - Ajuda-me por favor
+    - Preciso de ajuda por favor
+    - Por favor ajuda-me
+    - Mostra me os comandos
+    - Quais são os comandos
+    - Quais são os comandos disponíveis
+    - Mostra-me as suas funcionalidades
+    - Quais são as suas funcionalidades
