@@ -234,6 +234,9 @@ class Assistant(WebAssistant):
             # write message
             input_box.send_keys(self.message_to_be_sent)
             input_box.send_keys(Keys.ENTER)
+             
+            self.send_to_voice("Vídeo enviado com sucesso")
+        
             time.sleep(2)
 
             # Close the WhatsApp tab
@@ -411,18 +414,42 @@ class Assistant(WebAssistant):
 
         save_option = self.driver.find_element(By.XPATH, '//*[@id="items"]/ytd-menu-service-item-renderer[2]')
 
+    
         save_option.click()
 
         time.sleep(2)
 
         playlists_container = self.driver.find_elements(By.XPATH, '//ytd-playlist-add-to-option-renderer//tp-yt-paper-checkbox[@id="checkbox"]')
-
-        if not (self.playlist_exits(playlists_container, playlist)):
-             self.send_to_voice(f"Erro ao guardar o vídeo na playlist, a playlist {playlist} não foi encontrada")
+        
+        # Not use is not, becuase this method can return a None value
+        if self.playlist_exits(playlists_container, playlist) == False:
+            self.send_to_voice(f"Erro ao guardar o vídeo na playlist, a playlist {playlist} não foi encontrada")
 
         time.sleep(2)
 
         self.close_playlist_menu()
+
+    def close_playlist_menu(self):
+        """
+        The close_playlist_menu method is responsible for closing the playlist menu.
+        The method will try to find the close palylist menu button in two different languages(english and portuguese), if the button is found, the method will click on it.
+        Otherwise, the method will send a message to the user informing that there was an error closing the menu, and refresh the page.
+        """
+        try:
+            close_menu = self.driver.find_element(By.XPATH, '//*[@id="button" and @aria-label="Cancel"]')
+        except NoSuchElementException:
+            try:    
+                close_menu = self.driver.find_element(By.XPATH, '//*[@id="button" and @aria-label="Cancelar"]')
+            except NoSuchElementException:
+                 self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
+                 self.driver.refresh()
+
+        try:
+            close_menu.click()
+        except Exception as ex:
+            self.send_to_voice("Erro ao fechar o menu de opções, dando refresh na página")
+            self.driver.refresh()
+           
 
     def playlist_exits(self, playlists_container, playlist):
        """
@@ -442,6 +469,10 @@ class Assistant(WebAssistant):
             playlist_name = playlist_container.find_element(By.XPATH, './/yt-formatted-string[@id="label"]').text.lower()
 
             if playlist_name == playlist.lower():
+                if playlist_container.get_attribute("aria-checked") == "true":
+                    self.send_to_voice("Este vídeo já está guardado nesta playlist")
+                    return None
+                
                 playlist_container.click()
                 self.send_to_voice("Vídeo guardado na playlist com sucesso")
                 return True

@@ -481,9 +481,13 @@ class Video:
         driver.execute_script("window.open('');")
         driver.switch_to.window(driver.window_handles[1])  # Change the focus to the new tab
         driver.get("https://web.whatsapp.com/")
+        
+        time.sleep(2)
+         
+        send_to_voice("Por favor, aguarde um pouco")
 
         # Wait for the user to scan the QR code
-        time.sleep(15)
+        #time.sleep(13)
 
         # Search for the contact and send the message
         inp_xpath_search = '//*[@id="side"]/div[1]/div/div[2]/div[2]/div/div'

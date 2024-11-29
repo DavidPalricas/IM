@@ -268,7 +268,7 @@ nlu:
 
 - intent: share_video
   examples: |
-    - Partilha este vídeo com o [Henrique](user)
+    - Partilha este vídeo com o [Madeirense](user)
     - Envie este vídeo para o [Nuno](user)
     - Reencaminhe este vídeo para o [Cunha](user)
     - Comparti-lhe o vídeo com  a [Susana](user)
@@ -282,7 +282,8 @@ nlu:
 
 - intent: save_to_playlist
   examples: |
-   - Guarda este vídeo na playlist [Favoritos](playlist)
+   - Guarda este vídeo na playlist [Bangers](playlist)
+   - Guarde este vídeo na playlist [Favoritos](playlist), por favor
    - Quero guardar na playlist [Assistir mais tarde](playlist)
    - Adiciona a música à playlist [Depressed Songs](playlist)
    - Adicione o vídeo à playlist [destinos de viagem](playlist)
@@ -292,6 +293,7 @@ nlu:
    - Por favor coloque a música na playlist [Músicas de Natal](playlist)
    - Guarda este vídeo na playlist [prime youtube](playlist), se faz favor 
    - Adicione esta música à playlist [músicas de relaxamento](playlist), se faz favor
+
 
 - intent: activate_notifications
   examples: |
