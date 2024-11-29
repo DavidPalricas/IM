@@ -27,7 +27,6 @@ class Video:
         """
         self.confirmation = Confirmation(FusionAdd=f"https://{OUTPUT}/IM/USER1/SPEECH_ANSWER")
         self.is_short = is_short
-        self.muted = False
      
         self.speed =  1 if speed is None else speed
         self.driver = driver
@@ -289,7 +288,7 @@ class Video:
         try:
             # Locate the element containing the subtitles
             subtitles_element = '//*[@id="caption-window-1"]'
-            subtitles = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, subtitles_element)))
+            subtitles = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.XPATH, subtitles_element)))
             #print(f"Subtitles -----------: {subtitles.is_displayed()}")
             return subtitles.is_displayed()
         except Exception as e:
@@ -306,9 +305,9 @@ class Video:
                 - turn_on: a boolean that indicates if it is to turn on the subtitles or not.
         """
         if turn_on:
-            send_to_voice("Desativando as legendas")
-        else:
             send_to_voice("Ativando as legendas")
+        else:
+            send_to_voice("Desativando as legendas")
 
         self.youtube.send_keys('c')
 
@@ -322,7 +321,11 @@ class Video:
                 - send_to_voice: a function that sends a message to the user.
                 - intent: a string that represents the intent's name of the user.
         """
-        if self.muted:
+        volume_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-mute-button')]")
+                
+        title = volume_button.get_attribute("title")
+
+        if title == "Unmute (m)":
             if intent == "mute_video":
                 send_to_voice("O vídeo já está mudo")
             else:
@@ -342,13 +345,13 @@ class Video:
                 - send_to_voice: a function that sends a message to the user.
                 - mute: a boolean that indicates if it is to mute the video or not.
         """
+        
         if mute:
             send_to_voice("Desativando o som do vídeo")
         else:
             send_to_voice("Ativando o som do vídeo")
 
         self.youtube.send_keys('m')
-        self.muted = not self.muted
 
     def seek_forward_backward(self,send_to_voice,intent,entities):
         """
