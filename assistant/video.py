@@ -376,7 +376,7 @@ class Video:
                 - entities: a dictionary that contains the entities found in the user's message.
                 - forward: a boolean that indicates if it is to seek forward or backward the video.
         """
-        time, current_seconds = self.convert_time(entities,forward)
+        time, current_seconds = self.convert_time(entities,forward,send_to_voice)
 
         #print("timeeeeeeeeeeeeeeeeeeeeeeeee : "+str(time))
         # if time >= 36000: 
@@ -404,7 +404,7 @@ class Video:
             
         return None
 
-    def convert_time(self, entities, forward):
+    def convert_time(self, entities, forward,send_to_voice):
         """
             The method convert_time is responsible for converting the time to seconds.
 
@@ -418,9 +418,14 @@ class Video:
 
         time_units = ["segundos", "minutos", "horas"]
 
-        type_time = entities.split(" ")[1]
-        time = int(entities.split(" ")[0])
-
+        
+        try:
+            type_time = entities.split(" ")[1]
+            time_choosen = int(entities.split(" ")[0])
+        except:
+            send_to_voice("Erro ao avançar ou retroceder o vídeo")
+            return 0, 0
+        
         current_time, total_time = self.get_video_time()
         
         #print(f"current_time: {current_time}, total_time: {total_time}")
@@ -432,16 +437,19 @@ class Video:
 
         for i in range(len(time_units)):
             if type_time == time_units[i] or type_time == time_units[i][:-1]:
-                time_in_seconds = time * 60 ** i
+                time_in_seconds = time_choosen * 60 ** i
                 if forward:
                     new_time = current_seconds + time_in_seconds
-                    return min(new_time, total_seconds), current_seconds
+                    if new_time >= total_seconds:
+                        time.sleep(2)
+                        send_to_voice("O vídeo chegou ao fim")
+                    return min(new_time, total_seconds-1), current_seconds
                 else:
                     new_time = current_seconds - time_in_seconds
                     return max(new_time, 0), current_seconds
 
         #print(f"Time: {time}")
-        return time, current_seconds
+        return time_choosen, current_seconds
 
     def share_video(self,send_to_voice,entities,items_to_be_searched):
         """

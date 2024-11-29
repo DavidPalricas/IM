@@ -332,7 +332,7 @@ nlu:
 - intent: help
   examples: |
     - Ajuda
-    - Perciso de ajuda
+    - Preciso de ajuda
     - Ajuda-me
     - Pode me ajudar
     - Ajuda-me por favor

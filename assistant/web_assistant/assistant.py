@@ -163,7 +163,7 @@ class Assistant(WebAssistant):
         # Open YouTube search results page
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
         
-        time.sleep(2)
+        time.sleep(5)
 
         visible = EC.visibility_of_element_located
         self.wait.until(visible((By.ID, "video-title")))
