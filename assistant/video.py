@@ -48,7 +48,7 @@ class Video:
             self.youtube =self.driver.find_element("tag name", "body")
 
             # Pause video first
-            if not self.verify_video_playing(self.driver):
+            if not self.verify_video_playing(self.driver, self.is_short):
                 self.youtube.send_keys('k')
 
             #print(f"youtube: {self.youtube}")
@@ -149,7 +149,7 @@ class Video:
                 - intent: a string that represents the intent's name of the user.
             """
         
-        if self.verify_video_playing(self.driver):
+        if self.verify_video_playing(self.driver,self.is_short):
             send_to_voice("O vídeo está pausado, não é possível alterar a velocidade")
             return
          
