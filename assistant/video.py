@@ -91,7 +91,7 @@ class Video:
             video = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, video_element)))
             
             #print(f"Video -----------: {video.get_attribute('aria-label')}")
-            return video.get_attribute('aria-label') == "Pause"
+            return video.get_attribute('aria-label') == "Pause" or video.get_attribute('aria-label') == "Pausa"
         except Exception as e:
             print(f"Error while verifying video playing: {e}")
             return False
@@ -287,10 +287,9 @@ class Video:
         """
         try:
             # Locate the element containing the subtitles
-            subtitles_element = '//*[@id="caption-window-1"]'
-            subtitles = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.XPATH, subtitles_element)))
-            #print(f"Subtitles -----------: {subtitles.is_displayed()}")
-            return subtitles.is_displayed()
+            subtitles_element = driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-subtitles-button')]")
+
+            return subtitles_element.get_attribute("aria-pressed") == "true"
         except Exception as e:
             print(f"Error while verifying subtitles: {e}")
             return False
@@ -325,7 +324,7 @@ class Video:
                 
         title = volume_button.get_attribute("title")
 
-        if title == "Unmute (m)":
+        if title == "Unmute (m)" or title == "Reativar som (m)":
             if intent == "mute_video":
                 send_to_voice("O vídeo já está mudo")
             else:
