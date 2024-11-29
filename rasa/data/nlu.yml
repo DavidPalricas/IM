@@ -205,7 +205,7 @@ nlu:
 - intent: write_comment
   examples: |
      - Escreve [Este vídeo poderia explicar melhor o filme](comment)
-     - Esvreva nos comentários [Quero continuação](comment)
+     - Escreva nos comentários [Quero continuação](comment)
      - Digita [Adorei este vídeo](comment)
      - Comenta [Gostei muito deste vídeo](comment)
      - Escreva aí [incrível](comment)

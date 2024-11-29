@@ -328,6 +328,7 @@ class Assistant(WebAssistant):
         """
 
         scroll_to_comments = 0
+        old_position = 0
 
         while True:
             # To give time to the comment box to load
@@ -340,11 +341,12 @@ class Assistant(WebAssistant):
                 time.sleep(5)
                 break
 
-            except NoSuchElementException: 
+            except NoSuchElementException:
+                old_position = scroll_to_comments 
                 scroll_to_comments += 500
-                self.driver.execute_script(f"window.scrollTo(0,{scroll_to_comments});")
+                self.driver.execute_script(f"window.scrollTo({old_position},{scroll_to_comments});")
 
-                if scroll_to_comments > 1500:
+                if scroll_to_comments > 8000:
                     self.send_to_voice("Erro ao escrever o comentário, a caixa de comentários não foi encontrada ou os comentários estão desativados")
                     break
 
