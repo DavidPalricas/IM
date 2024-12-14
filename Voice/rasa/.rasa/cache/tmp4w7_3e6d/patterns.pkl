@@ -1,0 +1,26 @@
+[
+  {
+    "name": "comment",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  },
+  {
+    "name": "playlist",
+    "pattern": "[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+(\\s+[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+)*"
+  },
+  {
+    "name": "speed",
+    "pattern": "(0.25 | 0.5 | 0.75 | 1 | 1.25 | 1.5 | 1.75 | 2)"
+  },
+  {
+    "name": "time",
+    "pattern": "[0-9]+ (segundos|segundo|minutos|minuto|horas|hora)"
+  },
+  {
+    "name": "user",
+    "pattern": "[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+(\\s+[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+)*"
+  },
+  {
+    "name": "video",
+    "pattern": "[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+(\\s+[a-zA-Z0-9á-úÁ-Úà-ùÀ-Ùãẽõî]+)*"
+  }
+]

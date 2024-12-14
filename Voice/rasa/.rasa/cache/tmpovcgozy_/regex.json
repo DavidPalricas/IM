@@ -1,0 +1,6 @@
+[
+  {
+    "name": "time",
+    "pattern": "[0-9]+ (segundos|segundo|minutos|minuto|hora|horas)"
+  }
+]

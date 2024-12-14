@@ -1,0 +1,13 @@
+<!--This XML file contains the gestures of the database.-->
+<Gestures>
+  <Gesture>
+    <ID>0</ID>
+    <NAME>Dislike</NAME>
+    <SEMANTIC>Dislike</SEMANTIC>
+  </Gesture>
+  <Gesture>
+    <ID>1</ID>
+    <NAME>Like</NAME>
+    <SEMANTIC>Like</SEMANTIC>
+  </Gesture>
+</Gestures>

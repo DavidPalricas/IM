@@ -1,0 +1,54 @@
+[
+  {
+    "name": "comment",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  },
+  {
+    "name": "playlist",
+    "pattern": "(?<=playlist\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "time",
+    "pattern": "[0-9]+ (segundos|segundo|minutos|minuto|horas|hora)"
+  },
+  {
+    "name": "user",
+    "pattern": "(?<=a\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "user",
+    "pattern": "(?<=ao\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "user",
+    "pattern": "(?<=grupo\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "user",
+    "pattern": "(?<=o\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=encontra\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=encontre\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=música\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=pela\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=por\\s)(\\S+(?:\\s+\\S+)*)"
+  },
+  {
+    "name": "video",
+    "pattern": "(?<=vídeo\\s)(\\S+(?:\\s+\\S+)*)"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "comment",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  },
+  {
+    "name": "playlist",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  },
+  {
+    "name": "time",
+    "pattern": "[0-9]+ (segundos|segundo|minutos|minuto|horas|hora)"
+  },
+  {
+    "name": "user",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  },
+  {
+    "name": "video",
+    "pattern": "[a-zA-Z0-9]+(\\s*[a-zA-Z0-9]+)*$"
+  }
+]

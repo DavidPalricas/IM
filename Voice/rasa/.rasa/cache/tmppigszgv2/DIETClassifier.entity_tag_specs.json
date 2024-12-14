@@ -1,0 +1,52 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-comment",
+      "2": "I-comment",
+      "3": "L-comment",
+      "4": "U-comment",
+      "5": "B-playlist",
+      "6": "I-playlist",
+      "7": "L-playlist",
+      "8": "U-playlist",
+      "9": "B-time",
+      "10": "I-time",
+      "11": "L-time",
+      "12": "U-time",
+      "13": "B-user",
+      "14": "I-user",
+      "15": "L-user",
+      "16": "U-user",
+      "17": "B-video",
+      "18": "I-video",
+      "19": "L-video",
+      "20": "U-video",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-comment": 1,
+      "I-comment": 2,
+      "L-comment": 3,
+      "U-comment": 4,
+      "B-playlist": 5,
+      "I-playlist": 6,
+      "L-playlist": 7,
+      "U-playlist": 8,
+      "B-time": 9,
+      "I-time": 10,
+      "L-time": 11,
+      "U-time": 12,
+      "B-user": 13,
+      "I-user": 14,
+      "L-user": 15,
+      "U-user": 16,
+      "B-video": 17,
+      "I-video": 18,
+      "L-video": 19,
+      "U-video": 20,
+      "O": 0
+    },
+    "num_tags": 21
+  }
+]

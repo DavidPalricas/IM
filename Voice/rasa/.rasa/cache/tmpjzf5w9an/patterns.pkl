@@ -1,0 +1,14 @@
+[
+  {
+    "name": "time",
+    "pattern": "[0-9]+ (segundos|segundo|minutos|minuto|hora|horas)"
+  },
+  {
+    "name": "choose_item",
+    "pattern": "(\\bprimeiro\\b|\\b1º\\b|\\bsegundo\\b|\\b2º\\b|\\bterceiro\\b|\\b3º\\b)"
+  },
+  {
+    "name": "speed",
+    "pattern": "(\\b0,25\\b|\\b0,5\\b|\\b0,50\\b|\\b0,75\\b|\\b1\\b|\\b1,25\\b|\\b1,5\\b|\\b1,50\\b|\\b1,75\\b|\\b2\\b)"
+  }
+]
