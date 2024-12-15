@@ -685,9 +685,9 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao mostrar a ajuda")
 
     
-    def execute_action(self, nlu):
+    def speech_action(self, nlu):
         """
-        The execute_action method is responsible for executing the action based on the user's intent.
+        The speech_action method is responsible for executing the action based on the user's intent.
 
         Args:
             - nlu: a dictionary that contains the intent and entity of the user's message.
@@ -816,3 +816,17 @@ class Assistant(WebAssistant):
                  self.help()            
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
+
+    def gesture_action(self, gesture):
+        match gesture:
+            case "DISLIKE":
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para dar dislike")
+                else:
+                    self.video.dislike_video(self.send_to_voice)
+            
+            case "LIKE":
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para dar like")
+                else:
+                    self.video.like_video(self.send_to_voice)

@@ -7,15 +7,13 @@ from consts import HOST
 from web_assistant.assistant import Assistant
 from web_assistant.index import Index
 
-def nlu_extractor(message):
+def nlu_extractor(message, assistant):
   """
   The nlu_extractor exctracts the nlu from the websocket's message
   
   Args:
     message (str): The message received from the websocket
 
-  Returns:
-    dict: The nlu extracted from the message(contains the user's intent, entity and the entity's confidence)
   """ 
    # Remove the <comand> tag
   comand_tag = ET.fromstring(message).findall(".//command")
@@ -23,16 +21,24 @@ def nlu_extractor(message):
    # Removes the text from the comand tag 
   message = json.loads(comand_tag.pop(0).text)
 
-  nlu = json.loads(message["nlu"])
+  modality = message["recognized"][0]
 
-  print(f"nlu: {nlu}")
+  print(f"modalityyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: {modality}")
 
-  if "entities" not in nlu or len(nlu["entities"]) == 0:
-    return {"intent": nlu["intent"] ["name"]}
+  if modality == "SPEECH":
+    nlu = json.loads(message["nlu"])
+
+    print(f"nlu: {nlu}")
+
+    if "entities" not in nlu or len(nlu["entities"]) == 0:
+      return {"intent": nlu["intent"] ["name"]}
+    
+    confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
+    
+    return assistant.speech_action({"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidence})
   
-  confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
-  
-  return {"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidence}
+  elif modality == "GESTURES":
+    return assistant.gesture_action(message["recognized"][1])
 
 
 def ignore_certificates():
@@ -68,12 +74,12 @@ async def main():
           try:
             print("Waiting for messages")
             message = await websocket.recv()
+            print(f"Message received APPPPPPPP.PY -----------: {message}")
             
             if message not in ["OK","RENEW"]:  
-              nlu = nlu_extractor(message)
+              # mudar nome, depois
+              nlu = nlu_extractor(message, assistant)
               print(f"Message received:  {nlu}")
-
-              assistant.execute_action(nlu)
                       
           except Exception as ex:
                 print(f"Exception {ex}")

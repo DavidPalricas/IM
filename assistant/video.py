@@ -561,3 +561,26 @@ class Video:
         except Exception as e:
             return True
         
+
+    def dislike_video(self,send_to_voice):
+        """
+            The method dislike_video is responsible for disliking a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Descurtindo o vídeo")
+        # logica
+
+
+    def like_video(self,send_to_voice):
+        """
+            The method like_video is responsible for liking a video on YouTube.
+            The method also sends a message to the user to inform the action.
+
+            Args:
+                - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Curtindo o vídeo")
+        # logica
