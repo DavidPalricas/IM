@@ -7,18 +7,37 @@ pip install -r requirements.txt
 # How to run
  ## First Step
   Open a `terminal` in this directory and start the `mmiframework` with this commands:
+  
+  **VOICE Project:**
    ```ps
-   cd .\mmiframeworkV2\; ./start.bat
+   cd .\Voice\mmiframeworkV2\; ./start.bat
+   ```
+
+  **GESTURES Project:**
+   ```ps
+   cd .\Gestures\IM\; ./start.bat
    ```
 
    ## Second Step
    Open another `terminal` in this directory and star the `Fusion Engine` with the following command:
+
+  **VOICE Project:**
+
    ```ps
-   cd .\FusionEngine\; ./start.bat
+   cd .\Voice\FusionEngine\; ./start.bat
+   ``` 
+
+  **GESTURES Project:**
+
+   ```ps
+   cd .\Gestures\FusionEngine\; ./start.bat
    ``` 
 
    ## Third Step
-   Open a `Anacond Prompt (Miniconda3)` and execute this command:
+  **VOICE Project:**
+
+  Open a `Anacond Prompt (Miniconda3)` and execute this command:
+
    ```bat
     activate rasa-env &&  cd .\rasa\
   ```
@@ -32,11 +51,25 @@ pip install -r requirements.txt
   rasa run --enable-api -m .\models\ --cors "*"
   ```
 
+  **GESTURES Project:**
+   ```bat
+    cd .\Gestures\GenericGesturesModality-2023\; .\GenericGesturesModality.exe
+  ```
+
+  Proper Kinect interaction requires careful positioning of the user's **upper body**. The optimal capture zone spans a **distance between 1.5 and 2 meters from the sensor**. Within the application's GenericGesturesModality interface, users can monitor real-time tracking and gesture recognition. This interface also provides detailed feedback, including the specific gesture detected and its recognition confidence level.If a black window appears within the GenericGesturesModality, check that the Kinect is correctly connected.
+
   ## Fourth Step
   To start the `web app server` open a `terminal` in this folder and execute the following command
-  ````ps
-   cd .\WebAppAssistantV2\;   ./start_web_app.bat
-  ````
+
+  **VOICE Project:**
+  ```ps
+   cd .\Voice\WebAppAssistantV2\;   ./start_web_app.bat
+  ```
+
+  **GESTURES Project:**	
+  ```ps
+   cd .\Gestures\WebAppAssistantV2\;   ./start_web_app.bat
+  ```
 
   ## Fifth Step
    To run our `assistant` open a `terminal` in this folder and execute the next command
