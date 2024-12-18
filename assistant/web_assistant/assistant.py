@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementClickInterceptedException
 from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
 from web_app_conextions_files.index_connections import TTS, Confirmation
@@ -820,13 +820,209 @@ class Assistant(WebAssistant):
     def gesture_action(self, gesture):
         match gesture:
             case "DISLIKE":
-                if self.video is None:
-                    self.send_to_voice("Não há nenhum vídeo para dar dislike")
-                else:
-                    self.video.dislike_video(self.send_to_voice)
-            
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para dar dislike")
+                #else:
+                #    self.video.dislike_video(self.send_to_voice)
+                self.dislike_video(self.send_to_voice)
+
             case "LIKE":
-                if self.video is None:
-                    self.send_to_voice("Não há nenhum vídeo para dar like")
-                else:
-                    self.video.like_video(self.send_to_voice)
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para dar like")
+                #else:
+                #    self.video.like_video(self.send_to_voice)
+                self.like_video(self.send_to_voice)
+
+            case "FULLSCREEN":
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
+                #else:
+                #    self.video.fullscreen(self.send_to_voice)
+                self.fullscreen(self.send_to_voice)
+
+            case "NORMALSCREEN":
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para sair da tela cheia")
+                #else:
+                #    self.video.normalscreen(self.send_to_voice)
+                self.normalscreen(self.send_to_voice)
+
+            case "NEXTVIDEO":
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para ir para o próximo")
+                #else:
+                #    self.video.next_video(self.send_to_voice)
+                self.next_video(self.send_to_voice)
+
+            case "PREVIOUSVIDEO":
+                #if self.video is None:
+                #    self.send_to_voice("Não há nenhum vídeo para voltar para o anterior")
+                #else:
+                #    self.video.previous_video(self.send_to_voice)
+                self.previous_video(self.send_to_voice)
+
+            case "SLIDEDOWN":
+                self.slide_down(self.send_to_voice)
+            
+            case "SLIDEUP":
+                self.slide_up(self.send_to_voice)
+
+            case _:
+                self.send_to_voice("Desculpe, não entendi o que você disse")
+
+
+    def dislike_video(self, send_to_voice):
+        """
+        The method dislike_video is responsible for disliking a video on YouTube.
+        The method also sends a message to the user to inform the action.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        try:
+            # Locate the dislike button using XPath
+            dislike_button = self.driver.find_element(By.XPATH, "//button[@title='I dislike this']")
+            if "aria-pressed" in dislike_button.get_attribute("outerHTML"):
+                if dislike_button.get_attribute("aria-pressed") == "true":
+                    send_to_voice("O vídeo já foi descurtido.")
+                    return
+            ActionChains(self.driver).move_to_element(dislike_button).perform()
+            dislike_button.click()
+            send_to_voice("Vídeo descurtido com sucesso.")
+        except NoSuchElementException:
+            send_to_voice("Não foi possível encontrar o botão de descurtir.")
+        except ElementClickInterceptedException:
+            send_to_voice("O botão de descurtir não pôde ser clicado.")
+
+    def like_video(self, send_to_voice):
+        """
+        The method like_video is responsible for liking a video on YouTube.
+        The method also sends a message to the user to inform the action.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        try:
+            # Locate the like button using XPath
+            like_button = self.driver.find_element(By.XPATH, "//button[@title='I like this']")
+            if "aria-pressed" in like_button.get_attribute("outerHTML"):
+                if like_button.get_attribute("aria-pressed") == "true":
+                    send_to_voice("O vídeo já foi curtido.")
+                    return
+            ActionChains(self.driver).move_to_element(like_button).perform()
+            like_button.click()
+            send_to_voice("Vídeo curtido com sucesso.")
+        except NoSuchElementException:
+            send_to_voice("Não foi possível encontrar o botão de curtir.")
+        except ElementClickInterceptedException:
+            send_to_voice("O botão de curtir não pôde ser clicado.")
+
+    def fullscreen(self, send_to_voice):
+        """
+        Toggles fullscreen mode on the video.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Entrando no modo tela cheia.")
+        try:
+            fullscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
+            aria_label = fullscreen_button.get_attribute("aria-label")
+            if aria_label == "Exit full screen (f)":
+                send_to_voice("O vídeo já está em tela cheia.")
+                return
+            ActionChains(self.driver).move_to_element(fullscreen_button).perform()
+            fullscreen_button.click()
+            send_to_voice("Modo tela cheia ativado.")
+        except NoSuchElementException:
+            send_to_voice("Não foi possível encontrar o botão de tela cheia.")
+
+    def normalscreen(self, send_to_voice):
+        """
+        Exits fullscreen mode on the video.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Saindo do modo tela cheia.")
+        try:
+            normalscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
+            aria_label = normalscreen_button.get_attribute("aria-label")
+            if aria_label == "Full screen (f)":
+                send_to_voice("O vídeo já está fora do modo tela cheia.")
+                return
+            ActionChains(self.driver).move_to_element(normalscreen_button).perform()
+            normalscreen_button.click()
+            send_to_voice("Modo tela cheia desativado.")
+        except NoSuchElementException:
+            send_to_voice("Não foi possível encontrar o botão para sair da tela cheia.")
+
+    def next_video(self, send_to_voice):
+        """
+        Skips to the next video.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Indo para o próximo vídeo.")
+        try:
+            next_button = self.driver.find_element(By.XPATH, "//a[contains(@class, 'ytp-next-button')]")
+            ActionChains(self.driver).move_to_element(next_button).perform()
+            next_button.click()
+            send_to_voice("Próximo vídeo iniciado.")
+        except NoSuchElementException:
+            send_to_voice("Não foi possível encontrar o botão de próximo vídeo.")
+
+    def previous_video(self, send_to_voice):
+        """
+        Goes back to the previous video by navigating to the previous browser page.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Voltando para o vídeo anterior.")
+        try:
+            self.driver.execute_script("window.history.back();")
+            send_to_voice("Vídeo anterior iniciado.")
+        except Exception:
+            send_to_voice("Não foi possível retornar ao vídeo anterior.")
+
+    def slide_down(self, send_to_voice):
+        """
+        Scrolls down the page.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Rolando a página para baixo.")
+        self.driver.execute_script("window.scrollBy(0, 50);")      # depois mudamos conforme for preciso..
+
+    def slide_up(self, send_to_voice):
+        """
+        Scrolls up the page.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Rolando a página para cima.")
+        self.driver.execute_script("window.scrollBy(0, -50);")      # depois mudamos conforme for preciso..
+
+    def volume_down(self, send_to_voice):
+        """
+        Lowers the video volume.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Diminuindo o volume do vídeo.")
+        self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ARROW_DOWN)
+
+    def volume_up(self, send_to_voice):
+        """
+        Increases the video volume.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+        """
+        send_to_voice("Aumentando o volume do vídeo.")
+        self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ARROW_UP)
