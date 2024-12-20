@@ -48,6 +48,7 @@ class Assistant(WebAssistant):
 
         self.message_to_be_sent = ""
 
+
         self.initialize_assistant()
       
     def chrome_config(self):
@@ -833,41 +834,48 @@ class Assistant(WebAssistant):
                 #    self.video.like_video(self.send_to_voice)
                 self.like_video(self.send_to_voice)
 
-            case "FULLSCREEN":
+            case "FULLS":
                 #if self.video is None:
                 #    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
                 #else:
                 #    self.video.fullscreen(self.send_to_voice)
                 self.fullscreen(self.send_to_voice)
 
-            case "NORMALSCREEN":
+            case "NORMALS":
                 #if self.video is None:
                 #    self.send_to_voice("Não há nenhum vídeo para sair da tela cheia")
                 #else:
                 #    self.video.normalscreen(self.send_to_voice)
                 self.normalscreen(self.send_to_voice)
 
-            case "NEXTVIDEO":
+            case "NEXTV":
                 #if self.video is None:
                 #    self.send_to_voice("Não há nenhum vídeo para ir para o próximo")
                 #else:
                 #    self.video.next_video(self.send_to_voice)
                 self.next_video(self.send_to_voice)
 
-            case "PREVIOUSVIDEO":
+            case "PREVIOUSV":
                 #if self.video is None:
                 #    self.send_to_voice("Não há nenhum vídeo para voltar para o anterior")
                 #else:
                 #    self.video.previous_video(self.send_to_voice)
                 self.previous_video(self.send_to_voice)
 
-            case "SLIDEDOWN":
+            case "SLIDED":
                 self.slide_down(self.send_to_voice)
             
             case "SLIDEUP":
                 self.slide_up(self.send_to_voice)
 
+            case "VOLUMEU":
+                self.volume_up(self.send_to_voice)
+
+            case "VOLUMED":
+                self.volume_down(self.send_to_voice)
             case _:
+                print(f"Gesture:", gesture)
+                print(gesture)
                 self.send_to_voice("Desculpe, não entendi o que você disse")
 
 
@@ -881,16 +889,21 @@ class Assistant(WebAssistant):
         """
         try:
             # Locate the dislike button using XPath
-            dislike_button = self.driver.find_element(By.XPATH, "//button[@title='I dislike this']")
+            dislike_button = self.driver.find_element(By.XPATH, "//button[@title='I dislike this' or @title='Não gosto disto']")
+            
+
             if "aria-pressed" in dislike_button.get_attribute("outerHTML"):
                 if dislike_button.get_attribute("aria-pressed") == "true":
-                    send_to_voice("O vídeo já foi descurtido.")
+                    send_to_voice("Já deu dislike no vídeo.")
                     return
+                
             ActionChains(self.driver).move_to_element(dislike_button).perform()
             dislike_button.click()
-            send_to_voice("Vídeo descurtido com sucesso.")
+            send_to_voice("Dislike dado no vídeo.")
+
         except NoSuchElementException:
-            send_to_voice("Não foi possível encontrar o botão de descurtir.")
+            send_to_voice("Não foi possível encontrar o botão de dislike.")
+
         except ElementClickInterceptedException:
             send_to_voice("O botão de descurtir não pôde ser clicado.")
 
@@ -901,21 +914,32 @@ class Assistant(WebAssistant):
 
         Args:
             - send_to_voice: a function that sends a message to the user.
+            
         """
-        try:
-            # Locate the like button using XPath
-            like_button = self.driver.find_element(By.XPATH, "//button[@title='I like this']")
-            if "aria-pressed" in like_button.get_attribute("outerHTML"):
-                if like_button.get_attribute("aria-pressed") == "true":
-                    send_to_voice("O vídeo já foi curtido.")
-                    return
-            ActionChains(self.driver).move_to_element(like_button).perform()
-            like_button.click()
-            send_to_voice("Vídeo curtido com sucesso.")
+        try :
+
+            video_liked = self.driver.find_element(By.XPATH, "Unlike" or '@title= "Anular \"gosto\""')
+
+            if video_liked:
+                send_to_voice("Já deu like neste vídeo.")
+                return
+                                                                                          
         except NoSuchElementException:
-            send_to_voice("Não foi possível encontrar o botão de curtir.")
-        except ElementClickInterceptedException:
-            send_to_voice("O botão de curtir não pôde ser clicado.")
+            try:
+                # Locate the like button using XPath
+                like_button = self.driver.find_element(By.XPATH, "//button[@title='I like this' or @title='Gosto disto']")
+
+                if "aria-pressed" in like_button.get_attribute("outerHTML"):
+                    if like_button.get_attribute("aria-pressed") == "true":
+                        send_to_voice("O vídeo já foi curtido.")
+                        return
+                ActionChains(self.driver).move_to_element(like_button).perform()
+                like_button.click()
+                send_to_voice("Like dado no vídeo.")
+            except NoSuchElementException:
+                send_to_voice("Não foi possível encontrar o botão de like.")
+            except ElementClickInterceptedException:
+                send_to_voice("O botão de like não pôde ser clicado.")
 
     def fullscreen(self, send_to_voice):
         """
@@ -928,9 +952,11 @@ class Assistant(WebAssistant):
         try:
             fullscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
             aria_label = fullscreen_button.get_attribute("aria-label")
-            if aria_label == "Exit full screen (f)":
+
+            if aria_label in  ["Exit full screen (f)", "Sair do ecrã inteiro (f)"]:
                 send_to_voice("O vídeo já está em tela cheia.")
                 return
+            
             ActionChains(self.driver).move_to_element(fullscreen_button).perform()
             fullscreen_button.click()
             send_to_voice("Modo tela cheia ativado.")
@@ -948,9 +974,11 @@ class Assistant(WebAssistant):
         try:
             normalscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
             aria_label = normalscreen_button.get_attribute("aria-label")
-            if aria_label == "Full screen (f)":
+
+            if aria_label in ["Full screen (f)", "Ecrã inteiro (f)"]:
                 send_to_voice("O vídeo já está fora do modo tela cheia.")
                 return
+            
             ActionChains(self.driver).move_to_element(normalscreen_button).perform()
             normalscreen_button.click()
             send_to_voice("Modo tela cheia desativado.")
@@ -994,8 +1022,8 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
-        send_to_voice("Rolando a página para baixo.")
-        self.driver.execute_script("window.scrollBy(0, 50);")      # depois mudamos conforme for preciso..
+        send_to_voice("Scroll para baixo efetuado com sucesso.")
+        self.driver.execute_script("window.scrollBy(0, 200);")      # depois mudamos conforme for preciso..
 
     def slide_up(self, send_to_voice):
         """
@@ -1004,8 +1032,8 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
-        send_to_voice("Rolando a página para cima.")
-        self.driver.execute_script("window.scrollBy(0, -50);")      # depois mudamos conforme for preciso..
+        send_to_voice("Scroll para cima efetuado com sucesso.")
+        self.driver.execute_script("window.scrollBy(0, -200);")      # depois mudamos conforme for preciso..
 
     def volume_down(self, send_to_voice):
         """
@@ -1014,8 +1042,17 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
+
+        player = self.driver.find_element(By.ID, 'movie_player')
+        player.send_keys(Keys.SPACE) 
+
+        player.send_keys(Keys.ARROW_DOWN)
+        player.send_keys(Keys.SPACE)
+
+        send_to_voice("Aumentando o volume do vídeo.")
+
         send_to_voice("Diminuindo o volume do vídeo.")
-        self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ARROW_DOWN)
+    
 
     def volume_up(self, send_to_voice):
         """
@@ -1024,5 +1061,11 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
+
+        player = self.driver.find_element(By.ID, 'movie_player')
+        player.send_keys(Keys.SPACE) 
+
+        player.send_keys(Keys.ARROW_UP)
+        player.send_keys(Keys.SPACE)
+
         send_to_voice("Aumentando o volume do vídeo.")
-        self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ARROW_UP)
