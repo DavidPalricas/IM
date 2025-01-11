@@ -957,7 +957,6 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
-        send_to_voice("Entrando no modo tela cheia.")
         try:
             fullscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
             aria_label = fullscreen_button.get_attribute("aria-label")
@@ -979,7 +978,6 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
-        send_to_voice("Saindo do modo tela cheia.")
         try:
             normalscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
             aria_label = normalscreen_button.get_attribute("aria-label")
