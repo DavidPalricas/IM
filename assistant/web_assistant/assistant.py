@@ -1076,3 +1076,10 @@ class Assistant(WebAssistant):
         player.send_keys(Keys.SPACE)
 
         send_to_voice("Aumentando o volume do vídeo.")
+
+    def fusion_action(self, command, commands):
+        """
+        The fusion_action method is responsible for executing the action based on the user's command.
+        The method will check if the command is a gesture or a speech command, and call the right method to execute the action.
+        """
+        pass
