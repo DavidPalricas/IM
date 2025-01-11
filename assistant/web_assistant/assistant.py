@@ -642,7 +642,12 @@ class Assistant(WebAssistant):
 
             with open(file_path, "r", encoding = "utf-8") as file:
                 message = json.load(file)
-                self.send_to_voice(message[intent].format(entity = entity))
+                
+                if entity is None:
+                    self.send_to_voice(message[intent])
+                else:
+                    self.send_to_voice(message[intent].format(entity = entity))
+            
 
             self.confirmation.confirm()
 
@@ -709,7 +714,11 @@ class Assistant(WebAssistant):
                 self.skip_ad()
 
             case "shutdown_assistant":
-                self.shutdown()
+                if self.intent_to_be_confirmed  == {"intent":"shutdown_assistant"}:
+                    self.shutdown()
+                else:
+                    self.intent_to_be_confirmed = {"intent":"shutdown_assistant"}
+                    self.ask_confirmation(nlu["intent"], None)
 
             case "pause_video" | "play_video":
                 if self.video is None:
@@ -803,7 +812,7 @@ class Assistant(WebAssistant):
                     if "confidence" in self.intent_to_be_confirmed:
                         self.intent_to_be_confirmed["confidence"] = 100
 
-                    self.execute_action(self.intent_to_be_confirmed)
+                    self.speech_action(self.intent_to_be_confirmed)
                     self.intent_to_be_confirmed = None
 
             case "deny":
@@ -959,7 +968,7 @@ class Assistant(WebAssistant):
             
             ActionChains(self.driver).move_to_element(fullscreen_button).perform()
             fullscreen_button.click()
-            send_to_voice("Modo tela cheia ativado.")
+          
         except NoSuchElementException:
             send_to_voice("Não foi possível encontrar o botão de tela cheia.")
 
@@ -981,7 +990,7 @@ class Assistant(WebAssistant):
             
             ActionChains(self.driver).move_to_element(normalscreen_button).perform()
             normalscreen_button.click()
-            send_to_voice("Modo tela cheia desativado.")
+         
         except NoSuchElementException:
             send_to_voice("Não foi possível encontrar o botão para sair da tela cheia.")
 

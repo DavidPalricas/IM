@@ -1,13 +1,29 @@
-Segue-se a lista das minhas funcionalidades :
-Pesquisa de vídeos
+Aqui estão as funcionalidades que posso realizar e como utilizá-las:
+
+Pesquisar vídeos
+O que eu faço: Procuro vídeos baseados no tema solicitado.
+Exemplo: "Procure vídeos sobre culinária italiana."
+
 Reproduzir ou Parar um vídeo
-Ativar ou Desativar as legendas de um vídeo
+O que eu faço: Reproduzo ou paro o vídeo que você selecionou.
+Exemplo: "Reproduza o vídeo sobre esportes." ou "Pause o vídeo atual."
+
+Ativar ou Desativar legendas de um vídeo
+O que eu faço: Ativo ou desativo as legendas do vídeo em reprodução.
+Exemplo: "Ative as legendas deste vídeo." ou "Desative as legendas."
+
 Alterar a velocidade de reprodução de um vídeo
+O que eu faço: Ajusto a velocidade do vídeo, mais rápido ou mais devagar.
+Exemplo: "Aumente a velocidade para 1.5x." ou "Reduza a velocidade para 0.75x."
+
 Subscrever ou cancelar a inscrição do canal do vídeo selecionado
+O que eu faço: Inscrevo você no canal ou cancelo sua inscrição.
+Exemplo: "Inscreva-me no canal deste vídeo." ou "Cancele a minha inscrição deste canal."
+
 Silenciar ou ligar o som de um vídeo
+O que eu faço: Controlo o som do vídeo.
+Exemplo: "Silencie o vídeo." ou "Ligue o som novamente."
+
 Guardar um vídeo numa playlist
-Escrever comentários acerca do vídeo selecionado
-Partilhar um vídeo por Whatsapp
-Avançar ou recuar num vídeo
-Desligar me
-Comando de ajuda para mostrar as minhas funcionalidades
+O que eu faço: Adiciono o vídeo à playlist que você escolher.
+Exemplo: "Adicione este vídeo à minha playlist de favoritos."

@@ -31,7 +31,7 @@ def nlu_extractor(message, assistant):
     print(f"nlu: {nlu}")
 
     if "entities" not in nlu or len(nlu["entities"]) == 0:
-      return {"intent": nlu["intent"] ["name"]}
+      return assistant.speech_action({"intent": nlu["intent"] ["name"]})
     
     confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
     
@@ -55,7 +55,7 @@ async def main():
   """
    The main function is responsible for starting the assistant, and make the conection to the WebApp's websocket
    It also is responsible for receiving messages and calling the nlu_extractor function to extract the nlu from the message
-   After that, the function calls the assistant's execute_action method to execute the action based on the nlu
+   After that, the function calls the assistant's speech action method to execute the voice action based on the nlu
   """
   # Opens the html index file, the variable is not used, but it is necessary to open the file
   index = Index()
@@ -76,7 +76,7 @@ async def main():
             message = await websocket.recv()
             print(f"Message received APPPPPPPP.PY -----------: {message}")
             
-            if message not in ["OK","RENEW"]:  
+            if message not in ["OK","RENEW"] or message is not None:  
               # mudar nome, depois
               nlu = nlu_extractor(message, assistant)
               print(f"Message received:  {nlu}")
