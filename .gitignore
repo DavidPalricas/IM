@@ -161,8 +161,14 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-rasa/.rasa/
+Voice/rasa/.rasa/
 
-actions/__pycache__/
+Voice/rasa/actions/__pycache__/
 
-rasa/models/
+Voice/rasa/models/
+
+Fusion/rasaDemo/.rasa/
+
+Fusion/rasaDemo/actions/__pycache__/
+
+Fusion/rasaDemo/models/

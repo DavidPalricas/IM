@@ -331,6 +331,120 @@ nlu:
     - Desliga as notificações
     - Quero desligar as notificações
 
+- intent: dislike
+  examples: |
+    - Não gostei
+    - Não gostei do vídeo
+    - Não gostei do vídeo
+
+- intent: like
+  examples: |
+    - Gostei
+    - Gostei do vídeo
+    - Gostei do vídeo
+
+- intent: previousv
+  examples: |
+    - Anterior
+    - Anterior por favor
+    - Volta atrás
+    - Volta atrás por favor
+    - Retrocede
+    - Retrocede por favor
+    - Volta
+    - Volta por favor
+    - Anterior vídeo
+    - Anterior vídeo por favor
+
+- intent: nextv
+  examples: |
+    - Seguinte
+    - Seguinte por favor
+    - Próximo
+    - Próximo por favor
+    - Avança
+    - Avança por favor
+    - Próximo vídeo
+    - Próximo vídeo por favor
+
+- intent: volumeu
+  examples: |
+    - Aumenta o volume
+    - Aumenta o volume por favor
+    - Aumenta o som
+    - Aumenta o som por favor
+    - Aumenta o volume do vídeo
+    - Aumenta o volume do vídeo por favor
+    - Aumenta o som do vídeo
+    - Aumenta o som do vídeo por favor
+    - Aumenta o volume, por favor
+    - Aumenta o som, por favor
+    - Aumenta o volume do vídeo, por favor
+    - Aumenta o som do vídeo, por favor
+
+- intent: volumed
+  examples: |
+    - Diminui o volume
+    - Diminui o volume por favor
+    - Diminui o som
+    - Diminui o som por favor
+    - Diminui o volume do vídeo
+    - Diminui o volume do vídeo por favor
+    - Diminui o som do vídeo
+    - Diminui o som do vídeo por favor
+    - Diminui o volume, por favor
+    - Diminui o som, por favor
+    - Diminui o volume do vídeo, por favor
+    - Diminui o som do vídeo, por favor
+
+- intent: fulls
+  examples: |
+    - Ecrã inteiro
+    - Ecrã inteiro por favor
+    - Ecrã cheio
+    - Ecrã cheio por favor
+    - Ecrã completo
+    - Ecrã completo por favor
+    - Ecrã total
+    - Ecrã total por favor
+    - Ecrã inteiro do vídeo
+    - Ecrã inteiro do vídeo por favor
+    - Ecrã cheio do vídeo
+    - Ecrã cheio do vídeo por favor
+    - Ecrã completo do vídeo
+    - Ecrã completo do vídeo por favor
+    - Ecrã total do vídeo
+    - Ecrã total do vídeo por favor
+
+- intent: normals
+  examples: |
+    - Ecrã normal
+    - Ecrã normal por favor
+    - Ecrã normal do vídeo
+    - Ecrã normal do vídeo por favor
+    - Ecrã normal, por favor
+    - Ecrã normal do vídeo, por favor
+
+- intent: slideup
+  examples: |
+    - Desliza para cima
+    - Desliza para cima por favor
+    - Desliza para cima do vídeo
+    - Desliza para cima do vídeo por favor
+    - Desliza para cima, por favor
+    - Desliza para cima do vídeo, por favor
+    - Dá scroll para cima
+
+- intent: slided
+  examples: |
+    - Desliza para baixo
+    - Desliza para baixo por favor
+    - Desliza para baixo do vídeo
+    - Desliza para baixo do vídeo por favor
+    - Desliza para baixo, por favor
+    - Desliza para baixo do vídeo, por favor
+    - Dá scroll para baixo
+
 - intent: help
   examples: |
     - Ajuda

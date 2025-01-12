@@ -41,7 +41,7 @@ def nlu_extractor(message, assistant):
     return assistant.gesture_action(message["recognized"][1])
   
   elif modality == "FUSION":
-    return assistant.fusion_action(command["recognized"][1:], commands)
+    return assistant.fusion_action(message["recognized"][1:], message)
 
 
 def ignore_certificates():
