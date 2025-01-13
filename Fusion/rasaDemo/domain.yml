@@ -24,10 +24,6 @@ intents:
 - mantain_notifications
 - desactivate_notifications
 - choose_item
-- dislike
-- like
-- previousv
-- nextv
 - volumeu
 - volumed
 - fulls
@@ -168,18 +164,6 @@ responses:
 
   utter_unsubscribe_channel:
   - text: Cancelado a inscrição do canal 
-
-  utter_like:
-  - text: Gostei do video
-
-  utter_dislike:
-  - text: Não gostei do video
-
-  utter_previousv:
-  - text: Video anterior
-
-  utter_nextv:
-  - text: Próximo video
 
   utter_volumeu:
   - text: Aumentando o volume

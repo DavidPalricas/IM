@@ -823,26 +823,25 @@ class Assistant(WebAssistant):
                      self.send_to_voice("Peço desculpa pela confusão")
 
             case "help":
-                 self.help()            
+                 self.help()   
+
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
 
     def gesture_action(self, gesture):
         match gesture:
             case "DISLIKE":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para dar dislike")
-                #else:
-                #    self.video.dislike_video(self.send_to_voice)
-                self.dislike_video(self.send_to_voice)
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para dar dislike")
+                else:
+                    self.video.dislike_video(self.send_to_voice)
 
             case "LIKE":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para dar like")
-                #else:
-                #    self.video.like_video(self.send_to_voice)
-                self.like_video(self.send_to_voice)
-
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para dar like")
+                else:
+                    self.video.like_video(self.send_to_voice)
+         
             case "FULLS":
                 #if self.video is None:
                 #    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
@@ -1077,9 +1076,15 @@ class Assistant(WebAssistant):
 
         send_to_voice("Aumentando o volume do vídeo.")
 
-    def fusion_action(self, command, commands):
+    def fusion_action(self,recognized_message, message):
         """
         The fusion_action method is responsible for executing the action based on the user's command.
         The method will check if the command is a gesture or a speech command, and call the right method to execute the action.
         """
+
+
+        print(f"Recognized message: {recognized_message}")
+        print(f"Message: {message}")
+
+
         pass

@@ -8,12 +8,8 @@ import scxmlgen.interfaces.IModality;
 
 public enum Speech implements IModality{  
 
-	DISLIKE("[SPEECH][DISLIKE]", 0),
-	LIKE("[SPEECH][LIKE]", 0),
 	FULLSCREEN("[SPEECH][FULLS]",0),
 	NORMALSCREEN("[SPEECH][NORMALS]",0),
-	NEXTVIDEO("[SPEECH][NEXTV]",0),
-	PREVIOUSVIDEO("[SPEECH][PREVIOUSV]",0),
 	SLIDEDOWN("[SPEECH][SLIDED]",0),
 	SLIDEUP("[SPEECH][SLIDEUP]",0),
 	VOLUMEUP("[SPEECH][VOLUMEU]",0),

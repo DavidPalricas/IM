@@ -449,12 +449,27 @@ InitializeKWS();
     //         setValue(JSON.stringify(result))));
     // }
 
-    var message = JSON.stringify(data);
-      var messaget = btoa(unescape(encodeURIComponent(final_transcript)));
-      var result = { "recognized" : ["SPEECH", "SPEECHIN", "APP"], "text": messaget, "nlu": message };
-      mmiCli_1.sendToIM(new LifeCycleEvent("SPEECHIN", "IM", "text-1", "ctx-1").
-            doExtensionNotification(new EMMA("text-", "text", "command", 1, 0).
-            setValue(JSON.stringify(result))));
+    var messaget = btoa(unescape(encodeURIComponent(final_transcript)));
+    var result = { "recognized": ["SPEECH"], "text": messaget, "nlu": JSON.stringify(data) };
+    console.log("result.......: ", result);
+
+    const intentMap = {
+      "fulls": "FULLS",
+      "normals": "NORMALS",
+      "slided": "SLIDED",
+      "slideu": "SLIDEUP",
+      "volumeu": "VOLUMEUP",
+      "volumed": "VOLUMEDOWN"
+    };
+    console.log("result2.......: ", result);
+    if (intentMap[data.intent.name]) {
+      result.recognized.push(intentMap[data.intent.name]);
+    }
+    console.log("result3.......: ", result);
+
+    mmiCli_1.sendToIM(new LifeCycleEvent("SPEECHIN", "IM", "text-1", "ctx-1").
+                    doExtensionNotification(new EMMA("text-", "text", "command", 1, 0).
+                        setValue(JSON.stringify(result))));
   });
 
   /*

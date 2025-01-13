@@ -102,26 +102,6 @@ rules:
   - intent: unsubscribe_channel
   - action: utter_unsubscribe_channel
 
-- rule: like
-  steps:
-  - intent: like
-  - action: utter_like
-
-- rule: dislike
-  steps:
-  - intent: dislike
-  - action: utter_dislike
-
-- rule: previousv
-  steps:
-  - intent: previousv
-  - action: utter_previousv
-
-- rule: nextv
-  steps:
-  - intent: nextv
-  - action: utter_nextv
-
 - rule: volumeu
   steps:
   - intent: volumeu

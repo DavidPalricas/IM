@@ -25,14 +25,11 @@ public class GenFusionSCXML {
 
     FusionGenerator fg = new FusionGenerator();
   
-    fg.Redundancy(Touch.DISLIKE, Speech.DISLIKE, Output.DISLIKE);
-    fg.Redundancy(Touch.LIKE, Speech.LIKE, Output.LIKE);
     fg.Redundancy(Touch.FULLSCREEN, Speech.FULLSCREEN, Output.FULLSCREEN);
     fg.Redundancy(Touch.NORMALSCREEN, Speech.NORMALSCREEN, Output.NORMALSCREEN);
-    fg.Redundancy(Touch.NEXTVIDEO, Speech.NEXTVIDEO, Output.NEXTVIDEO);
-    fg.Redundancy(Touch.PREVIOUSVIDEO, Speech.PREVIOUSVIDEO, Output.PREVIOUSVIDEO);
     fg.Redundancy(Touch.SLIDEDOWN, Speech.SLIDEDOWN, Output.SLIDEDOWN);
     fg.Redundancy(Touch.SLIDEUP, Speech.SLIDEUP, Output.SLIDEUP);
+    
     fg.Redundancy(Touch.VOLUMEUP, Speech.VOLUMEUP, Output.VOLUMEUP);
     fg.Redundancy(Touch.VOLUMEDOWN, Speech.VOLUMEDOWN, Output.VOLUMEDOWN);
 
