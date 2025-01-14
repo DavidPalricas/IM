@@ -842,45 +842,6 @@ class Assistant(WebAssistant):
                 else:
                     self.video.like_video(self.send_to_voice)
          
-            case "FULLS":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
-                #else:
-                #    self.video.fullscreen(self.send_to_voice)
-                self.fullscreen(self.send_to_voice)
-
-            case "NORMALS":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para sair da tela cheia")
-                #else:
-                #    self.video.normalscreen(self.send_to_voice)
-                self.normalscreen(self.send_to_voice)
-
-            case "NEXTV":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para ir para o próximo")
-                #else:
-                #    self.video.next_video(self.send_to_voice)
-                self.next_video(self.send_to_voice)
-
-            case "PREVIOUSV":
-                #if self.video is None:
-                #    self.send_to_voice("Não há nenhum vídeo para voltar para o anterior")
-                #else:
-                #    self.video.previous_video(self.send_to_voice)
-                self.previous_video(self.send_to_voice)
-
-            case "SLIDED":
-                self.slide_down(self.send_to_voice)
-            
-            case "SLIDEUP":
-                self.slide_up(self.send_to_voice)
-
-            case "VOLUMEU":
-                self.volume_up(self.send_to_voice)
-
-            case "VOLUMED":
-                self.volume_down(self.send_to_voice)
             case _:
                 print(f"Gesture:", gesture)
                 print(gesture)
@@ -991,36 +952,6 @@ class Assistant(WebAssistant):
         except NoSuchElementException:
             send_to_voice("Não foi possível encontrar o botão para sair da tela cheia.")
 
-    def next_video(self, send_to_voice):
-        """
-        Skips to the next video.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        send_to_voice("Indo para o próximo vídeo.")
-        try:
-            next_button = self.driver.find_element(By.XPATH, "//a[contains(@class, 'ytp-next-button')]")
-            ActionChains(self.driver).move_to_element(next_button).perform()
-            next_button.click()
-            send_to_voice("Próximo vídeo iniciado.")
-        except NoSuchElementException:
-            send_to_voice("Não foi possível encontrar o botão de próximo vídeo.")
-
-    def previous_video(self, send_to_voice):
-        """
-        Goes back to the previous video by navigating to the previous browser page.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        send_to_voice("Voltando para o vídeo anterior.")
-        try:
-            self.driver.execute_script("window.history.back();")
-            send_to_voice("Vídeo anterior iniciado.")
-        except Exception:
-            send_to_voice("Não foi possível retornar ao vídeo anterior.")
-
     def slide_down(self, send_to_voice):
         """
         Scrolls down the page.
@@ -1048,18 +979,15 @@ class Assistant(WebAssistant):
         Args:
             - send_to_voice: a function that sends a message to the user.
         """
-
+        
         player = self.driver.find_element(By.ID, 'movie_player')
         player.send_keys(Keys.SPACE) 
 
         player.send_keys(Keys.ARROW_DOWN)
         player.send_keys(Keys.SPACE)
 
-        send_to_voice("Aumentando o volume do vídeo.")
-
         send_to_voice("Diminuindo o volume do vídeo.")
     
-
     def volume_up(self, send_to_voice):
         """
         Increases the video volume.
@@ -1070,21 +998,46 @@ class Assistant(WebAssistant):
 
         player = self.driver.find_element(By.ID, 'movie_player')
         player.send_keys(Keys.SPACE) 
-
+        
         player.send_keys(Keys.ARROW_UP)
         player.send_keys(Keys.SPACE)
 
         send_to_voice("Aumentando o volume do vídeo.")
 
-    def fusion_action(self,recognized_message, message):
+    def fusion_action(self,recognized_message):
         """
         The fusion_action method is responsible for executing the action based on the user's command.
         The method will check if the command is a gesture or a speech command, and call the right method to execute the action.
         """
+        print(f"Recognized Message: {recognized_message}")
 
+        match recognized_message[0]:
+            case "FULLS":
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
+                    return
+                
+                self.fullscreen(self.send_to_voice)
 
-        print(f"Recognized message: {recognized_message}")
-        print(f"Message: {message}")
+            case "NORMALS":
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para sair da tela cheia")
+                    return
+                
+                self.normalscreen(self.send_to_voice)
 
+            case "SLIDED":
+                self.slide_down(self.send_to_voice)
 
-        pass
+            case "SLIDEUP":
+                self.slide_up(self.send_to_voice)
+
+            case "VOLUMED":
+                self.volume_down(self.send_to_voice)
+
+            case "VOLUMEU":
+                self.volume_up(self.send_to_voice)
+
+            case _:
+                self.send_to_voice("Desculpe, não entendi o que voocê queria")
+    

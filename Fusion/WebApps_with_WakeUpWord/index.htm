@@ -457,10 +457,11 @@ InitializeKWS();
       "fulls": "FULLS",
       "normals": "NORMALS",
       "slided": "SLIDED",
-      "slideu": "SLIDEUP",
-      "volumeu": "VOLUMEUP",
-      "volumed": "VOLUMEDOWN"
+      "slideup": "SLIDEUP",
+      "volumeu": "VOLUMEU",
+      "volumed": "VOLUMED"
     };
+    
     console.log("result2.......: ", result);
     if (intentMap[data.intent.name]) {
       result.recognized.push(intentMap[data.intent.name]);

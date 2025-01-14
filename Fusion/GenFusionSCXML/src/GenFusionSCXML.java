@@ -30,8 +30,8 @@ public class GenFusionSCXML {
     fg.Redundancy(Touch.SLIDEDOWN, Speech.SLIDEDOWN, Output.SLIDEDOWN);
     fg.Redundancy(Touch.SLIDEUP, Speech.SLIDEUP, Output.SLIDEUP);
     
-    fg.Redundancy(Touch.VOLUMEUP, Speech.VOLUMEUP, Output.VOLUMEUP);
-    fg.Redundancy(Touch.VOLUMEDOWN, Speech.VOLUMEDOWN, Output.VOLUMEDOWN);
+    fg.Complementary(Touch.VOLUMEUP, Speech.VOLUMEUP, Output.VOLUMEUP);
+    fg.Complementary(Touch.VOLUMEDOWN, Speech.VOLUMEDOWN, Output.VOLUMEDOWN);
 
     // fg.Complementary(Speech.HELP, Touch.HELP, Output.HELP_ACTION);
     // fg.Single(Speech.HELP, Output.HELP_ACTION);
