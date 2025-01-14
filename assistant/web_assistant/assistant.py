@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementClickInterceptedException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 from web_assistant.web_assistant import WebAssistant
 from consts import OUTPUT
 from web_app_conextions_files.index_connections import TTS, Confirmation
@@ -971,40 +971,94 @@ class Assistant(WebAssistant):
         """
         send_to_voice("Scroll para cima efetuado com sucesso.")
         self.driver.execute_script("window.scrollBy(0, -200);")      # depois mudamos conforme for preciso..
+     
 
-    def volume_down(self, send_to_voice):
+    def handle_volume(self, entity, increase_volume):
         """
-        Lowers the video volume.
+        Handles the video volume.
 
         Args:
             - send_to_voice: a function that sends a message to the user.
+            - entity: a string that represents the entity of the user's message.
+            - increase_volume: a boolean that represents if the volume should be increased or decreased.
         """
         
-        player = self.driver.find_element(By.ID, 'movie_player')
+        current_volume = None
+        player = None
+
+        try: 
+            current_volume =self.driver.execute_script("""
+                const video = document.querySelector('video');
+                return video ? video.volume : null;
+            """)
+
+            player = self.driver.find_element(By.ID, 'movie_player')
+
+        except NoSuchElementException:
+            self.send_to_voice("Erro ao obter o volume do vídeo.")
+            return
+        
+        volume_to_change = None
+
+        little_volume = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
+
+        medium_volume = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
+        
+        if entity is None:
+            volume_to_change = 0.15
+        else:
+            if  entity in little_volume:
+                    volume_to_change = 0.10
+
+            elif entity in medium_volume:
+                    volume_to_change = 0.25
+
+            elif  entity == "mínimo" and not increase_volume:                
+                    volume_to_change = 0
+
+            elif entity == "máximo" and increase_volume:          
+                    volume_to_change = 1
+
+            elif entity == "máximo" and not increase_volume or entity == "mínimo" and increase_volume:       
+                    self.send_to_voice("Não percebi o que queria fazer.")
+                    return  
+
+        key_to_send = Keys.ARROW_UP if increase_volume else Keys.ARROW_DOWN
+
         player.send_keys(Keys.SPACE) 
 
-        player.send_keys(Keys.ARROW_DOWN)
-        player.send_keys(Keys.SPACE)
 
-        send_to_voice("Diminuindo o volume do vídeo.")
+        ARROW_VOLUME_VALUE = 0.05
+        
+        steps = int(abs(volume_to_change) / ARROW_VOLUME_VALUE)
+
+        message = "Volume aumentado." if increase_volume else "Volume diminuído."
+        
+        self.send_to_voice(message)
+       
+        print(f"Currrent Volume: {current_volume}")
+
+        for _ in range(steps):
+            if current_volume >= 1:
+                self.send_to_voice("O volume já está no máximo.")
+                player.send_keys(Keys.SPACE)
+                return
+            elif current_volume <= 0:
+                self.send_to_voice("O volume já está no mínimo.")
+                player.send_keys(Keys.SPACE)
+                return
     
-    def volume_up(self, send_to_voice):
-        """
-        Increases the video volume.
+            player.send_keys(key_to_send)
 
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
+            current_volume  = current_volume + ARROW_VOLUME_VALUE if increase_volume else current_volume - ARROW_VOLUME_VALUE
+            
+            time.sleep(3)
 
-        player = self.driver.find_element(By.ID, 'movie_player')
-        player.send_keys(Keys.SPACE) 
-        
-        player.send_keys(Keys.ARROW_UP)
+            print(f"Currrent Volume: {current_volume}")
+
         player.send_keys(Keys.SPACE)
-
-        send_to_voice("Aumentando o volume do vídeo.")
-
-    def fusion_action(self,recognized_message):
+        
+    def fusion_action(self,recognized_message, nlu):
         """
         The fusion_action method is responsible for executing the action based on the user's command.
         The method will check if the command is a gesture or a speech command, and call the right method to execute the action.
@@ -1032,11 +1086,14 @@ class Assistant(WebAssistant):
             case "SLIDEUP":
                 self.slide_up(self.send_to_voice)
 
-            case "VOLUMED":
-                self.volume_down(self.send_to_voice)
+            case "VOLUMED" | "VOLUMEU":
+                increase_voulme = True if recognized_message[0] == "VOLUMEU" else False
 
-            case "VOLUMEU":
-                self.volume_up(self.send_to_voice)
+                print(f"Nlu: {nlu}")
+
+                entity = nlu["entity"] if "entity" in nlu else None
+
+                self.handle_volume(entity, increase_voulme)
 
             case _:
                 self.send_to_voice("Desculpe, não entendi o que voocê queria")

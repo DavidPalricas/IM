@@ -15,11 +15,11 @@ def nlu_extractor(message, assistant):
     message (str): The message received from the websocket
 
   """ 
-   # Remove the <comand> tag
-  comand_tag = ET.fromstring(message).findall(".//command")
+   # Find all the command tags in the message
+  comand_tags = ET.fromstring(message).findall(".//command")
    
    # Removes the text from the comand tag 
-  message = json.loads(comand_tag.pop(0).text)
+  message = json.loads(comand_tags.pop(0).text)
 
   modality = message["recognized"][0]
 
@@ -41,7 +41,26 @@ def nlu_extractor(message, assistant):
     return assistant.gesture_action(message["recognized"][1])
   
   elif modality == "FUSION":
-    return assistant.fusion_action(message["recognized"][1:])
+    nlu = None
+    
+    for command in comand_tags:
+      if "nlu" in command.text:
+        speech_tag = json.loads(command.text)
+
+        nlu = json.loads(speech_tag["nlu"])
+
+        print(f"nlu: {nlu}")
+        
+        if "entities" not in nlu or len(nlu["entities"]) == 0:
+           nlu = {"intent": nlu["intent"] ["name"]}
+        else:
+          confidence = round(nlu["entities"][0]["confidence_entity"] * 100) 
+
+          nlu = {"intent": nlu["intent"] ["name"], "entity": nlu["entities"][0]["value"],"confidence": confidence}
+
+        break
+
+    return assistant.fusion_action(message["recognized"][1:],nlu)
 
 
 def ignore_certificates():

@@ -40,6 +40,7 @@ entities:
   - playlist
   - speed
   - choosen_item
+  - volume_value
 
 slots:
   video:
@@ -90,6 +91,13 @@ slots:
     mappings:
     - type: from_entity
       entity: choosen_item
+
+  volume_value:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: volume_value
 
 responses:
   utter_greet:
@@ -166,10 +174,10 @@ responses:
   - text: Cancelado a inscrição do canal 
 
   utter_volumeu:
-  - text: Aumentando o volume
+  - text: Aumentando o volume para {volume_value}
 
   utter_volumed:
-  - text: Diminuindo o volume
+  - text: Diminuindo o volume para {volume_value}
 
   utter_fulls:
   - text: Tela cheia

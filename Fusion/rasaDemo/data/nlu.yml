@@ -334,32 +334,57 @@ nlu:
 - intent: volumeu
   examples: |
     - Aumenta o volume
+    - Aumenta um [pouco](volume_value) o volume
     - Aumenta o volume por favor
+    - AUmenta o volume para o [máximo](volume_value) por favor
     - Aumenta o som
+    - Aumenta [uma beca](volume_value) o som
     - Aumenta o som por favor
+    - Aumenta [mais um pouco](volume_value) o som por favor
     - Aumenta o volume do vídeo
+    - Aumenta o volume do vídeo para o [máximo](volume_value)
     - Aumenta o volume do vídeo por favor
+    - Aumenta [um bocado](volume_value) o volume do vídeo
     - Aumenta o som do vídeo
+    - Aumenta [uma beca](volume_value) o som do vídeo
     - Aumenta o som do vídeo por favor
+    - Aumenta [mais um pouco](volume_value) o som do vídeo por favor
     - Aumenta o volume, por favor
+    - Aumenta o volume para o [máximo](volume_value), por favor
     - Aumenta o som, por favor
+    - Aumenta [uma beca](volume_value) o som, por favor
     - Aumenta o volume do vídeo, por favor
+    - Aumenta o volume do vídeo para o [máximo](volume_value), por favor
     - Aumenta o som do vídeo, por favor
+    - Aumenta [uma beca](volume_value) o som do vídeo, por favor
+
 
 - intent: volumed
   examples: |
     - Diminui o volume
+    - Diminui um [pouco](volume_value) o volume
     - Diminui o volume por favor
+    - Diminui o volume para o [mínimo](volume_value) por favor
     - Diminui o som
+    - Diminui [uma beca](volume_value) o som
     - Diminui o som por favor
+    - Diminui [mais um pouco](volume_value) o som por favor
     - Diminui o volume do vídeo
+    - Diminui o volume do vídeo para o [mínimo](volume_value)
     - Diminui o volume do vídeo por favor
+    - Diminui [um bocado](volume_value) o volume do vídeo
     - Diminui o som do vídeo
+    - Diminui [uma beca](volume_value) o som do vídeo
     - Diminui o som do vídeo por favor
+    - Diminui [mais um pouco](volume_value) o som do vídeo por favor
     - Diminui o volume, por favor
+    - Diminui o volume para o [mínimo](volume_value), por favor
     - Diminui o som, por favor
+    - Diminui [uma beca](volume_value) o som, por favor
     - Diminui o volume do vídeo, por favor
+    - Diminui o volume do vídeo para o [mínimo](volume_value), por favor
     - Diminui o som do vídeo, por favor
+    - Diminui [uma beca](volume_value) o som do vídeo, por favor
 
 - intent: fulls
   examples: |
