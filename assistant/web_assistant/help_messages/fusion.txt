@@ -1,0 +1,26 @@
+As funcionalidades de fusão podem ser dividas em duas categorias redundantes, você pode executar por voz ou gestos ou complementares você tem de executar através de gestos e voz
+
+Aqui estão as minhas funcionalidades redundantes
+
+Scroll
+O que eu faço: Dou scroll para cima ou para baixo na página do Youtube, dependendo da direção indicada.
+
+Exemplo por voz:
+    Para cima: Dá scroll para cima
+    Para baixo: Dá scroll para baixo
+
+Exemplo por gesto:
+    Para cima: Estique um dos seus braços para frente e estenda o outro para cima, com a palma da mão aberta. Baixe-o lentamente até o seu peito.
+    Para baixo: Estique um dos seus braços para frente e estenda o outro para baixo, com a palma da mão aberta. Eleve-o lentamente até o seu peito.
+
+
+Meter um vídeo em ecrã normal ou ecrã cheio
+O que eu faço: Entro ou saio de ecrã cheio de um vídeo
+
+Exemplo por voz:
+    Ecrã cheio: Ecrã cheio por favor
+    Ecrã Normal: Ecrã normal por favor
+
+Exemplo por gesto:
+    Ecrã cheio: Estique os braços na diagonal com palma das suas mãos abertas e lentamente aproxime os seus braços ao seu peito quando tiver as suas mão a frente do seu peito junte-as 
+    Ecrã Normal: Junte as suas mão a frente do seu peito e estique os seus braços na diagonal mantedo as suas mão fechadas, quando não consegui -los esticar-los mais abra as suas mãos

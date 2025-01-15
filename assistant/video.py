@@ -381,13 +381,6 @@ class Video:
         """
         time, current_seconds = self.convert_time(entities,forward,send_to_voice)
 
-        #print("timeeeeeeeeeeeeeeeeeeeeeeeee : "+str(time))
-        # if time >= 36000: 
-        #     send_to_voice("O tempo é muito grande, não é possível avançar ou retroceder")
-        #     return
-
-        #print("eeeeeeeeeeeeeeeeeeeeeeee : "+entities)
-
         if forward:
             send_to_voice(f"Avançando {entities}")
         else:
@@ -441,11 +434,14 @@ class Video:
         for i in range(len(time_units)):
             if type_time == time_units[i] or type_time == time_units[i][:-1]:
                 time_in_seconds = time_choosen * 60 ** i
+
                 if forward:
                     new_time = current_seconds + time_in_seconds
+
                     if new_time >= total_seconds:
                         time.sleep(2)
                         send_to_voice("O vídeo chegou ao fim")
+                        
                     return min(new_time, total_seconds-1), current_seconds
                 else:
                     new_time = current_seconds - time_in_seconds

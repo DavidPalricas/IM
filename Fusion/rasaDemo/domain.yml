@@ -31,6 +31,7 @@ intents:
 - slideup
 - slided
 - help
+- choose_help_options
 
 entities:
   - video
@@ -41,6 +42,7 @@ entities:
   - speed
   - choosen_item
   - volume_value
+  - help_options
 
 slots:
   video:
@@ -98,6 +100,13 @@ slots:
     mappings:
     - type: from_entity
       entity: volume_value
+
+  help_options:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: help_options
 
 responses:
   utter_greet:
@@ -190,6 +199,9 @@ responses:
 
   utter_slided:
   - text: Scroll para baixo
+
+  utter_choose_help_options:
+  - text: As opções de ajuda disponíveis são {help_options}
 
 session_config:
   session_expiration_time: 60

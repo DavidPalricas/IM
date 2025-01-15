@@ -1,4 +1,4 @@
-Aqui estão as funcionalidades que posso realizar e como utilizá-las:
+Aqui estão as minhas funcionalidades por voz que posso realizar e como utilizá-las:
 
 Pesquisar vídeos
 O que eu faço: Procuro vídeos baseados no tema solicitado.
@@ -27,3 +27,5 @@ Exemplo: "Silencie o vídeo." ou "Ligue o som novamente."
 Guardar um vídeo numa playlist
 O que eu faço: Adiciono o vídeo à playlist que você escolher.
 Exemplo: "Adicione este vídeo à minha playlist de favoritos."
+
+Mais funcionalidades de voz podem estar disponivéis na modalidade de fusão

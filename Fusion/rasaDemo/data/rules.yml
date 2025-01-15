@@ -131,3 +131,8 @@ rules:
   steps:
   - intent: slided
   - action: utter_slided
+
+- rule: help_options
+  steps:
+  - intent: choose_help_options
+  - action: utter_choose_help_options

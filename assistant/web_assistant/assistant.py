@@ -672,19 +672,49 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao entender o seu pedido")
             return
         
-    def help(self):
-        """The help method is responsible for showing the list of the asistant funcioniolaities by voice to the user.
-           The method will open the help_message.txt file, and send by voice each line of the file.
-           This file contains a message that lists the assistant's functionalities.
+    def read_help_options(self, entity):
         """
+        The read_help_options method is responsible for reading the help options based on the user's choice.
+        
+        Args:
+            - entity: a string that represents the user's choice.
+            
+        """
+
+        print(f"Entity: {entity}")
+       
+        files_to_read = []
+
+        if "voz" in entity:
+            files_to_read.append("voice.txt")
+
+        if "gestos" in entity:
+            files_to_read.append("gestures.txt")
+
+        if "fusão" in entity:
+            files_to_read.append("fusion.txt")
+
+        if "todas" in entity or "todos" in entity:
+            files_to_read = ["voice.txt", "gesture.txt", "fusion.txt"]
+
+        if files_to_read == []:
+            self.send_to_voice("Desculpe, pelo incómodo")
+            return
+    
         try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(current_dir, "help_message.txt")
+            help_messages_dir = os.path.join(current_dir, "help_messages")
 
-            with open(file_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    self.send_to_voice(line)
-                    time.sleep(3.5)
+            for file in files_to_read:
+
+                print(f"File: {file}")
+                file_path = os.path.join(help_messages_dir, file)
+        
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        if line != "\n":
+                            self.send_to_voice(line)
+                            time.sleep(3.5)
 
         except Exception as ex:
             print(f"Exception {ex}")
@@ -823,7 +853,18 @@ class Assistant(WebAssistant):
                      self.send_to_voice("Peço desculpa pela confusão")
 
             case "help":
-                 self.help()   
+                self.intent_to_be_confirmed = nlu["intent"]
+
+                self.send_to_voice("Que modalides de ajuda deseja, voz, gestos, fusão ou todas?") 
+                self.confirmation.confirm()
+
+            case "choose_help_options":
+                if self.intent_to_be_confirmed != "help":
+                    self.send_to_voice("Para obter ajuda, primeiro peça ajuda")                    
+                    return
+                
+                self.intent_to_be_confirmed = None
+                self.read_help_options(nlu["entity"])
 
             case _:
                 self.send_to_voice("Desculpe, não entendi o que você disse")
@@ -986,6 +1027,9 @@ class Assistant(WebAssistant):
         current_volume = None
         player = None
 
+        MIN_VOLUME = 0.05
+        MAX_VOLUME = 1
+
         try: 
             current_volume =self.driver.execute_script("""
                 const video = document.querySelector('video');
@@ -998,6 +1042,10 @@ class Assistant(WebAssistant):
             self.send_to_voice("Erro ao obter o volume do vídeo.")
             return
         
+        if current_volume == 0:
+            self.send_to_voice("O vídeo está sem som, por favor ative o som.")
+            return
+        
         volume_to_change = None
 
         little_volume = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
@@ -1005,19 +1053,22 @@ class Assistant(WebAssistant):
         medium_volume = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
         
         if entity is None:
-            volume_to_change = 0.15
+            DEFAULT_VOLUME_VALUE = 0.15
+            volume_to_change = DEFAULT_VOLUME_VALUE
         else:
             if  entity in little_volume:
-                    volume_to_change = 0.10
+                    LOW_VOLUME_VALUE = 0.10
+                    volume_to_change = LOW_VOLUME_VALUE
 
             elif entity in medium_volume:
-                    volume_to_change = 0.25
+                    MEDIUM_VOLUME_VALUE = 0.25
+                    volume_to_change = MEDIUM_VOLUME_VALUE
 
             elif  entity == "mínimo" and not increase_volume:                
-                    volume_to_change = 0
+                    volume_to_change = MIN_VOLUME
 
             elif entity == "máximo" and increase_volume:          
-                    volume_to_change = 1
+                    volume_to_change = MAX_VOLUME
 
             elif entity == "máximo" and not increase_volume or entity == "mínimo" and increase_volume:       
                     self.send_to_voice("Não percebi o que queria fazer.")
@@ -1027,23 +1078,31 @@ class Assistant(WebAssistant):
 
         player.send_keys(Keys.SPACE) 
 
-
         ARROW_VOLUME_VALUE = 0.05
-        
-        steps = int(abs(volume_to_change) / ARROW_VOLUME_VALUE)
+
+        steps = 0
+
+        if volume_to_change == MIN_VOLUME:
+            # To ensure that we have the maximum setps to reach the minimum volume
+            volume_to_change = MAX_VOLUME + 0.05 if current_volume * 100 % 5 != 0 else MAX_VOLUME
+            steps = int(volume_to_change/ ARROW_VOLUME_VALUE)
+        else:
+            volume_to_change = volume_to_change + 0.05 if current_volume * 100 % 5 != 0 else volume_to_change
+
+            steps = int(abs(volume_to_change) / ARROW_VOLUME_VALUE)
 
         message = "Volume aumentado." if increase_volume else "Volume diminuído."
         
         self.send_to_voice(message)
-       
-        print(f"Currrent Volume: {current_volume}")
+
+        print(f"Currrent Volume: {current_volume} && Entity: {entity} && Steps: {steps}")
 
         for _ in range(steps):
-            if current_volume >= 1:
+            if current_volume >= MAX_VOLUME and increase_volume:
                 self.send_to_voice("O volume já está no máximo.")
                 player.send_keys(Keys.SPACE)
                 return
-            elif current_volume <= 0:
+            elif current_volume <= MIN_VOLUME and not increase_volume:
                 self.send_to_voice("O volume já está no mínimo.")
                 player.send_keys(Keys.SPACE)
                 return
@@ -1087,9 +1146,11 @@ class Assistant(WebAssistant):
                 self.slide_up(self.send_to_voice)
 
             case "VOLUMED" | "VOLUMEU":
+                if self.video is None:
+                    self.send_to_voice("Não há nenhum vídeo para alterar o volume")
+                    return
+                
                 increase_voulme = True if recognized_message[0] == "VOLUMEU" else False
-
-                print(f"Nlu: {nlu}")
 
                 entity = nlu["entity"] if "entity" in nlu else None
 

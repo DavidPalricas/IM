@@ -448,3 +448,17 @@ nlu:
     - Quais são os comandos disponíveis
     - Mostra-me as suas funcionalidades
     - Quais são as suas funcionalidades
+
+- intent: choose_help_options
+  examples: |
+    - [voz](help_options)
+    - [gestos](help_options))
+    - [fusão](help_options))
+    - [todos](help_options))
+    - [nehumm](help_options))
+    - comandos de [gestos](help_options))
+    - funcionalidades de [voz](help_options))
+    - Quero saber mais sobre [fusão e voz](help_options))
+    - Quero ajuda na [voz e gestos](help_options))
+    - Quero ajuda com os [gestos](help_options))
+    - Não quero em [nenhum](help_options))
