@@ -229,24 +229,14 @@ class Assistant(WebAssistant):
         if self.video_or_contact:
             chosen_span = self.items_to_be_searched[choice]
             chosen_span.click()
-            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
-            input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
-            time.sleep(2)
-            # write message
-            input_box.send_keys(self.message_to_be_sent)
-            input_box.send_keys(Keys.ENTER)
-             
-            self.send_to_voice("Vídeo enviado com sucesso")
-        
-            time.sleep(2)
-
-            # Close the WhatsApp tab
-            self.driver.close()
-
-            # Return to the YouTube tab
-            self.driver.switch_to.window(self.driver.window_handles[0])
-            self.items_to_be_searched = []
-            self.video_or_contact = None
+            
+             # Confirm the user wants to send the respective message
+            self.intent_to_be_confirmed = {"intent": "send_message"}
+            self.send_to_voice("Deseja enviar a mensagem?")
+            self.confirmation.confirm()
+            
+            
+            
         else:
             video = self.items_to_be_searched[choice]
             self.send_to_voice(f"Selecionando o vídeo {video.text}")
@@ -264,7 +254,36 @@ class Assistant(WebAssistant):
                 print(f"speed {self.video.speed}")
                 self.video.url = self.driver.current_url
 
+    def send_message_to_contact(self):
+        inp_xpath = '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div/div[1]'
+        input_box = WebDriverWait(self.driver,50).until(EC.presence_of_element_located((By.XPATH, inp_xpath)))
+        time.sleep(2)
 
+        # write message
+        input_box.send_keys(self.message_to_be_sent)
+        input_box.send_keys(Keys.ENTER)
+         
+        self.send_to_voice("Vídeo enviado com sucesso")
+    
+        time.sleep(2)
+
+        # Close the WhatsApp tab
+        self.driver.close()
+
+        # Return to the YouTube tab
+        self.driver.switch_to.window(self.driver.window_handles[0])
+        self.items_to_be_searched = []
+        self.video_or_contact = None
+
+    def close_whatsapp_tab(self):
+        """
+        The close_whatsapp_tab method is responsible for closing the whatsapp tab.
+        """
+        self.driver.close()
+
+        self.driver.switch_to.window(self.driver.window_handles[0])
+        self.items_to_be_searched = []
+        self.video_or_contact = None
 
     def shutdown(self) :
         """
@@ -734,6 +753,10 @@ class Assistant(WebAssistant):
                     self.confirm_action(nlu)
                 else:
                     self.select_item(nlu["entity"])
+
+            case "send_message":
+                self.send_message_to_contact()
+
             case "search_video":
                 if "confidence" not in nlu or nlu["confidence"] < 80:
                     self.confirm_action(nlu)
@@ -846,11 +869,15 @@ class Assistant(WebAssistant):
                     self.intent_to_be_confirmed = None
 
             case "deny":
-                 if self.intent_to_be_confirmed is None:
+                if self.intent_to_be_confirmed is None:
                     self.send_to_voice("Não há nenhuma ação para negar")
-                 else:
-                     self.intent_to_be_confirmed = None
-                     self.send_to_voice("Peço desculpa pela confusão")
+                elif self.intent_to_be_confirmed == {"intent":"send_message"}:
+                    self.send_to_voice("Desculpe pelo engano")
+                    self.close_whatsapp_tab()
+                    self.intent_to_be_confirmed = None
+                else:
+                    self.intent_to_be_confirmed = None
+                    self.send_to_voice("Peço desculpa pela confusão")
 
             case "help":
                 self.intent_to_be_confirmed = nlu["intent"]
