@@ -428,7 +428,7 @@ nlu:
     - Desliza [um pouco](scroll_value) para cima, por favor
     - Desliza para cima do vídeo, por favor
     - Dá scroll para cima
-    - Dá scroll para o [topo](scroll_value) da página
+
 
 - intent: slided
   examples: |
@@ -445,7 +445,6 @@ nlu:
     - Desliza para baixo do vídeo, por favor
     - Desliza para baixo do vídeo [mais um pouco](scroll_value), por favor
     - Dá scroll para baixo
-    - Dá scroll para o [fundo](scroll_value) da página
 
 - intent: help
   examples: |

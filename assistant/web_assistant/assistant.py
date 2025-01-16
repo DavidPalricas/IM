@@ -1004,43 +1004,18 @@ class Assistant(WebAssistant):
             elif entity in medium_scroll:
                 MEDIUM_SCROLL_VALUE = 600
                 scroll_value = MEDIUM_SCROLL_VALUE
-
-            elif entity == "fundo":
-                if slide_up:
-                    self.send_to_voice("Desculpe, não é possível fazer scroll para cima para o fundo da página.")
-                    return
-                
-                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                self.send_to_voice("Scroll para o fundo da página efetuado com sucesso.")
+            else: 
+                self.send_to_voice("Erro a dar scroll na página")
                 return
 
-            elif entity == "topo":
-                if not slide_up:
-                    self.send_to_voice("Desculpe, não é possível fazer scroll para baixo para o topo da página.")
-                    return
-                
-                self.driver.execute_script("window.scrollTo(0, 0);")
-                self.send_to_voice("Scroll para o topo da página efetuado com sucesso.")
+        message = ""
 
-                return
-            
         if slide_up:
-            # Check if the user is at the top of the page
-            if self.driver.execute_script("return window.scrollY === 0;"):
-                self.send_to_voice("Não é possível fazer scroll para cima, já está no topo da página.")
-                return
-            
+            scroll_value = -scroll_value
             message = "Scroll para cima efetuado com sucesso."
         else:    
-            # Check if the user is at the bottom of the page
-            if self.driver.execute_script("return (window.innerHeight + window.scrollY) >= document.body.scrollHeight;"):
-                self.send_to_voice("Não é possível fazer scroll para baixo, já está no fundo da página.")
-                return
-            
-            scroll_value = -scroll_value
             message = "Scroll para baixo efetuado com sucesso."
 
-        scroll_value = - scroll_value if slide_up else scroll_value
 
         print(f"Scroll Value: {scroll_value}")
     
@@ -1071,6 +1046,8 @@ class Assistant(WebAssistant):
                 entity = nlu["entity"] if "entity" in nlu else None
 
                 print("boas")
+                print("Entity:", entity)
+                print("Slide Up:", slide_up)
 
                 self.slide_page(slide_up,entity)
 

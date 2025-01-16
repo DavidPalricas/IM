@@ -661,16 +661,15 @@ class Video:
 
         message = "Volume aumentado." if increase_volume else "Volume diminuído."
         
-        send_to_voice(message)
-
+  
         print(f"Currrent Volume: {current_volume} && Entity: {entity} && Steps: {steps}")
 
         for _ in range(steps):
-            if current_volume >= MAX_VOLUME and increase_volume:
+            if round(current_volume, 2) >= MAX_VOLUME and increase_volume:
                 send_to_voice("O volume já está no máximo.")
                 player.send_keys(Keys.SPACE)
                 return
-            elif current_volume <= MIN_VOLUME and not increase_volume:
+            elif round(current_volume, 2) <= MIN_VOLUME and not increase_volume:
                 send_to_voice("O volume já está no mínimo.")
                 player.send_keys(Keys.SPACE)
                 return
@@ -679,9 +678,11 @@ class Video:
 
             current_volume  = current_volume + ARROW_VOLUME_VALUE if increase_volume else current_volume - ARROW_VOLUME_VALUE
             
-            time.sleep(3)
+            time.sleep(0.2)
 
             print(f"Currrent Volume: {current_volume}")
+
+        send_to_voice(message)
 
         player.send_keys(Keys.SPACE)
         
