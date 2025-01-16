@@ -503,8 +503,9 @@ class Video:
 
             # Find all matching span elements (e.g., top 3 contacts)
             contact_spans = driver.find_elements(By.XPATH, contact_spans_xpath)
-            
-            
+
+            # reverse the list to display the most recent contacts first
+            contact_spans.reverse()
             # Collect the names of the top three results
             for result in contact_spans[:3]:  # Limit to top 3 results
                 try:
@@ -515,9 +516,6 @@ class Video:
 
             # Display the options to the user
             message = "Contactos encontrados: "
-            # reverse the list to display the most recent contacts first
-            contact_spans.reverse()
-            items_to_be_searched.reverse()
 
             for i, name in enumerate(contact_spans[:3]):
                 message += f"{i + 1}. {name.get_attribute('title')}, "
