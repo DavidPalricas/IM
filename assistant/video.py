@@ -17,6 +17,7 @@ class Video:
     - speed: a float that represents the speed of the video.
     - driver: an instance of the WebDriver class.
     - youtube: an instance of the WebElement class(body) that represents the YouTube page.
+    - is_fullscreen: a boolean that indicates if the video is in fullscreen mode or not.
     """
     def __init__(self,is_short,driver, speed = None):
         """
@@ -32,6 +33,8 @@ class Video:
         self.speed =  1 if speed is None else speed
         self.driver = driver
         self.youtube =self.driver.find_element("tag name", "body")
+
+        self.is_fullscreen = False
 
     def get_video_time(self):
         """
@@ -555,4 +558,130 @@ class Video:
             return not contact.is_displayed()
         except Exception as e:
             return True
+        
+    def handle_fullscreen(self, send_to_voice, change_to_fullscreen):
+        """
+        Handles the video fullscreen mode.
+        
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+            - change_to_fullscreen: a boolean that indicates if the video should be in fullscreen mode or not.
+        """      
+        if self.is_short:
+            send_to_voice("Alterar o modo de ecrã não é possível em shorts.")
+            return
+        
+        if self.is_fullscreen and change_to_fullscreen:
+            send_to_voice("O vídeo já está em ecrã cheio.")
+            return
+        
+        if not self.is_fullscreen and not change_to_fullscreen:
+            send_to_voice("O vídeo já está em ecrã normal.")
+            return
+        
+        self.youtube.send_keys('f')
+        self.is_fullscreen = not self.is_fullscreen
+        
+    def handle_volume(self,send_to_voice, entity, increase_volume):
+        """
+        Handles the video volume.
+
+        Args:
+            - send_to_voice: a function that sends a message to the user.
+            - entity: a string that represents the entity of the user's message.
+            - increase_volume: a boolean that represents if the volume should be increased or decreased.
+        """
+        
+        current_volume = None
+        player = None
+
+        MIN_VOLUME = 0.05
+        MAX_VOLUME = 1
+
+        try: 
+            current_volume =self.driver.execute_script("""
+                const video = document.querySelector('video');
+                return video ? video.volume : null;
+            """)
+
+            player = self.driver.find_element(By.ID, 'movie_player')
+
+        except NoSuchElementException:
+            send_to_voice("Erro ao obter o volume do vídeo.")
+            return
+        
+        if current_volume == 0:
+            send_to_voice("O vídeo está sem som, por favor ative o som.")
+            return
+        
+        volume_to_change = None
+
+        little_volume = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
+
+        medium_volume = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
+        
+        if entity is None:
+            DEFAULT_VOLUME_VALUE = 0.15
+            volume_to_change = DEFAULT_VOLUME_VALUE
+        else:
+            if  entity in little_volume:
+                    LOW_VOLUME_VALUE = 0.10
+                    volume_to_change = LOW_VOLUME_VALUE
+
+            elif entity in medium_volume:
+                    MEDIUM_VOLUME_VALUE = 0.25
+                    volume_to_change = MEDIUM_VOLUME_VALUE
+
+            elif  entity == "mínimo" and not increase_volume:                
+                    volume_to_change = MIN_VOLUME
+
+            elif entity == "máximo" and increase_volume:          
+                    volume_to_change = MAX_VOLUME
+
+            elif entity == "máximo" and not increase_volume or entity == "mínimo" and increase_volume:       
+                    send_to_voice("Não percebi o que queria fazer.")
+                    return  
+
+        key_to_send = Keys.ARROW_UP if increase_volume else Keys.ARROW_DOWN
+
+        player.send_keys(Keys.SPACE) 
+
+        ARROW_VOLUME_VALUE = 0.05
+
+        steps = 0
+
+        if volume_to_change == MIN_VOLUME:
+            # To ensure that we have the maximum setps to reach the minimum volume
+            volume_to_change = MAX_VOLUME + 0.05 if current_volume * 100 % 5 != 0 else MAX_VOLUME
+            steps = int(volume_to_change/ ARROW_VOLUME_VALUE)
+        else:
+            volume_to_change = volume_to_change + 0.05 if current_volume * 100 % 5 != 0 else volume_to_change
+
+            steps = int(abs(volume_to_change) / ARROW_VOLUME_VALUE)
+
+        message = "Volume aumentado." if increase_volume else "Volume diminuído."
+        
+        send_to_voice(message)
+
+        print(f"Currrent Volume: {current_volume} && Entity: {entity} && Steps: {steps}")
+
+        for _ in range(steps):
+            if current_volume >= MAX_VOLUME and increase_volume:
+                send_to_voice("O volume já está no máximo.")
+                player.send_keys(Keys.SPACE)
+                return
+            elif current_volume <= MIN_VOLUME and not increase_volume:
+                send_to_voice("O volume já está no mínimo.")
+                player.send_keys(Keys.SPACE)
+                return
+    
+            player.send_keys(key_to_send)
+
+            current_volume  = current_volume + ARROW_VOLUME_VALUE if increase_volume else current_volume - ARROW_VOLUME_VALUE
+            
+            time.sleep(3)
+
+            print(f"Currrent Volume: {current_volume}")
+
+        player.send_keys(Keys.SPACE)
         

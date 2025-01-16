@@ -27,23 +27,15 @@ public class GenFusionSCXML {
   
     fg.Redundancy(Touch.FULLSCREEN, Speech.FULLSCREEN, Output.FULLSCREEN);
     fg.Redundancy(Touch.NORMALSCREEN, Speech.NORMALSCREEN, Output.NORMALSCREEN);
-    fg.Redundancy(Touch.SLIDEDOWN, Speech.SLIDEDOWN, Output.SLIDEDOWN);
-    fg.Redundancy(Touch.SLIDEUP, Speech.SLIDEUP, Output.SLIDEUP);
+  
     
     fg.Complementary(Touch.VOLUMEUP, Speech.VOLUMEUP, Output.VOLUMEUP);
     fg.Complementary(Touch.VOLUMEDOWN, Speech.VOLUMEDOWN, Output.VOLUMEDOWN);
+    fg.Complementary(Touch.SLIDEDOWN, Speech.SLIDEDOWN, Output.SLIDEDOWN);
+    fg.Complementary(Touch.SLIDEUP, Speech.SLIDEUP, Output.SLIDEUP);
 
-    // fg.Complementary(Speech.HELP, Touch.HELP, Output.HELP_ACTION);
-    // fg.Single(Speech.HELP, Output.HELP_ACTION);
-    // fg.Complementary(Speech.HELP_OPERACOES, Touch.HELP, Output.HELP_OPERACOES_ACTION);
-    // fg.Complementary(Speech.HELP_GESTOS, Touch.HELP, Output.HELP_GESTOS_ACTION);
-    // fg.Complementary(Speech.HELP_TODAS, Touch.HELP, Output.HELP_TODAS_ACTION);
-    
+
     fg.Build("fusion_novo.scxml");
-
-
-
-
 
   /*  
     fg.Sequence(Speech.SQUARE, SecondMod.RED, Output.SQUARE_RED);

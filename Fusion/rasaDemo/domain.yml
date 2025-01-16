@@ -43,6 +43,7 @@ entities:
   - choosen_item
   - volume_value
   - help_options
+  - scroll_value
 
 slots:
   video:
@@ -107,6 +108,13 @@ slots:
     mappings:
     - type: from_entity
       entity: help_options
+
+  scroll_value:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: scroll_value
 
 responses:
   utter_greet:
@@ -195,10 +203,10 @@ responses:
   - text: Tela normal
 
   utter_slideup:
-  - text: Scroll para cima
+  - text: Scroll para cima {scroll_value}
 
   utter_slided:
-  - text: Scroll para baixo
+  - text: Scroll para baixo {scroll_value}
 
   utter_choose_help_options:
   - text: As opções de ajuda disponíveis são {help_options}

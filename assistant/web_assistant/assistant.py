@@ -161,6 +161,9 @@ class Assistant(WebAssistant):
         """
         self.handling_search_message(query)
 
+        if self.video is not None and self.video.is_fullscreen:
+            self.video.youtube.send_keys("f")
+
         # Open YouTube search results page
         self.driver.get('https://www.youtube.com/results?search_query={}'.format(str(query)))
         
@@ -233,10 +236,7 @@ class Assistant(WebAssistant):
              # Confirm the user wants to send the respective message
             self.intent_to_be_confirmed = {"intent": "send_message"}
             self.send_to_voice("Deseja enviar a mensagem?")
-            self.confirmation.confirm()
-            
-            
-            
+            self.confirmation.confirm()   
         else:
             video = self.items_to_be_searched[choice]
             self.send_to_voice(f"Selecionando o vídeo {video.text}")
@@ -978,172 +978,76 @@ class Assistant(WebAssistant):
             except ElementClickInterceptedException:
                 send_to_voice("O botão de like não pôde ser clicado.")
 
-    def fullscreen(self, send_to_voice):
+    def slide_page(self, slide_up,entity):
         """
-        Toggles fullscreen mode on the video.
+        The slide_page method is responsible for sliding the page up or down based on the user's message.
 
         Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        try:
-            fullscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
-            aria_label = fullscreen_button.get_attribute("aria-label")
-
-            if aria_label in  ["Exit full screen (f)", "Sair do ecrã inteiro (f)"]:
-                send_to_voice("O vídeo já está em tela cheia.")
-                return
-            
-            ActionChains(self.driver).move_to_element(fullscreen_button).perform()
-            fullscreen_button.click()
-          
-        except NoSuchElementException:
-            send_to_voice("Não foi possível encontrar o botão de tela cheia.")
-
-    def normalscreen(self, send_to_voice):
-        """
-        Exits fullscreen mode on the video.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        try:
-            normalscreen_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-fullscreen-button')]")
-            aria_label = normalscreen_button.get_attribute("aria-label")
-
-            if aria_label in ["Full screen (f)", "Ecrã inteiro (f)"]:
-                send_to_voice("O vídeo já está fora do modo tela cheia.")
-                return
-            
-            ActionChains(self.driver).move_to_element(normalscreen_button).perform()
-            normalscreen_button.click()
-         
-        except NoSuchElementException:
-            send_to_voice("Não foi possível encontrar o botão para sair da tela cheia.")
-
-    def slide_down(self, send_to_voice):
-        """
-        Scrolls down the page.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        send_to_voice("Scroll para baixo efetuado com sucesso.")
-        self.driver.execute_script("window.scrollBy(0, 200);")      # depois mudamos conforme for preciso..
-
-    def slide_up(self, send_to_voice):
-        """
-        Scrolls up the page.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
-        """
-        send_to_voice("Scroll para cima efetuado com sucesso.")
-        self.driver.execute_script("window.scrollBy(0, -200);")      # depois mudamos conforme for preciso..
-     
-
-    def handle_volume(self, entity, increase_volume):
-        """
-        Handles the video volume.
-
-        Args:
-            - send_to_voice: a function that sends a message to the user.
+            - slide_up: a boolean that represents if the page should be slided up or down.
             - entity: a string that represents the entity of the user's message.
-            - increase_volume: a boolean that represents if the volume should be increased or decreased.
         """
-        
-        current_volume = None
-        player = None
 
-        MIN_VOLUME = 0.05
-        MAX_VOLUME = 1
+        print(f"Slide Page")
 
-        try: 
-            current_volume =self.driver.execute_script("""
-                const video = document.querySelector('video');
-                return video ? video.volume : null;
-            """)
+        DEFAULT_SCROLL_VALUE = 400
 
-            player = self.driver.find_element(By.ID, 'movie_player')
+        small_scroll = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
 
-        except NoSuchElementException:
-            self.send_to_voice("Erro ao obter o volume do vídeo.")
-            return
-        
-        if current_volume == 0:
-            self.send_to_voice("O vídeo está sem som, por favor ative o som.")
-            return
-        
-        volume_to_change = None
+        medium_scroll = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
 
-        little_volume = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
+        scroll_value = DEFAULT_SCROLL_VALUE
 
-        medium_volume = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
-        
-        if entity is None:
-            DEFAULT_VOLUME_VALUE = 0.15
-            volume_to_change = DEFAULT_VOLUME_VALUE
-        else:
-            if  entity in little_volume:
-                    LOW_VOLUME_VALUE = 0.10
-                    volume_to_change = LOW_VOLUME_VALUE
+        if entity is not None:
+            if entity in small_scroll:
+                SMALL_SCROLL_VALUE = 200
+                scroll_value = SMALL_SCROLL_VALUE
+            elif entity in medium_scroll:
+                MEDIUM_SCROLL_VALUE = 600
+                scroll_value = MEDIUM_SCROLL_VALUE
 
-            elif entity in medium_volume:
-                    MEDIUM_VOLUME_VALUE = 0.25
-                    volume_to_change = MEDIUM_VOLUME_VALUE
-
-            elif  entity == "mínimo" and not increase_volume:                
-                    volume_to_change = MIN_VOLUME
-
-            elif entity == "máximo" and increase_volume:          
-                    volume_to_change = MAX_VOLUME
-
-            elif entity == "máximo" and not increase_volume or entity == "mínimo" and increase_volume:       
-                    self.send_to_voice("Não percebi o que queria fazer.")
-                    return  
-
-        key_to_send = Keys.ARROW_UP if increase_volume else Keys.ARROW_DOWN
-
-        player.send_keys(Keys.SPACE) 
-
-        ARROW_VOLUME_VALUE = 0.05
-
-        steps = 0
-
-        if volume_to_change == MIN_VOLUME:
-            # To ensure that we have the maximum setps to reach the minimum volume
-            volume_to_change = MAX_VOLUME + 0.05 if current_volume * 100 % 5 != 0 else MAX_VOLUME
-            steps = int(volume_to_change/ ARROW_VOLUME_VALUE)
-        else:
-            volume_to_change = volume_to_change + 0.05 if current_volume * 100 % 5 != 0 else volume_to_change
-
-            steps = int(abs(volume_to_change) / ARROW_VOLUME_VALUE)
-
-        message = "Volume aumentado." if increase_volume else "Volume diminuído."
-        
-        self.send_to_voice(message)
-
-        print(f"Currrent Volume: {current_volume} && Entity: {entity} && Steps: {steps}")
-
-        for _ in range(steps):
-            if current_volume >= MAX_VOLUME and increase_volume:
-                self.send_to_voice("O volume já está no máximo.")
-                player.send_keys(Keys.SPACE)
+            elif entity == "fundo":
+                if slide_up:
+                    self.send_to_voice("Desculpe, não é possível fazer scroll para cima para o fundo da página.")
+                    return
+                
+                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                self.send_to_voice("Scroll para o fundo da página efetuado com sucesso.")
                 return
-            elif current_volume <= MIN_VOLUME and not increase_volume:
-                self.send_to_voice("O volume já está no mínimo.")
-                player.send_keys(Keys.SPACE)
-                return
-    
-            player.send_keys(key_to_send)
 
-            current_volume  = current_volume + ARROW_VOLUME_VALUE if increase_volume else current_volume - ARROW_VOLUME_VALUE
+            elif entity == "topo":
+                if not slide_up:
+                    self.send_to_voice("Desculpe, não é possível fazer scroll para baixo para o topo da página.")
+                    return
+                
+                self.driver.execute_script("window.scrollTo(0, 0);")
+                self.send_to_voice("Scroll para o topo da página efetuado com sucesso.")
+
+                return
             
-            time.sleep(3)
+        if slide_up:
+            # Check if the user is at the top of the page
+            if self.driver.execute_script("return window.scrollY === 0;"):
+                self.send_to_voice("Não é possível fazer scroll para cima, já está no topo da página.")
+                return
+            
+            message = "Scroll para cima efetuado com sucesso."
+        else:    
+            # Check if the user is at the bottom of the page
+            if self.driver.execute_script("return (window.innerHeight + window.scrollY) >= document.body.scrollHeight;"):
+                self.send_to_voice("Não é possível fazer scroll para baixo, já está no fundo da página.")
+                return
+            
+            scroll_value = -scroll_value
+            message = "Scroll para baixo efetuado com sucesso."
 
-            print(f"Currrent Volume: {current_volume}")
+        scroll_value = - scroll_value if slide_up else scroll_value
 
-        player.send_keys(Keys.SPACE)
-        
+        print(f"Scroll Value: {scroll_value}")
+    
+        self.driver.execute_script(f"window.scrollBy(0, {scroll_value});")
+    
+        self.send_to_voice(message)
+               
     def fusion_action(self,recognized_message, nlu):
         """
         The fusion_action method is responsible for executing the action based on the user's command.
@@ -1152,25 +1056,23 @@ class Assistant(WebAssistant):
         print(f"Recognized Message: {recognized_message}")
 
         match recognized_message[0]:
-            case "FULLS":
+            case "FULLS" | "NORMALS":
                 if self.video is None:
-                    self.send_to_voice("Não há nenhum vídeo para colocar em tela cheia")
+                    self.send_to_voice("Não há nenhum vídeo para alterar o modo de ecrã")
                     return
-                
-                self.fullscreen(self.send_to_voice)
 
-            case "NORMALS":
-                if self.video is None:
-                    self.send_to_voice("Não há nenhum vídeo para sair da tela cheia")
-                    return
-                
-                self.normalscreen(self.send_to_voice)
+                change_to_fullscreen = True if recognized_message[0] == "FULLS" else False
 
-            case "SLIDED":
-                self.slide_down(self.send_to_voice)
+                self.video.handle_fullscreen(self.send_to_voice, change_to_fullscreen)
+        
+            case "SLIDED" | "SLIDEUP":
+                slide_up = True if recognized_message[0] == "SLIDEUP" else False
 
-            case "SLIDEUP":
-                self.slide_up(self.send_to_voice)
+                entity = nlu["entity"] if "entity" in nlu else None
+
+                print("boas")
+
+                self.slide_page(slide_up,entity)
 
             case "VOLUMED" | "VOLUMEU":
                 if self.video is None:
@@ -1181,7 +1083,7 @@ class Assistant(WebAssistant):
 
                 entity = nlu["entity"] if "entity" in nlu else None
 
-                self.handle_volume(entity, increase_voulme)
+                self.video.handle_volume(self.send_to_voice, entity, increase_voulme)
 
             case _:
                 self.send_to_voice("Desculpe, não entendi o que voocê queria")

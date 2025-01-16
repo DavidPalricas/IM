@@ -417,22 +417,35 @@ nlu:
 - intent: slideup
   examples: |
     - Desliza para cima
-    - Desliza para cima por favor
+    - Desliza [um pouco](scroll_value) para cima
+    - Desliza para cima por favor 
+    - Desliza [mais um bocado](scroll_value) para cima por favor
+    - Desliza [um pouco](scroll_value) para cima do vídeo
     - Desliza para cima do vídeo
     - Desliza para cima do vídeo por favor
+    - Desliza [mais um bocado](scroll_value) para cima do vídeo por favor
     - Desliza para cima, por favor
+    - Desliza [um pouco](scroll_value) para cima, por favor
     - Desliza para cima do vídeo, por favor
     - Dá scroll para cima
+    - Dá scroll para o [topo](scroll_value) da página
 
 - intent: slided
   examples: |
     - Desliza para baixo
+    - Desliza para baixo [um pouco](scroll_value)
     - Desliza para baixo por favor
+    - Deslica para baixo [mais um pouco](scroll_value) por favor
     - Desliza para baixo do vídeo
+    - Desliza para baixo do vídeo [mais um bocado](scroll_value)
     - Desliza para baixo do vídeo por favor
+    - Desliza para baixo do vídeo [um pouco](scroll_value) por favor
     - Desliza para baixo, por favor
+    - Desliza para baixo [um pouco](scroll_value), por favor
     - Desliza para baixo do vídeo, por favor
+    - Desliza para baixo do vídeo [mais um pouco](scroll_value), por favor
     - Dá scroll para baixo
+    - Dá scroll para o [fundo](scroll_value) da página
 
 - intent: help
   examples: |
