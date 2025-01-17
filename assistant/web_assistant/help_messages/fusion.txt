@@ -26,5 +26,5 @@ Scroll
 O que eu faço: Dou scroll para cima ou para baixo na página do Youtube, dependendo da direção indicada.
 
 Exemplo: 
-    Para cima: Estique um dos seus braços para frente e estenda o outro para baixo, com a palma da mão aberta. Eleve-o lentamente até o seu peito. A seguir diga algo como dá scroll para o topo da página.
-    Para baixo: Estique um dos seus braços para frente e estenda o outro para cima, com a palma da mão aberta. Baixe-o lentamente até o seu peito. A seguir diga algo como dá scroll para o fundo da página.
+    Para cima: Estique um dos seus braços para frente e estenda o outro para baixo, com a palma da mão aberta. Eleve-o lentamente até o seu peito. A seguir diga algo como dá scroll um pouco para cima.
+    Para baixo: Estique um dos seus braços para frente e estenda o outro para cima, com a palma da mão aberta. Baixe-o lentamente até o seu peito. A seguir diga algo como dá scroll mais um bocado para baixo.
