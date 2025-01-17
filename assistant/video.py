@@ -618,7 +618,7 @@ class Video:
 
         little_volume = ["pouco", "um pouco", "uma beca", "pedaço", "um pedaço", "um bocado", "um pouquinho"]
 
-        medium_volume = ["mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
+        medium_volume = ["bocado","mais", "mais um pouco", "mais um pedaço", "mais um bocado", "mais um pouquinho", "mais um pouco", "mais um bocado"]
         
         if entity is None:
             DEFAULT_VOLUME_VALUE = 0.15
@@ -641,6 +641,11 @@ class Video:
             elif entity == "máximo" and not increase_volume or entity == "mínimo" and increase_volume:       
                     send_to_voice("Não percebi o que queria fazer.")
                     return  
+            
+
+        if volume_to_change is None:
+            send_to_voice("Não percebi o que queria.")
+            return
 
         key_to_send = Keys.ARROW_UP if increase_volume else Keys.ARROW_DOWN
 

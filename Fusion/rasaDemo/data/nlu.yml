@@ -357,6 +357,7 @@ nlu:
     - Aumenta o volume do vídeo para o [máximo](volume_value), por favor
     - Aumenta o som do vídeo, por favor
     - Aumenta [uma beca](volume_value) o som do vídeo, por favor
+    - Aumenta mais um bocado o volume
 
 
 - intent: volumed
@@ -404,6 +405,7 @@ nlu:
     - Ecrã completo do vídeo por favor
     - Ecrã total do vídeo
     - Ecrã total do vídeo por favor
+    - Mete em tela cheia
 
 - intent: normals
   examples: |
@@ -413,6 +415,7 @@ nlu:
     - Ecrã normal do vídeo por favor
     - Ecrã normal, por favor
     - Ecrã normal do vídeo, por favor
+    - Mete em tela normal
 
 - intent: slideup
   examples: |
